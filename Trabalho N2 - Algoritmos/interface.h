@@ -2,6 +2,7 @@
 #define INTERFACE_H
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include "structs.h"
 
 void initSDL ();

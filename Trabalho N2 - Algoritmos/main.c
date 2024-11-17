@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	
 	makeTextures();
 	
-	void initSound ();
+	initSound ();
 	
 	phase1();
 	

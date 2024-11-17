@@ -18,6 +18,7 @@ void phase1 () {
 	int beak = 0, x[2], y[2], xD[2], yD[2];
 	int score = 0, missing;
 	int dragonCountDown = 0;
+	int over = 0;
 	
 	alocMap("Fase1.txt", &mapPhase1);
 	
@@ -51,7 +52,9 @@ void phase1 () {
 		lastTIME2[i] = SDL_GetTicks();
 		
 	}
-				
+	
+	playSound(1);
+			
 	while (missing != 0) {
 		
 		srand(time(0));
@@ -69,22 +72,24 @@ void phase1 () {
 				else beak = 1;
 			}
 		
-			if (finalTime % 100 == 0) {
+			if (finalTime % 300 == 0) {
 				
 				if (dragonCountDown == 0) dragonCountDown++;
 			} 
 			
-			
-				
 			for (i = 0; i < 8; i++) {
 				
-				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME);
-			
+				over = moveNPC(&mapPhase1, &(ogre[i]), &lastTIME, &wizard);
+				
+				if (over == 1) break;
 			}
+			
 			preTime = finalTime;
 		}
 		
 		printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown);
+		
+		if (over == 1) sleep();
 		
 		SDL_Event event;
 	
@@ -95,7 +100,7 @@ void phase1 () {
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-		move(state, &wizard, &mapPhase1, &lastTIME);
+		over = move(state, &wizard, &mapPhase1, &lastTIME, ogre);
 		
 		eat(&mapPhase1, &wizard, &score, &missing);
 	}

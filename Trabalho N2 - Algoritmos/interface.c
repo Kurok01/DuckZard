@@ -116,8 +116,7 @@ void initSound () {
 		exit(1);
 	}
 	
-	Mix_VolumeChunk(eatingSound, 32);
-	Mix_VolumeChunk(portalSound, 50);
+	Mix_Volume(-1, 2);
 }
 
 void playSound (int soundChoice) {
@@ -127,7 +126,7 @@ void playSound (int soundChoice) {
 		case 1:
 			
 			Mix_PlayMusic(soundTrack, -1);
-			Mix_VolumeMusic(64);
+			Mix_VolumeMusic(28);
 			break;
 			
 		case 2:
@@ -209,7 +208,7 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase
 	int i, j, k = 0;
 	int x, y;
 	static int tempLimits = 0;
-	static int temp = 1;
+	static int temp = 2;
 	
 	height = displayMode.h / map->height;
 	width = displayMode.w / map->width;

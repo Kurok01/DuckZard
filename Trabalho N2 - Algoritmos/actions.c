@@ -8,11 +8,11 @@
 #define MOVESPEED 150
 #define MOVESPEEDNPC 100
 
-void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
+int move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, Ogre_t *ogre) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
-	int xD, yD, x, y;
+	int xD, yD, x, y, xO[2], yO[2];
 	int i;
 	char limits[] = "*$";
 	
@@ -47,13 +47,14 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 	wizard->x += (speedX * deltaTime);
 	wizard->y += (speedY * deltaTime);
 	
-	xD = (((wizard->x + map->imageSize - 4) - map->outOfLimitsX) / map->imageSize);
-	yD = (((wizard->y + map->imageSize - 4) - map->outOfLimitsY) / map->imageSize);
+	xD = (((wizard->x + map->imageSize - 5) - map->outOfLimitsX) / map->imageSize);
+	yD = (((wizard->y + map->imageSize - 5) - map->outOfLimitsY) / map->imageSize);
 	
-	x = ((wizard->x - map->outOfLimitsX + 4)/ map->imageSize);
-	y = ((wizard->y - map->outOfLimitsY + 4) / map->imageSize);
+	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
+	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for(i = 0; i < 2; i++){
+	for (i = 0; i < 2; i++) {
+		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
 			wizard->x = preX;
@@ -61,6 +62,27 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 			break;
 		}
 	}
+	
+	xD = wizard->x + map->imageSize;
+	yD = wizard->y + map->imageSize;
+		
+	
+	for (i = 0; i < 8; i++) {
+	
+		xO[0] = ogre[i].x - (map->imageSize / 2);
+		yO[0] = ogre[i].y - (map->imageSize / 2);
+		
+		xO[1] = ogre[i].x + (map->imageSize / 2);
+		yO[1] = ogre[i].y + (map->imageSize / 2);
+		
+		if ((((xO[0] < wizard->x) && (xO[1] > wizard->x)) || ((xO[0] < xD) && (xO[1] > xD))) && 
+			(((yO[0] < wizard->y) && (yO[1] > wizard->y)) || ((yO[0] < yD) && (yO[1] > yD)))) {
+				
+				return 1;
+			}
+	}
+	
+	return 0;
 }
 
 void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
@@ -77,6 +99,7 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[y][x] = '-';
 		
+		playSound(2);
 		(*score)++;
 		(*missing)--;
 	}
@@ -85,6 +108,7 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[y][xD] = '-';
 		
+		playSound(2);
 		(*score)++;
 		(*missing)--;
 		
@@ -94,6 +118,7 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[yD][x] = '-';
 		
+		playSound(2);
 		(*score)++;
 		(*missing)--;
 		
@@ -103,21 +128,25 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[yD][xD] = '-';
 		
+		playSound(2);
 		(*score)++;
 		(*missing)--;
 	}
 }
 
-void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
+int moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, Role_t *wizard) {
 
 	float speedX, speedY;
 	float preX = character->x, preY = character->y;
 	int middleX, middleY, x, y, direction;
+	float xD, yD, xO[2], yO[2];
 	int i, correct = 0;
 	char limits[] = "*$";
 	
 	Uint32 currentTime = SDL_GetTicks();
 	float deltaTime = (currentTime - *lastTIME) / 1000.00;
+	
+	srand (time(0));
 	
 	if (character->destX != 0 && character->destY != 0) {
 		
@@ -125,7 +154,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			if (character->x < character->destX) {
 				
-				character->x += 10;
+				character->x += (map->imageSize / 4);
 				
 				if (character->x > character->destX) {
 					
@@ -135,7 +164,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			else {
 				
-				character->x -= 10;
+				character->x -= (map->imageSize / 4);
 				
 				if (character->x < character->destX) {
 					
@@ -145,9 +174,9 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 
 		} else if (character->y != character->destY){
 			
-			if(character->y < character->destY){
+			if (character->y < character->destY){
 				
-				character->y += 10;
+				character->y += (map->imageSize / 4);
 				
 				if(character->y > character->destY){
 					
@@ -156,7 +185,8 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			}
 			
 			else {
-				character->y -= 10;
+				
+				character->y -= (map->imageSize / 4);
 				
 				if(character->y < character->destY){
 					
@@ -168,7 +198,6 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			character->destX = 0;
 			character->destY = 0;
-			
 		}
 		
 	} else {
@@ -178,31 +207,42 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 		middleX = character->x;
 		middleY = character->y;
 		
+		printf ("%d %d %d %d %d\n", middleX, middleY, map->imageSize, map->outOfLimitsX, map->outOfLimitsY);
+		
 		x = (middleX - map->outOfLimitsX) / map->imageSize;
 		y = (middleY - map->outOfLimitsY) / map->imageSize;
+		
+		printf ("%d %d\n", x, y );
+		
+		if (x == 0) x = 1;
+		if (y == 0) y = 1;
 		
 		direction = rand() % 4;
 		
 		switch(direction){
 			
 			case 0:
-				if (map->mapPptr[y][x+1] == ' ') {
+				if (map->mapPptr[y][x+1] == ' ' || map->mapPptr[y][x+1] == '-') {
 					correct = 1;
+				
+					if (x >= 1 && x < (map->width - 7)) {
 					
-					for(i = 0; i < 5; i++){
-						
-						if(map->mapPptr[y][x+1+i] == ' ') correct = 0;
-						else{
-							correct = 1;
-							character->destX = ((i) * map->imageSize) +  middleX;
-							character->destY = middleY;
-							break;
-						}  
+						for(i = 0; i < 5; i++){
+							
+							if (map->mapPptr[y][x+1+i] == ' ' || map->mapPptr[y][x+1+i] == '-') correct = 0;
+							
+							else {
+								correct = 1;
+								character->destX = ((i) * map->imageSize) +  middleX;
+								character->destY = middleY;
+								break;
+							}  
+						}
 					}
 					
 					if(correct == 0){
 						correct = 1;
-						character->destX = ((5) * map->imageSize) + middleX;
+						character->destX = ((4) * map->imageSize) + middleX;
 						character->destY = middleY;
 						break;
 						
@@ -214,91 +254,128 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 				
 				else correct = 0;
 				break;
+				
 			case 1:
-				if(map->mapPptr[y][x-1] == ' '){
+				if (map->mapPptr[y][x-1] == ' ' || map->mapPptr[y][x-1] == '-'){
 					correct = 1;
 					
-					for(i = 0; i < 5; i++){
-						
-						if(map->mapPptr[y][x-1-i] == ' ') correct = 0;
-						else{
-							correct = 1;
-							character->destX = middleX - ((i) * map->imageSize);
-							character->destY = middleY;
-							break;
-						}  
+					if (x > 7 && x < (map->width)) {	
+					
+						for(i = 0; i < 5; i++){
+							
+							if(map->mapPptr[y][x-1-i] == ' ' || map->mapPptr[y][x-1-i] == '-') correct = 0;
+							
+							else {
+								
+								correct = 1;
+								character->destX = middleX - ((i) * map->imageSize);
+								character->destY = middleY;
+								break;
+							}  
+						}
 					}
 					
-					if(correct == 0){
+					if (correct == 0){
 						correct = 1;
 						character->destX = middleX - ((5) * map->imageSize);
 						character->destY = middleY;
 						break;
 						
-					}else{
+					} else {
+						
 						break;
 					}
 				}
+				
 				else correct = 0;
 				break;
+				
 			case 2:
-				if(map->mapPptr[y+1][x] == ' '){
+				if(map->mapPptr[y+1][x] == ' ' || map->mapPptr[y+1][x] == '-'){
 					correct = 1;
 					
-					for(i = 0; i < 5; i++){
-						
-						if(map->mapPptr[y+1+i][x] == ' ') correct = 0;
-						else{
-							correct = 1;
-							character->destX = middleX;
-							character->destY = middleY + ((i) * map->imageSize);
-							break;
-						}  
+					if (y >= 1 && y < (map->height - 7)) {	
+					
+						for (i = 0; i < 5; i++){
+							
+							if(map->mapPptr[y+1+i][x] == ' ' || map->mapPptr[y+1+i][x] == '-') correct = 0;
+							else{
+								correct = 1;
+								character->destX = middleX;
+								character->destY = middleY + ((i) * map->imageSize);
+								break;
+							}  
+						}
 					}
 					
-					if(correct == 0){
+					if (correct == 0){
 						correct = 1;
 						character->destX = middleX;
 						character->destY = middleY + ((5) * map->imageSize);
 						break;
 						
-					}else{
+					} else {
+						
 						break;
 					}
 				}
+				
 				else correct = 0;
 				break;
+				
 			case 3:
-				if(map->mapPptr[y-1][x] == ' '){
+				if(map->mapPptr[y-1][x] == ' ' || map->mapPptr[y-1][x] == '-'){
 					correct = 1;
-					
-					for(i = 0; i < 5; i++){
+				
+				if (y > 7 && y < (map->height)) {
+
+					for (i = 0; i < 5; i++){
 						
-						if(map->mapPptr[y-1-i][x] == ' ') correct = 0;
-						else{
+						if (map->mapPptr[y-1-i][x] == ' ' || map->mapPptr[y-1-i][x] == '-') correct = 0;
+						
+						else {
+							
 							correct = 1;
 							character->destX = middleX;
 							character->destY = middleY - ((i) * map->imageSize);
 							break;
 						}  
-					}
-					
-					if(correct == 0){
+					}	
+				}
+					if (correct == 0){
+						
 						correct = 1;
 						character->destX = middleX;
 						character->destY = middleY - ((5) * map->imageSize);
 						break;
 						
-					}else{
+					} else {
+						
 						break;
 					}
 				}
+				
 				else correct = 0;
 			}
-		
 		}
-		
 	}
 	
+	xO[0] = middleX - (map->imageSize / 2);
+	yO[0] = middleY - (map->imageSize / 2);
+	
+	xO[1] = middleX + (map->imageSize / 2);
+	yO[1] = middleY + (map->imageSize / 2);
+	
+	xD = wizard->x + map->imageSize;
+	yD = wizard->y + map->imageSize;
+	
+	if ((((xO[0] < wizard->x) && (xO[1] > wizard->x)) || ((xO[0] < xD) && (xO[1] > xD))) && 
+		(((yO[0] < wizard->y) && (yO[1] > wizard->y)) || ((yO[0] < yD) && (yO[1] > yD)))) {
+			
+			return 1;
+		} 
+	
 	*lastTIME = currentTime;
+	
+	return 0;
 }
