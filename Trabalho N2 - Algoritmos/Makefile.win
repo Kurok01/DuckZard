@@ -1,0 +1,40 @@
+# Project: DuckZard
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = main.o mapFunctions.o interface.o actions.o phase.o
+LINKOBJ  = main.o mapFunctions.o interface.o actions.o phase.o
+LIBS     = -L"D:/Dev-Cpp/MinGW64/lib" -L"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -L"C:/Users/ribei/Desktop/Trabalho N2 - Algoritmos/libs" -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+INCS     = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = DuckZard.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) -I"C:\Users\ribei\Desktop\Trabalho N2 - Algoritmos\include"
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.c
+	$(CC) -c main.c -o main.o $(CFLAGS)
+
+mapFunctions.o: mapFunctions.c
+	$(CC) -c mapFunctions.c -o mapFunctions.o $(CFLAGS)
+
+interface.o: interface.c
+	$(CC) -c interface.c -o interface.o $(CFLAGS)
+
+actions.o: actions.c
+	$(CC) -c actions.c -o actions.o $(CFLAGS)
+
+phase.o: phase.c
+	$(CC) -c phase.c -o phase.o $(CFLAGS)
