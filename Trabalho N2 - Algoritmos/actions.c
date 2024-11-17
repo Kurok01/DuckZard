@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <SDL.h>
 #include "mapFunctions.h"
 #include "structs.h"
@@ -107,53 +108,21 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 	}
 }
 
-void moveNPC(Map_t *map, Role_t *character, Uint32 *lastTIME){
+void moveNPC(Map_t *map, Role_t *character, Uint32 *lastTIME) {
 
 	float speedX, speedY;
 	float preX = character->x, preY = character->y;
 	int xD, yD, x, y;
-	int i;
+	int i, correct = 0;
 	char limits[] = "*$";
 	
-	switch(character->direction) {
-		
-		case 0:
-			speedX = +MOVESPEEDNPC;
-			break;
-			
-		case 1:
-			speedX = -MOVESPEEDNPC;
-			break;
-			
-		case 2:
-			speedY = +MOVESPEEDNPC;
-			break;
-			
-		case 3:
-			speedY = -MOVESPEEDNPC;
-			break;
-	}	
-
 	Uint32 currentTime = SDL_GetTicks();
-	float deltaTime = (currentTime - *lastTIME) / 1000.00;
-	*lastTIME = currentTime;
+	float deltaTime = (currentTime - *lastTIME) / 1000.00;	
 	
-	character->x += (speedX * deltaTime);
-	character->y += (speedY * deltaTime);
+	while (correct == 0) {
 	
-	xD = (((character->x + map->imageSize + 4) - map->outOfLimitsX) / map->imageSize);
-	yD = (((character->y + map->imageSize - 4) - map->outOfLimitsY) / map->imageSize);
-	
-	x = ((character->x - map->outOfLimitsX + 4)/ map->imageSize);
-	y = ((character->y - map->outOfLimitsY + 4) / map->imageSize);
-	
-	for(i = 0; i < 2; i++){
 		
-		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
-			
-			character->x = preX;
-			character->y = preY;
-			break;
-		}
 	}
+	
+	*lastTIME = currentTime;
 }
