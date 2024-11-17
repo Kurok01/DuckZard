@@ -8,7 +8,7 @@
 #define MOVESPEED 150
 #define MOVESPEEDNPC 100
 
-int move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, Ogre_t *ogre) {
+void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
@@ -62,27 +62,6 @@ int move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, Ogre
 			break;
 		}
 	}
-	
-	xD = wizard->x + map->imageSize;
-	yD = wizard->y + map->imageSize;
-		
-	
-	for (i = 0; i < 8; i++) {
-	
-		xO[0] = ogre[i].x - (map->imageSize / 2);
-		yO[0] = ogre[i].y - (map->imageSize / 2);
-		
-		xO[1] = ogre[i].x + (map->imageSize / 2);
-		yO[1] = ogre[i].y + (map->imageSize / 2);
-		
-		if ((((xO[0] < wizard->x) && (xO[1] > wizard->x)) || ((xO[0] < xD) && (xO[1] > xD))) && 
-			(((yO[0] < wizard->y) && (yO[1] > wizard->y)) || ((yO[0] < yD) && (yO[1] > yD)))) {
-				
-				return 1;
-			}
-	}
-	
-	return 0;
 }
 
 void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
@@ -134,7 +113,7 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 	}
 }
 
-int moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, Role_t *wizard) {
+void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 
 	float speedX, speedY;
 	float preX = character->x, preY = character->y;
@@ -207,19 +186,15 @@ int moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, Role_t *wizard) {
 		middleX = character->x;
 		middleY = character->y;
 		
-		printf ("%d %d %d %d %d\n", middleX, middleY, map->imageSize, map->outOfLimitsX, map->outOfLimitsY);
-		
 		x = (middleX - map->outOfLimitsX) / map->imageSize;
 		y = (middleY - map->outOfLimitsY) / map->imageSize;
-		
-		printf ("%d %d\n", x, y );
 		
 		if (x == 0) x = 1;
 		if (y == 0) y = 1;
 		
 		direction = rand() % 4;
 		
-		switch(direction){
+		switch (direction){
 			
 			case 0:
 				if (map->mapPptr[y][x+1] == ' ' || map->mapPptr[y][x+1] == '-') {
@@ -240,7 +215,8 @@ int moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, Role_t *wizard) {
 						}
 					}
 					
-					if(correct == 0){
+					if (correct == 0) {
+						
 						correct = 1;
 						character->destX = ((4) * map->imageSize) + middleX;
 						character->destY = middleY;
@@ -359,23 +335,5 @@ int moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, Role_t *wizard) {
 			}
 		}
 	}
-	
-	xO[0] = middleX - (map->imageSize / 2);
-	yO[0] = middleY - (map->imageSize / 2);
-	
-	xO[1] = middleX + (map->imageSize / 2);
-	yO[1] = middleY + (map->imageSize / 2);
-	
-	xD = wizard->x + map->imageSize;
-	yD = wizard->y + map->imageSize;
-	
-	if ((((xO[0] < wizard->x) && (xO[1] > wizard->x)) || ((xO[0] < xD) && (xO[1] > xD))) && 
-		(((yO[0] < wizard->y) && (yO[1] > wizard->y)) || ((yO[0] < yD) && (yO[1] > yD)))) {
-			
-			return 1;
-		} 
-	
 	*lastTIME = currentTime;
-	
-	return 0;
 }

@@ -47,10 +47,9 @@ void phase1 () {
 	
 	lastTIME = SDL_GetTicks();
 	
-	for(i = 0; i < 8; i++){
+	for (i = 0; i < 8; i++){
 		
 		lastTIME2[i] = SDL_GetTicks();
-		
 	}
 	
 	playSound(1);
@@ -79,7 +78,9 @@ void phase1 () {
 			
 			for (i = 0; i < 8; i++) {
 				
-				over = moveNPC(&mapPhase1, &(ogre[i]), &lastTIME, &wizard);
+				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME);
+				
+				over = gameOver(&wizard, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
 				if (over == 1) break;
 			}
@@ -87,7 +88,7 @@ void phase1 () {
 			preTime = finalTime;
 		}
 		
-		printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown);
+	 	over = printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown);
 		
 		if (over == 1) sleep();
 		
@@ -100,7 +101,14 @@ void phase1 () {
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-		over = move(state, &wizard, &mapPhase1, &lastTIME, ogre);
+		move(state, &wizard, &mapPhase1, &lastTIME);
+		
+		for (i = 0; i < 8; i++) {
+						
+			over = gameOver(&wizard, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
+
+			if (over == 1) break;
+		}
 		
 		eat(&mapPhase1, &wizard, &score, &missing);
 	}

@@ -7,6 +7,8 @@ void alocMap (char path[], Map_t *map);
 
 void lookingFor (Role_t *wizard, int which, Map_t *map);
 
+int gameOver (Role_t *wizard, float x, float y, int imageSizeX, int imageSizeY);
+
 void lookingForOgre(Ogre_t *character, int which, Map_t *map);
 
 int hotDogCounter(Map_t *map);

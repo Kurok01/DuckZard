@@ -101,6 +101,25 @@ int hotDogCounter(Map_t *map){
 	return qtd;
 }
 
+int gameOver (Role_t *wizard, float x, float y, int imageSizeX, int imageSizeY) {
+
+	float xD, yD, xO, yO;
+
+	xD = wizard->x + imageSizeX;
+	yD = wizard->y + imageSizeY;
+		
+	xO = x + imageSizeX;
+	yO = y + imageSizeY;
+		
+		if ((((x < wizard->x) && (xO > wizard->x)) || ((x < xD) && (xO > xD))) && 
+			(((y < wizard->y) && (yO > wizard->y)) || ((y < yD) && (yO > yD)))) {
+					
+			return 1;	
+		}
+	
+	return 0;
+}
+
 void freeMap (Map_t *map) {
 	
 	int i;

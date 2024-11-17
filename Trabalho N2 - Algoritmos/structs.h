@@ -2,6 +2,7 @@
 #define STRUCTS_H
 
 typedef struct {
+	
 	char type;
 	int direction;
 	float x;
@@ -12,6 +13,7 @@ typedef struct {
 } Role_t;
 
 typedef struct{
+	
 	char type;
 	int x;
 	int y;
@@ -19,9 +21,11 @@ typedef struct{
 	int destY;
 	int width;
 	int height;
-}Ogre_t;
+	
+} Ogre_t;
 
 typedef struct {
+	
 	char type;
 	float x;
 	float y;

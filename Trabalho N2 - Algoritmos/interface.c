@@ -202,13 +202,14 @@ void makeTextures () {
 	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
 
-void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown) {
+int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown) {
 	
 	int imageSize, height, width;
 	int i, j, k = 0;
 	int x, y;
 	static int tempLimits = 0;
 	static int temp = 2;
+	int over = 0;
 	
 	height = displayMode.h / map->height;
 	width = displayMode.w / map->width;
@@ -308,6 +309,8 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase
 	    		temp++;
 			}  
 	    	
+				over = gameOver(wizard, ((map->screenWidth + x) + *dragonCountDown), y, map->screenWidth, (map->screenHeight / 2));
+	    	
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
 			
 		} else {
@@ -322,13 +325,19 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase
 	    		*dragonCountDown = 0;
 	    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
 			}
-	    	
+	    
+			over = gameOver(wizard, ((map->screenWidth + x) - *dragonCountDown), ((map->screenHeight / 2) + y), map->screenWidth, (map->screenHeight / 2));
+			
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
 	    }
+	    
+	    if (over == 1) break;
 	}
 	
 	SDL_RenderPresent(renderer);
 	SDL_Delay(16);
+	
+	return over;
 }
 
 void freeSDL () {
