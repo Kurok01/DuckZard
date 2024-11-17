@@ -15,7 +15,7 @@ void phase1 () {
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 0;
-	int beak = 0;
+	int beak = 0, x, y, xD, yD;
 	int score = 0, missing;
 	int dragonCountDown = 0;
 	
@@ -69,10 +69,31 @@ void phase1 () {
 				
 				if (dragonCountDown == 0) dragonCountDown++;
 			} 
+			
+			xD = (wizard.x - mapPhase1.outOfLimitsX) / mapPhase1.imageSize;
+			yD = (wizard.y - mapPhase1.outOfLimitsY) / mapPhase1.imageSize;
 				
 			for (i = 0; i < 8; i++) {
 				
-				ogre[i].direction = rand() % 4;
+				x = (ogre[i].x - mapPhase1.outOfLimitsX) / mapPhase1.imageSize;
+				y = (ogre[i].y - mapPhase1.outOfLimitsY) / mapPhase1.imageSize;
+				
+				if(x == xD){
+					
+					if(ogre[i].y < wizard.y) ogre[i].direction = 2;
+					else ogre[i].direction = 3;
+					
+				}else if(y == yD){
+					
+					if(ogre[i].x < wizard.x) ogre[i].direction = 0;
+					else ogre[i].direction = 1;
+					
+				}else{
+					
+					ogre[i].direction = rand()%4;
+					
+				}
+				
 			}
 			
 			preTime = finalTime;
