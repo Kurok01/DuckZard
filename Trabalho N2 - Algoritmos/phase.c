@@ -11,7 +11,7 @@ void phase1 () {
 	
 	Map_t mapPhase1;
 	Role_t wizard;
-	Role_t ogre[8];
+	Ogre_t ogre[8];
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 0;
@@ -31,7 +31,11 @@ void phase1 () {
 	for (i = 0; i < 8; i++) {
 		
 		ogre[i].type = 'O';
-		lookingFor(&(ogre[i]), (i+1), &mapPhase1);
+		lookingForOgre(&(ogre[i]), (i+1), &mapPhase1);
+		
+		ogre[i].destX = 0;
+		ogre[i].destY = 0;
+		
 	}
 	
 	firstTime = clock(); 
@@ -70,35 +74,12 @@ void phase1 () {
 				if (dragonCountDown == 0) dragonCountDown++;
 			} 
 			
-			xD[0] = (wizard.x - mapPhase1.outOfLimitsX) / mapPhase1.imageSize;
-			yD[0] = (wizard.y - mapPhase1.outOfLimitsY) / mapPhase1.imageSize;
-				
-			xD[1] = ((wizard.x + mapPhase1.imageSize) - mapPhase1.outOfLimitsX) / mapPhase1.imageSize;
-			yD[1] = ((wizard.y + mapPhase1.imageSize) - mapPhase1.outOfLimitsY) / mapPhase1.imageSize;
+			
 				
 			for (i = 0; i < 8; i++) {
 				
-				x[0] = (ogre[i].x - mapPhase1.outOfLimitsX) / mapPhase1.imageSize;
-				y[0] = (ogre[i].y - mapPhase1.outOfLimitsY) / mapPhase1.imageSize;
-				
-				x[1] = ((ogre[i].x + mapPhase1.imageSize) - mapPhase1.outOfLimitsX) / mapPhase1.imageSize;
-				y[1] = ((ogre[i].y + mapPhase1.imageSize) - mapPhase1.outOfLimitsY) / mapPhase1.imageSize;
-				
-				if (x[0] == xD[0] || x[0] == xD[1] || x[1] == xD[0] || x[1] == xD[1]){
-					
-					if(ogre[i].y < wizard.y) ogre[i].direction = 2;
-					else ogre[i].direction = 3;
-					
-				} else if (y[0] == yD[0] || y[0] == yD[1] || y[1] == yD[0] || y[1] == yD[1]) {
-					
-					if(ogre[i].x < wizard.x) ogre[i].direction = 0;
-					else ogre[i].direction = 1;
-					
-				} else {
-					
-					if (finalTime % 20 == 0)
-					ogre[i].direction = rand () % 4;	
-				}
+				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME);
+			
 			}
 			preTime = finalTime;
 		}
@@ -115,11 +96,6 @@ void phase1 () {
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
 		move(state, &wizard, &mapPhase1, &lastTIME);
-		
-		for(i = 0; i < 8; i++){
-			
-			moveNPC(&mapPhase1, &(ogre[i]), &(lastTIME2[i]));
-		}
 		
 		eat(&mapPhase1, &wizard, &score, &missing);
 	}

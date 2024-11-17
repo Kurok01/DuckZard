@@ -129,7 +129,7 @@ void makeTextures () {
 	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
 
-void printScreen (Map_t *map, Role_t *wizard, Role_t ogres[], int qtd, int phase, int beak, int *dragonCountDown) {
+void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown) {
 	
 	int imageSize, height, width;
 	int i, j, k = 0;
@@ -171,8 +171,11 @@ void printScreen (Map_t *map, Role_t *wizard, Role_t ogres[], int qtd, int phase
 		
 		for(i = 0; i < qtd; i++){
 			
-			ogres[i].x = (ogres[i].x * imageSize) + x;
-			ogres[i].y = (ogres[i].y * imageSize) + y;
+			ogres[i].x = ((ogres[i].x * imageSize) + x);
+			ogres[i].y = ((ogres[i].y * imageSize) + y);
+			
+			ogres[i].x += (imageSize/2);
+			ogres[i].y += (imageSize/2);
 		}
 		
 		tempLimits++;
@@ -199,8 +202,8 @@ void printScreen (Map_t *map, Role_t *wizard, Role_t ogres[], int qtd, int phase
 			}
 			else if (map->mapPptr[i][j] == 'O'){
 				
-				position.x = ogres[k].x;
-				position.y = ogres[k].y;
+				position.x = (ogres[k].x) - (imageSize/2);
+				position.y = (ogres[k].y) - (imageSize/2);
 				
 				SDL_RenderCopy(renderer, ogreImg, NULL, &position);
 				k++;

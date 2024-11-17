@@ -11,6 +11,16 @@ typedef struct {
 		
 } Role_t;
 
+typedef struct{
+	char type;
+	int x;
+	int y;
+	int destX;
+	int destY;
+	int width;
+	int height;
+}Ogre_t;
+
 typedef struct {
 	char type;
 	float x;

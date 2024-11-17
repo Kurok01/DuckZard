@@ -108,19 +108,199 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 	}
 }
 
-void moveNPC(Map_t *map, Role_t *character, Uint32 *lastTIME) {
+void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 
 	float speedX, speedY;
 	float preX = character->x, preY = character->y;
-	int xD, yD, x, y;
+	int middleX, middleY, x, y, direction;
 	int i, correct = 0;
 	char limits[] = "*$";
 	
 	Uint32 currentTime = SDL_GetTicks();
-	float deltaTime = (currentTime - *lastTIME) / 1000.00;	
+	float deltaTime = (currentTime - *lastTIME) / 1000.00;
 	
-	while (correct == 0) {
+	if(character->destX != 0 && character->destY != 0){
+		
+		if(character->x != character->destX){
+			
+			if(character->x < character->destX){
+				
+				character->x += 10;
+				
+				if(character->x > character->destX){
+					
+					character->x = character->destX;
+					
+				} 
+				
+			}
+			else{
+				
+				character->x -= 10;
+				
+				if(character->x < character->destX){
+					
+					character->x = character->destX;
+					
+				}
+			} 
+
+		}else if(character->y != character->destY){
+			
+			if(character->y < character->destY){
+				
+				character->y += 10;
+				
+				if(character->y > character->destY){
+					
+					character->y = character->destY;
+					
+				} 
+				
+			}
+			else{
+				character->y -= 10;
+				
+				if(character->y < character->destY){
+					
+					character->y = character->destY;
+					
+				}	
+				
+			}
+			
+		}else{
+			
+			character->destX = 0;
+			character->destY = 0;
+			
+		}
+		
+	}else{
+		
+		while (correct == 0) {
 	
+		middleX = character->x;
+		middleY = character->y;
+		
+		x = (middleX - map->outOfLimitsX) / map->imageSize;
+		y = (middleY - map->outOfLimitsY) / map->imageSize;
+		
+		direction = rand() % 4;
+		
+		switch(direction){
+			case 0:
+				if(map->mapPptr[y][x+1] == ' '){
+					correct = 1;
+					
+					for(i = 0; i < 5; i++){
+						
+						if(map->mapPptr[y][x+1+i] == ' ') correct = 0;
+						else{
+							correct = 1;
+							character->destX = ((i) * map->imageSize) +  middleX;
+							character->destY = middleY;
+							break;
+						}  
+					}
+					
+					if(correct == 0){
+						correct = 1;
+						character->destX = ((5) * map->imageSize) + middleX;
+						character->destY = middleY;
+						break;
+						
+					}else{
+						break;
+					}
+				
+					
+				}
+				else correct = 0;
+				break;
+			case 1:
+				if(map->mapPptr[y][x-1] == ' '){
+					correct = 1;
+					
+					for(i = 0; i < 5; i++){
+						
+						if(map->mapPptr[y][x-1-i] == ' ') correct = 0;
+						else{
+							correct = 1;
+							character->destX = middleX - ((i) * map->imageSize);
+							character->destY = middleY;
+							break;
+						}  
+					}
+					
+					if(correct == 0){
+						correct = 1;
+						character->destX = middleX - ((5) * map->imageSize);
+						character->destY = middleY;
+						break;
+						
+					}else{
+						break;
+					}
+				}
+				else correct = 0;
+				break;
+			case 2:
+				if(map->mapPptr[y+1][x] == ' '){
+					correct = 1;
+					
+					for(i = 0; i < 5; i++){
+						
+						if(map->mapPptr[y+1+i][x] == ' ') correct = 0;
+						else{
+							correct = 1;
+							character->destX = middleX;
+							character->destY = middleY + ((i) * map->imageSize);
+							break;
+						}  
+					}
+					
+					if(correct == 0){
+						correct = 1;
+						character->destX = middleX;
+						character->destY = middleY + ((5) * map->imageSize);
+						break;
+						
+					}else{
+						break;
+					}
+				}
+				else correct = 0;
+				break;
+			case 3:
+				if(map->mapPptr[y-1][x] == ' '){
+					correct = 1;
+					
+					for(i = 0; i < 5; i++){
+						
+						if(map->mapPptr[y-1-i][x] == ' ') correct = 0;
+						else{
+							correct = 1;
+							character->destX = middleX;
+							character->destY = middleY - ((i) * map->imageSize);
+							break;
+						}  
+					}
+					
+					if(correct == 0){
+						correct = 1;
+						character->destX = middleX;
+						character->destY = middleY - ((5) * map->imageSize);
+						break;
+						
+					}else{
+						break;
+					}
+				}
+				else correct = 0;
+			}
+		
+		}
 		
 	}
 	

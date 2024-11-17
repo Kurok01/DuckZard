@@ -60,6 +60,32 @@ void lookingFor (Role_t *character, int which, Map_t *map) {
 	}	
 }
 
+void lookingForOgre(Ogre_t *character, int which, Map_t *map){
+	
+	int i, j, k = 0;
+	
+	for (i = 0; i < map->height; i++) {
+		
+		for (j = 0; j < map->width; j++) {
+			
+			if (map->mapPptr[i][j] == character->type) {
+				
+				k++;
+				
+				if (k == which) {
+					
+					character->x = (float)j;
+					character->y = (float)i;
+					
+					break;
+				}
+			}
+		}
+		
+		if (k == which) break;
+	}	
+}
+
 int hotDogCounter(Map_t *map){
 	int i,j, qtd = 0;
 	

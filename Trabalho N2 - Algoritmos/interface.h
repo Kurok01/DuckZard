@@ -10,7 +10,7 @@ SDL_Texture *takeImage (char pathImage[]);
 
 void makeTextures ();
 
-void printScreen (Map_t *map, Role_t *wizard, Role_t ogres[], int qtd, int phase, int beak, int *dragonCountDown);
+void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown);
 
 void freeSDL ();
 
