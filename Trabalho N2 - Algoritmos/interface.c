@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include <SDL_image.h>
 #include "structs.h"
 #include "mapFunctions.h"
@@ -19,6 +20,10 @@ SDL_Texture *lightningProjectileImg;
 SDL_Texture *fireballProjectileImg;
 SDL_Texture *ogreCloneImg;
 
+Mix_Music *soundTrack;
+Mix_Chunk *eatingSound;
+Mix_Chunk *portalSound;
+
 SDL_DisplayMode displayMode;
 
 SDL_Renderer *renderer;
@@ -36,9 +41,23 @@ void initSDL () {
 	
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		
-		printf ("Erro to init SDL_Image: %s", IMG_GetError());
+		printf ("Error to init SDL_Image: %s", IMG_GetError());
 		
 		SDL_Quit();
+		exit(1);
+	}
+	
+	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+		
+		printf ("Error to init SDL: %s", SDL_GetError());
+		
+		exit(1);
+	}
+	
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		
+		printf ("Error to init SDL_Mixer: %s", Mix_GetError());
+		
 		exit(1);
 	}
 	
@@ -65,6 +84,61 @@ void initSDL () {
 		IMG_Quit();
 		SDL_Quit();
 		exit(1);
+	}
+}
+
+void initSound () {
+	
+	soundTrack = Mix_LoadMUS("SoundEffects\\SoundTrack.mp3");
+	
+	if (soundTrack == NULL) {
+		
+		printf ("Error to open SoundTrack: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	eatingSound = Mix_LoadWAV("SoundEffects\\EatingSoundEffect.wav");
+	
+	if (eatingSound == NULL) {
+		
+		printf ("Error to open eating sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	portalSound = Mix_LoadWAV("SoundEffects\\PortalSoundEffect.wav");
+	
+	if (portalSound == NULL) {
+		
+		printf ("Error to open portal sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	Mix_VolumeChunk(eatingSound, 32);
+	Mix_VolumeChunk(portalSound, 50);
+}
+
+void playSound (int soundChoice) {
+	
+	switch (soundChoice) {
+		
+		case 1:
+			
+			Mix_PlayMusic(soundTrack, -1);
+			Mix_VolumeMusic(64);
+			break;
+			
+		case 2:
+			
+			Mix_PlayChannel(-1, eatingSound, 0);
+			break;
+			
+		case 3:
+			
+			Mix_PlayChannel(-1, portalSound, 0);
+			break;
 	}
 }
 

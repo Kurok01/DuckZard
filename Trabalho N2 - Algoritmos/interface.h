@@ -6,6 +6,10 @@
 
 void initSDL ();
 
+void initSound ();
+
+void playSound ();
+
 SDL_Texture *takeImage (char pathImage[]);
 
 void makeTextures ();

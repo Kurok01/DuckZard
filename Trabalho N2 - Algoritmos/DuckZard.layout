@@ -32,9 +32,15 @@ CursorRow=4
 TopLine=1
 LeftChar=1
 [Editor_6]
+<<<<<<< Updated upstream
 CursorCol=1
 CursorRow=114
 TopLine=132
+=======
+CursorCol=3
+CursorRow=124
+TopLine=104
+>>>>>>> Stashed changes
 LeftChar=1
 [Editor_7]
 CursorCol=45
@@ -42,9 +48,15 @@ CursorRow=8
 TopLine=1
 LeftChar=1
 [Editor_8]
+<<<<<<< Updated upstream
 CursorCol=23
 CursorRow=86
 TopLine=64
+=======
+CursorCol=30
+CursorRow=99
+TopLine=77
+>>>>>>> Stashed changes
 LeftChar=1
 [Editor_9]
 CursorCol=1

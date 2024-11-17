@@ -119,33 +119,31 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 	Uint32 currentTime = SDL_GetTicks();
 	float deltaTime = (currentTime - *lastTIME) / 1000.00;
 	
-	if(character->destX != 0 && character->destY != 0){
+	if (character->destX != 0 && character->destY != 0) {
 		
-		if(character->x != character->destX){
+		if (character->x != character->destX) {
 			
-			if(character->x < character->destX){
+			if (character->x < character->destX) {
 				
 				character->x += 10;
 				
-				if(character->x > character->destX){
+				if (character->x > character->destX) {
 					
 					character->x = character->destX;
-					
 				} 
-				
 			}
-			else{
+			
+			else {
 				
 				character->x -= 10;
 				
-				if(character->x < character->destX){
+				if (character->x < character->destX) {
 					
 					character->x = character->destX;
-					
 				}
 			} 
 
-		}else if(character->y != character->destY){
+		} else if (character->y != character->destY){
 			
 			if(character->y < character->destY){
 				
@@ -153,30 +151,27 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 				
 				if(character->y > character->destY){
 					
-					character->y = character->destY;
-					
-				} 
-				
+					character->y = character->destY;	
+				} 		
 			}
-			else{
+			
+			else {
 				character->y -= 10;
 				
 				if(character->y < character->destY){
 					
-					character->y = character->destY;
-					
+					character->y = character->destY;	
 				}	
-				
 			}
 			
-		}else{
+		} else {
 			
 			character->destX = 0;
 			character->destY = 0;
 			
 		}
 		
-	}else{
+	} else {
 		
 		while (correct == 0) {
 	
@@ -189,8 +184,9 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 		direction = rand() % 4;
 		
 		switch(direction){
+			
 			case 0:
-				if(map->mapPptr[y][x+1] == ' '){
+				if (map->mapPptr[y][x+1] == ' ') {
 					correct = 1;
 					
 					for(i = 0; i < 5; i++){
@@ -210,12 +206,12 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 						character->destY = middleY;
 						break;
 						
-					}else{
+					} else {
+						
 						break;
-					}
-				
-					
+					}	
 				}
+				
 				else correct = 0;
 				break;
 			case 1:
