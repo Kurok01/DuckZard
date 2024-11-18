@@ -16,6 +16,7 @@ SDL_Texture *middleFireImg;
 SDL_Texture *internalFireImg;
 SDL_Texture *thunderImg;
 SDL_Texture *hotdogImg;
+SDL_Texture *lightningPillImg;
 SDL_Texture *lightningProjectileImg;
 SDL_Texture *fireballProjectileImg;
 SDL_Texture *ogreCloneImg;
@@ -195,10 +196,10 @@ void makeTextures () {
 	middleFireImg = takeImage ("assets\\MiddleFire.png");
 	internalFireImg = takeImage("assets\\InternalFire.png");
 	thunderImg = takeImage("assets\\Thunder.png");
+	lightningPillImg = takeImage("assets\\LightningPill.png");
 	hotdogImg = takeImage("assets\\Hotdog.png");
-	/*lightningProjectileImg = takeImage("assets\\LightningProjectile.png");
-	fireballProjectileImg = takeImage("assets\\FireballProjectile.png");
-	dragonImg = takeImage("assets\\Dragon.png");
+	lightningProjectileImg = takeImage("assets\\LightningProjectile.png");
+	/*fireballProjectileImg = takeImage("assets\\FireballProjectile.png");
 	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
 
@@ -309,7 +310,7 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    		temp++;
 			}  
 	    	
-				over = gameOver(wizard, ((map->screenWidth + x) + *dragonCountDown), y, map->screenWidth, (map->screenHeight / 2));
+			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, map->screenWidth, (map->screenHeight / 2));
 	    	
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
 			
@@ -326,14 +327,14 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
 			}
 	    
-			over = gameOver(wizard, ((map->screenWidth + x) - *dragonCountDown), ((map->screenHeight / 2) + y), map->screenWidth, (map->screenHeight / 2));
+			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, map->screenWidth, (map->screenHeight / 2));
 			
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
 	    }
 	    
 	    if (over == 1) break;
 	}
-	
+
 	SDL_RenderPresent(renderer);
 	SDL_Delay(16);
 	
@@ -367,11 +368,13 @@ void freeSDL () {
 	SDL_DestroyTexture(middleFireImg);
 	SDL_DestroyTexture(externalFireImg);
 	SDL_DestroyTexture(thunderImg);
-
-	/*SDL_DestroyTexture(ogreCloneImg);
-	SDL_DestroyTexture(dragonImg);
 	SDL_DestroyTexture(lightningProjectileImg);
-	SDL_DestroyTexture(fireballProjectileImg);*/
+	SDL_DestroyTexture(lightningPillImg);
+
+	SDL_DestroyTexture(ogreCloneImg);
+	SDL_DestroyTexture(dragonImg);
+	SDL_DestroyTexture(fireballProjectileImg);
+	
 	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

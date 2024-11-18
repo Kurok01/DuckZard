@@ -101,18 +101,54 @@ int hotDogCounter(Map_t *map){
 	return qtd;
 }
 
-int gameOver (Role_t *wizard, float x, float y, int imageSizeX, int imageSizeY) {
-
-	float xD, yD, xO, yO;
-
-	xD = wizard->x + imageSizeX;
-	yD = wizard->y + imageSizeY;
+void spawnPower (Map_t *map, int *score, int *missing) {
+	
+	int x, y;
+	int spawn = 0;
+	
+	srand (time(0));
+	
+	while (spawn == 0) {
 		
-	xO = x + imageSizeX;
-	yO = y + imageSizeY;
+		x = rand () % map->width;
+		y = rand () % map->height;
 		
-		if ((((x < wizard->x) && (xO > wizard->x)) || ((x < xD) && (xO > xD))) && 
-			(((y < wizard->y) && (yO > wizard->y)) || ((y < yD) && (yO > yD)))) {
+		if (map->mapPptr[y][x] == ' ') {
+			
+			map->mapPptr[y][x] = '+';
+			
+			(*score)++;
+			(*missing)--;
+			
+			spawn = 1;
+			
+		} else if (map->mapPptr[y][x] == '-') {
+			
+			map->mapPptr[y][x] = '+';
+			
+			(*score)++;
+			(*missing)--;
+			
+			spawn = 1;	
+		}
+	}
+}
+
+int gameOver (Role_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, int imageSizeY) {
+
+	float xD, yD, xO, yO, xd, yd;
+	
+	xd = wizard->x + 3;
+	yd = wizard->y + 3;
+	
+	xD = (wizard->x + map->imageSize) - 3;
+	yD = (wizard->y + map->imageSize) - 3;
+		
+	xO = xo + imageSizeX;
+	yO = yo + imageSizeY;
+		
+		if ((((xo < xd) && (xO > xd)) || ((xo < xD) && (xO > xD))) && 
+			(((yo < yd) && (yO > yd)) || ((yo < yD) && (yO > yD)))) {
 					
 			return 1;	
 		}

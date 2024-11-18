@@ -15,10 +15,10 @@ void phase1 () {
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 0;
-	int beak = 0, x[2], y[2], xD[2], yD[2];
-	int score = 0, missing;
+	int beak = 0, x, y;
+	int score = 0, missing, spawnPower = 0;
 	int dragonCountDown = 0;
-	int over = 0;
+	int over = 0, dragonOver = 0;
 	
 	alocMap("Fase1.txt", &mapPhase1);
 	
@@ -70,6 +70,11 @@ void phase1 () {
 				if (beak == 1) beak = 0;
 				else beak = 1;
 			}
+			
+			if ((finalTime + 100) % 300 == 0) {
+				
+				spawnPower(&mapPhase1, &score, &missing);
+			}
 		
 			if (finalTime % 300 == 0) {
 				
@@ -80,7 +85,7 @@ void phase1 () {
 				
 				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME);
 				
-				over = gameOver(&wizard, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
+				over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
 				if (over == 1) break;
 			}
@@ -88,9 +93,10 @@ void phase1 () {
 			preTime = finalTime;
 		}
 		
-	 	over = printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown);
+		dragonOver = printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown);
 		
 		if (over == 1) sleep();
+		else if (dragonOver == 1) sleep();
 		
 		SDL_Event event;
 	
@@ -105,7 +111,7 @@ void phase1 () {
 		
 		for (i = 0; i < 8; i++) {
 						
-			over = gameOver(&wizard, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
+			over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 
 			if (over == 1) break;
 		}
