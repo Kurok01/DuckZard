@@ -327,7 +327,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 							
 							correct = 1;
 							character->destX = middleX;
-							character->destY = middleY - ((i) * map->imageSize);
+							character->destY = middleY - ((i) * map->imageSize); 
 							break;
 						}  
 					}	
