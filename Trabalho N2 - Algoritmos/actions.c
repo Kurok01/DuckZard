@@ -68,9 +68,9 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int
 		
 		
 		if(map->mapPptr[y][x] == '+') map->mapPptr[y][x] = ' ';
-		if(map->mapPptr[yD][xD] == '+') map->mapPptr[y][x] = ' ';
-		if(map->mapPptr[y][xD] == '+') map->mapPptr[y][x] = ' ';
-		if(map->mapPptr[yD][x] == '+') map->mapPptr[y][x] = ' ';
+		if(map->mapPptr[yD][xD] == '+') map->mapPptr[yD][xD] = ' ';
+		if(map->mapPptr[y][xD] == '+') map->mapPptr[y][xD] = ' ';
+		if(map->mapPptr[yD][x] == '+') map->mapPptr[yD][x] = ' ';
 		
 		(*lightning) = 1;
 

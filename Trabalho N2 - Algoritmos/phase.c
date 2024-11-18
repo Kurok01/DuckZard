@@ -72,12 +72,12 @@ void phase1 () {
 				else beak = 1;
 			}
 			
-			if ((finalTime + 100) % 300 == 0) {
+			if ((finalTime + 100) % 500 == 0) {
 				
 				spawnLightning(&mapPhase1, &score, &missing);
 			}
 		
-			if (finalTime % 300 == 0) {
+			if (finalTime % 500 == 0) {
 				
 				if (dragonCountDown == 0) dragonCountDown++;
 			} 

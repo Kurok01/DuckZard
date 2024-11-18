@@ -309,13 +309,13 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    	lightningImage.w = map->screenWidth;
 	    	lightningImage.h = map->screenHeight / 2;
 	    	
-	    	if(lightningImage.x <= (dragonImage.x + map->screenWidth)){
+	    	if (lightningImage.x <= (dragonImage.x + map->screenWidth)){
 	    	
 				dragonImage.x = (lightningImage.x-1) - map->screenWidth;
 			
 			}
 	    	
-	    	if (dragonImage.x  >= map->screenWidth * 2 || lightningImage.x <= -(map->screenWidth * 2)) {
+	    	if (dragonImage.x  >= map->screenWidth || lightningImage.x <= -(map->screenWidth)) {
 	    		
 	    		*dragonCountDown = 0;
 	    		dragonImage.x = -(map->screenWidth + x) + *dragonCountDown;
@@ -326,12 +326,12 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    		temp++;
 			} 
 	    	
-			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, map->screenWidth, (map->screenHeight / 2));
+			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, (map->screenWidth - 100), (map->screenHeight / 2));
 	    	
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
 	    	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage);
 			
-		}else {
+		} else {
 	
     		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
 	    	dragonImage.y = (map->screenHeight / 2) + y;
@@ -343,13 +343,12 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    	lightningImage.w = map->screenWidth;
 	    	lightningImage.h = map->screenHeight / 2;
 	    	
-	    	if(((lightningImage.x + map->screenWidth) >= dragonImage.x)){
+	    	if ((lightningImage.x + map->screenWidth) >= dragonImage.x){
 	    	
 				dragonImage.x = lightningImage.x + map->screenWidth + 1;
-			
 			}
 	    	
-	    	if (dragonImage.x <= -(map->screenWidth * 2) || lightningImage.x >= map->screenWidth * 2) {
+	    	if (dragonImage.x <= -(map->screenWidth) || lightningImage.x >= map->screenWidth) {
 	    		
 	    		*dragonCountDown = 0;
 	    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
@@ -358,7 +357,7 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    		lightningImage.x = -(map->screenWidth + x) + (*lightning);
 			}
 	    
-			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, map->screenWidth, (map->screenHeight / 2));
+			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, (map->screenWidth - 100), (map->screenHeight / 2));
 			
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
 	    	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage);
