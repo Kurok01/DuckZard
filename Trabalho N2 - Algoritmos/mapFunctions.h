@@ -9,7 +9,7 @@ void lookingFor (Role_t *wizard, int which, Map_t *map);
 
 int gameOver (Role_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, int imageSizeY);
 
-void spawnPower (Map_t *map, int *score, int *missing);
+void spawnLightning(Map_t *map, int *score, int *missing);
 
 void lookingForOgre(Ogre_t *character, int which, Map_t *map);
 

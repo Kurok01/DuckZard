@@ -101,7 +101,7 @@ int hotDogCounter(Map_t *map){
 	return qtd;
 }
 
-void spawnPower (Map_t *map, int *score, int *missing) {
+void spawnLightning(Map_t *map, int *score, int *missing) {
 	
 	int x, y;
 	int spawn = 0;
@@ -149,7 +149,7 @@ int gameOver (Role_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, in
 		
 		if ((((xo < xd) && (xO > xd)) || ((xo < xD) && (xO > xD))) && 
 			(((yo < yd) && (yO > yd)) || ((yo < yD) && (yO > yD)))) {
-					
+				
 			return 1;	
 		}
 	

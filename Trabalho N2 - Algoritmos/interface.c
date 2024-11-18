@@ -203,7 +203,7 @@ void makeTextures () {
 	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
 
-int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown) {
+int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown, int *lightning) {
 	
 	int imageSize, height, width;
 	int i, j, k = 0;
@@ -230,7 +230,7 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	map->outOfLimitsX = x;
 	map->outOfLimitsY = y;
 	
-	SDL_Rect backGroundImage, dragonImage;
+	SDL_Rect backGroundImage, dragonImage, lightningImage;
 
     backGroundImage.x = x;
     backGroundImage.y = y;
@@ -284,12 +284,14 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 				k++;
 				
 			}
-			else if (map->mapPptr[i][j] == '+') SDL_RenderCopy(renderer, internalFireImg, NULL, &position);
+			else if (map->mapPptr[i][j] == '+') SDL_RenderCopy(renderer, lightningPillImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '?') SDL_RenderCopy(renderer, middleFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '#') SDL_RenderCopy(renderer, externalFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '$') SDL_RenderCopy(renderer, thunderImg, NULL, &position);
   		}
 	}
+	
+	if(*lightning != 0) *lightning += temp;
 	
 	if (*dragonCountDown != 0) *dragonCountDown += temp;
 	
@@ -302,34 +304,64 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    	dragonImage.w = map->screenWidth;
 	    	dragonImage.h = map->screenHeight / 2;
 	    	
-	    	if (dragonImage.x >= map->screenWidth * 2) {
+	    	lightningImage.x = (map->screenWidth + x) - *lightning;
+	    	lightningImage.y = y;
+	    	lightningImage.w = map->screenWidth;
+	    	lightningImage.h = map->screenHeight / 2;
+	    	
+	    	if(lightningImage.x <= (dragonImage.x + map->screenWidth)){
+	    	
+				dragonImage.x = (lightningImage.x-1) - map->screenWidth;
+			
+			}
+	    	
+	    	if (dragonImage.x  >= map->screenWidth * 2 || lightningImage.x <= -(map->screenWidth * 2)) {
 	    		
 	    		*dragonCountDown = 0;
 	    		dragonImage.x = -(map->screenWidth + x) + *dragonCountDown;
 	    		
+	    		*lightning = 0;
+	    		lightningImage.x = (map->screenWidth + x) - (*lightning);
+	    		
 	    		temp++;
-			}  
+			} 
 	    	
 			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, map->screenWidth, (map->screenHeight / 2));
 	    	
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
+	    	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage);
 			
-		} else {
+		}else {
 	
     		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
 	    	dragonImage.y = (map->screenHeight / 2) + y;
 	    	dragonImage.w = map->screenWidth;
 	    	dragonImage.h = map->screenHeight / 2;
 	    	
-	    	if (dragonImage.x <= -(map->screenWidth * 2)) {
+	    	lightningImage.x = -(map->screenWidth + x) + *lightning;
+	    	lightningImage.y = (map->screenHeight / 2) + y;
+	    	lightningImage.w = map->screenWidth;
+	    	lightningImage.h = map->screenHeight / 2;
+	    	
+	    	if(((lightningImage.x + map->screenWidth) >= dragonImage.x)){
+	    	
+				dragonImage.x = lightningImage.x + map->screenWidth + 1;
+			
+			}
+	    	
+	    	if (dragonImage.x <= -(map->screenWidth * 2) || lightningImage.x >= map->screenWidth * 2) {
 	    		
 	    		*dragonCountDown = 0;
 	    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
+	    		
+	    		*lightning = 0;
+	    		lightningImage.x = -(map->screenWidth + x) + (*lightning);
 			}
 	    
 			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, map->screenWidth, (map->screenHeight / 2));
 			
 	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
+	    	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage);
 	    }
 	    
 	    if (over == 1) break;
@@ -371,9 +403,9 @@ void freeSDL () {
 	SDL_DestroyTexture(lightningProjectileImg);
 	SDL_DestroyTexture(lightningPillImg);
 
-	SDL_DestroyTexture(ogreCloneImg);
+	/*SDL_DestroyTexture(ogreCloneImg);
 	SDL_DestroyTexture(dragonImg);
-	SDL_DestroyTexture(fireballProjectileImg);
+	SDL_DestroyTexture(fireballProjectileImg);*/
 	
 	
 	SDL_DestroyRenderer(renderer);

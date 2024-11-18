@@ -19,6 +19,7 @@ void phase1 () {
 	int score = 0, missing, spawnPower = 0;
 	int dragonCountDown = 0;
 	int over = 0, dragonOver = 0;
+	int lightning = 0;
 	
 	alocMap("Fase1.txt", &mapPhase1);
 	
@@ -73,7 +74,7 @@ void phase1 () {
 			
 			if ((finalTime + 100) % 300 == 0) {
 				
-				spawnPower(&mapPhase1, &score, &missing);
+				spawnLightning(&mapPhase1, &score, &missing);
 			}
 		
 			if (finalTime % 300 == 0) {
@@ -87,13 +88,15 @@ void phase1 () {
 				
 				over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
-				if (over == 1) break;
+				if(over == 1) break;
 			}
 			
 			preTime = finalTime;
 		}
 		
-		dragonOver = printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown);
+		dragonOver = printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown, &lightning);
+		
+		printf("%d", over);
 		
 		if (over == 1) sleep();
 		else if (dragonOver == 1) sleep();
@@ -107,13 +110,13 @@ void phase1 () {
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-		move(state, &wizard, &mapPhase1, &lastTIME);
+		move(state, &wizard, &mapPhase1, &lastTIME, &lightning);
 		
 		for (i = 0; i < 8; i++) {
 						
 			over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 
-			if (over == 1) break;
+			if(over == 1) break;
 		}
 		
 		eat(&mapPhase1, &wizard, &score, &missing);

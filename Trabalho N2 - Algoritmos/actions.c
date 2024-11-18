@@ -8,7 +8,7 @@
 #define MOVESPEED 150
 #define MOVESPEEDNPC 100
 
-void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
+void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int *lightning) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
@@ -61,7 +61,21 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 			wizard->y = preY;
 			break;
 		}
+		
 	}
+	
+	if (map->mapPptr[y][x] == '+' || map->mapPptr[yD][xD] == '+' || map->mapPptr[y][xD] == '+' || map->mapPptr[yD][x] == '+') {
+		
+		
+		if(map->mapPptr[y][x] == '+') map->mapPptr[y][x] = ' ';
+		if(map->mapPptr[yD][xD] == '+') map->mapPptr[y][x] = ' ';
+		if(map->mapPptr[y][xD] == '+') map->mapPptr[y][x] = ' ';
+		if(map->mapPptr[yD][x] == '+') map->mapPptr[y][x] = ' ';
+		
+		(*lightning) = 1;
+
+	}
+	
 }
 
 void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
