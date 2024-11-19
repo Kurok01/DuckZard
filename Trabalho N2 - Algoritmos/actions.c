@@ -5,16 +5,15 @@
 #include "mapFunctions.h"
 #include "structs.h"
 
-#define MOVESPEED 150
 #define MOVESPEEDNPC 100
 
-void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
+void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int MOVESPEED) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$";
+	char limits[] = "*$ASV";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -53,7 +52,7 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
 	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 5; i++) {
 		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
@@ -64,6 +63,64 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 		
 	}
 }
+
+void reverseMoves(const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int MOVESPEED) {
+	
+	float speedX = 0, speedY = 0;
+	float preX = wizard->x, preY = wizard->y;
+	int xD, yD, x, y;
+	int i;
+	char limits[] = "*$ASV";
+	
+	if (state[SDL_SCANCODE_W]) {
+		
+		speedY = +MOVESPEED;
+		wizard->direction = 2;
+	} 
+	
+	if (state[SDL_SCANCODE_S]) {
+		
+		speedY = -MOVESPEED;
+		wizard->direction = 3;
+	}
+	 
+	if (state[SDL_SCANCODE_A]) {
+		
+		speedX = +MOVESPEED;
+		wizard->direction = 0;
+	}
+	 
+	if (state[SDL_SCANCODE_D]) {
+		
+		speedX = -MOVESPEED;
+		wizard->direction = 1;
+	}
+	
+	Uint32 currentTime = SDL_GetTicks();
+	float deltaTime = (currentTime - *lastTIME) / 1000.00;
+	*lastTIME = currentTime;
+	
+	wizard->x += (speedX * deltaTime);
+	wizard->y += (speedY * deltaTime);
+	
+	xD = (((wizard->x + map->imageSize - 5) - map->outOfLimitsX) / map->imageSize);
+	yD = (((wizard->y + map->imageSize - 5) - map->outOfLimitsY) / map->imageSize);
+	
+	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
+	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
+	
+	for (i = 0; i < 5; i++) {
+		
+		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
+			
+			wizard->x = preX;
+			wizard->y = preY;
+			break;
+		}
+		
+	}
+}
+
 
 void eatPill(Map_t *map, Role_t *wizard, int *lightning){
 	int xD, yD, x, y;
@@ -137,14 +194,14 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 	}
 }
 
-void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
+void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, int MOVESPEED) {
 
 	float speedX, speedY;
 	float preX = character->x, preY = character->y;
 	int middleX, middleY, x, y, direction, sizeDirection;
 	float xD, yD, xO[2], yO[2];
 	int i, correct = 0;
-	char limits[] = "*$";
+	char limits[] = "*$ASV";
 	
 	Uint32 currentTime = SDL_GetTicks();
 	float deltaTime = (currentTime - *lastTIME) / 1000.00;
@@ -159,7 +216,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			if (character->x < character->destX) {
 				
-				character->x += (map->imageSize / 4);
+				character->x += MOVESPEED;
 				
 				if (character->x > character->destX) {
 					
@@ -169,7 +226,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			else {
 				
-				character->x -= (map->imageSize / 4);
+				character->x -= MOVESPEED;
 				
 				if (character->x < character->destX) {
 					
@@ -181,7 +238,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			if (character->y < character->destY){
 				
-				character->y += (map->imageSize / 4);
+				character->y += MOVESPEED;
 				
 				if(character->y > character->destY){
 					
@@ -191,7 +248,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 			
 			else {
 				
-				character->y -= (map->imageSize / 4);
+				character->y -= MOVESPEED;
 				
 				if(character->y < character->destY){
 					
@@ -218,7 +275,12 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 		if (x == 0) x = 1;
 		if (y == 0) y = 1;
 		
-		direction = rand() % 4;
+		direction = rand() % 200;
+		
+		if(direction <= 50) direction = 0;
+		else if(direction > 50 && direction <= 100) direction = 1;
+		else if(direction > 100 && direction <= 150) direction = 2;
+		else if(direction > 150) direction = 3;
 		
 		switch (direction){
 			

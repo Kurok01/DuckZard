@@ -92,7 +92,7 @@ void phase1 () {
 			
 			for (i = 0; i < 8; i++) {
 				
-				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME);
+				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME, (mapPhase1.imageSize/4));
 				
 				over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
@@ -116,7 +116,7 @@ void phase1 () {
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-		move(state, &wizard, &mapPhase1, &lastTIME);
+		move(state, &wizard, &mapPhase1, &lastTIME, 150);
 		eatPill(&mapPhase1, &wizard, &lightning);
 		
 		for (i = 0; i < 8; i++) {
@@ -134,13 +134,13 @@ void phase3(){
 	
 	Map_t mapPhase3;
 	Role_t wizard;
-	Ogre_t ogre[8];
+	Ogre_t dogs[11];
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 0;
+	int finalTime, preTime = 0, timeStopTime = 0;
 	int beak = 0, x, y;
-	int score = 0, missing, spawnPower = 0;
-	int over = 0;
+	int score = 0, missing, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
+	int over = 0, stop = 0;
 	int remove1, remove2;
 	
 	alocMap("Fase3.txt", &mapPhase3);
@@ -152,13 +152,13 @@ void phase3(){
 	lookingFor(&wizard, 1, &mapPhase3);
 	
 	
-	for (i = 0; i < 8; i++) {
+	for (i = 0; i < 11; i++) {
 		
-		ogre[i].type = 'O';
-		lookingForOgre(&(ogre[i]), (i+1), &mapPhase3);
+		dogs[i].type = 'O';
+		lookingForOgre(&(dogs[i]), (i+1), &mapPhase3);
 		
-		ogre[i].destX = 0;
-		ogre[i].destY = 0;
+		dogs[i].destX = 0;
+		dogs[i].destY = 0;
 		
 	}
 	
@@ -177,9 +177,9 @@ void phase3(){
 	
 	playSound(1);
 	
-	printScreen(&mapPhase3, &wizard, ogre, 8, 2, -1);
+	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -1);
 	sleep(2);
-	printScreen(&mapPhase3, &wizard, ogre, 8, 2, -2);
+	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -2);
 	sleep(1);
 	playSound(3);
 	
@@ -200,19 +200,22 @@ void phase3(){
 				else beak = 1;
 			}
 			
-			for (i = 0; i < 8; i++) {
+			if (stop != 1){
+				for (i = 0; i < 11; i++) {
 				
-				moveNPC(&mapPhase3, &(ogre[i]), &lastTIME);
+					moveNPC(&mapPhase3, &(dogs[i]), &lastTIME, (mapPhase3.imageSize/1.5));
 				
-				over = gameOver(&wizard, &mapPhase3, ogre[i].x, ogre[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
+					over = gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 				
-				if(over == 1) break;
-			}
+					if(over == 1) break;
+				}
+			} 
+		
 			
 			preTime = finalTime;
 		}
 		
-		printScreen(&mapPhase3, &wizard, ogre, 8, 2, beak);
+		printScreen(&mapPhase3, &wizard, dogs, 11, 3, beak);
 		
 		if (over == 1) exit(1);
 		
@@ -224,17 +227,51 @@ void phase3(){
 	}
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
-
-		move(state, &wizard, &mapPhase3, &lastTIME);
 		
-		for (i = 0; i < 8; i++) {
+		if(timeStopTime != 0)move(state, &wizard, &mapPhase3, &lastTIME, 75);
+		else if(reverseMove == 0) move(state, &wizard, &mapPhase3, &lastTIME, 150);
+		else reverseMoves(state, &wizard, &mapPhase3, &lastTIME, 150);
+		
+		
+		if (stop != 1){
+			for (i = 0; i < 11; i++) {
 						
-			over = gameOver(&wizard, &mapPhase3, ogre[i].x, ogre[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
+				over = gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 
-			if(over == 1) break;
+				if(over == 1) break;
+			}
 		}
 		
+		
 		eat(&mapPhase3, &wizard, &score, &missing);
+		
+		if (state[SDL_SCANCODE_F] && coolDownStopTime == 0){
+			
+			stopTimeMode();
+			
+			playSound(6);
+			
+			stop = 1;
+		
+			timeStopTime = finalTime;
+		
+		}
+		
+		if(finalTime >= (timeStopTime + 70) && timeStopTime != 0){
+			
+			makeTextures();
+			
+			stop = 0;
+			
+			timeStopTime = 0;
+			
+			coolDownStopTime = finalTime;
+			
+			reverseMove = finalTime;
+		}
+		
+		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
+		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;
 	}
 	
 }

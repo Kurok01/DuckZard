@@ -17,6 +17,8 @@ void makeTextures ();
 
 int dragonSpawn(Map_t *map ,int *dragonCountDown, int *lightning, Role_t *wizard, Ogre_t ogres[], int beak, int qtd);
 
+void stopTimeMode();
+
 void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase, int beak);
 
 void freeSDL ();

@@ -10,7 +10,7 @@
 SDL_Texture *wallImg[5];
 SDL_Texture *duckImg[4][2];
 SDL_Texture *backgroundImg[5];
-SDL_Texture *ogreImg;
+SDL_Texture *monsterImg[5];
 SDL_Texture *dragonImg[2];
 SDL_Texture *portalImg[2];
 SDL_Texture *externalFireImg;
@@ -22,6 +22,8 @@ SDL_Texture *lightningPillImg;
 SDL_Texture *lightningProjectileImg;
 SDL_Texture *fireballProjectileImg;
 SDL_Texture *ogreCloneImg;
+SDL_Texture *sandImg;
+SDL_Texture *woodImg;
 
 SDL_Rect backGroundImage, dragonImage[2], lightningImage[2];
 
@@ -30,6 +32,7 @@ Mix_Chunk *eatingSound;
 Mix_Chunk *portalSound;
 Mix_Chunk *dragonSound;
 Mix_Chunk *thunderSound;
+Mix_Chunk *timeStopSound;
 
 SDL_DisplayMode displayMode;
 
@@ -141,10 +144,13 @@ void initSound () {
 		exit(1);
 	}
 	
+	timeStopSound = Mix_LoadWAV("SoundEffects\\timeStopEffect.wav");
+	
 	Mix_VolumeChunk(eatingSound, 2);
 	Mix_VolumeChunk(portalSound, 64);
 	Mix_VolumeChunk(thunderSound, 64);
 	Mix_VolumeChunk(dragonSound, 64);
+	Mix_VolumeChunk(timeStopSound, 80);
 }
 
 void playSound (int soundChoice) {
@@ -176,6 +182,11 @@ void playSound (int soundChoice) {
 			
 			Mix_PlayChannel(-1, dragonSound, 0);
 			break;
+			
+		case 6:
+			
+			Mix_PlayChannel(-1, timeStopSound, 0);
+			break;
 	}
 }
 
@@ -204,18 +215,28 @@ void makeTextures () {
 	char pathDuck[] = "assets\\Duck( , ).png";
 	char pathDragon[] = "assets\\Dragon .png";
 	char pathPortal[] = "assets\\Portal .png";
+	char pathMonster[] = "assets\\Monster .png";
 	int i, j;
 	//Aumentar loop
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 3; i++) {
 		
 		pathWall[11] = (i+49);
 		pathBackground[17] = (i+49);
-		pathDragon[13] = (i+49);
-		pathPortal[13] = (i+49);
+		pathMonster[14] = (i+49);
+	
 		wallImg[i] = takeImage(pathWall);
 		backgroundImg[i] = takeImage(pathBackground);
+		monsterImg[i] =  takeImage(pathMonster);
+	
+	}
+	
+	for(i = 0; i < 2; i++){
+		pathDragon[13] = (i+49);
+		pathPortal[13] = (i+49);
+		
 		dragonImg[i] = takeImage(pathDragon);
 		portalImg[i] = takeImage(pathPortal);
+
 	}
 	
 	for (i = 0; i < 4; i++) {
@@ -230,7 +251,6 @@ void makeTextures () {
 		}
 	}
 		
-	ogreImg = takeImage("assets\\Ogre.png");
 	externalFireImg = takeImage("assets\\ExternalFire.png");
 	middleFireImg = takeImage ("assets\\MiddleFire.png");
 	internalFireImg = takeImage("assets\\InternalFire.png");
@@ -238,6 +258,8 @@ void makeTextures () {
 	lightningPillImg = takeImage("assets\\LightningPill.png");
 	hotdogImg = takeImage("assets\\Hotdog.png");
 	lightningProjectileImg = takeImage("assets\\LightningProjectile.png");
+	sandImg = takeImage("assets\\sand.png");
+	woodImg = takeImage("assets\\wood.png");
 	/*fireballProjectileImg = takeImage("assets\\FireballProjectile.png");
 	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
@@ -322,6 +344,17 @@ int dragonSpawn(Map_t *map ,int *dragonCountDown, int *lightning, Role_t *wizard
 	return over;
 }
 
+void stopTimeMode(){
+	
+	monsterImg[2] = takeImage("assets\\Monster3O.png");
+	hotdogImg = takeImage("assets\\HotdogO.png");
+	sandImg = takeImage("assets\\sandO.png");
+	woodImg = takeImage("assets\\woodO.png");
+	wallImg[2] = takeImage("assets\\wall3O.png");
+	backgroundImg[2] = takeImage("assets\\Background3O.png");
+	
+}
+
 void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase, int beak) {
 	
 	int imageSize, height, width;
@@ -398,7 +431,7 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 				position.x = (ogres[k].x) - (imageSize/2);
 				position.y = (ogres[k].y) - (imageSize/2);
 				
-				SDL_RenderCopy(renderer, ogreImg, NULL, &position);
+				SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
 				k++;	
 			}
 			
@@ -407,6 +440,8 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 			else if (map->mapPptr[i][j] == '?') SDL_RenderCopy(renderer, middleFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '#') SDL_RenderCopy(renderer, externalFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '$') SDL_RenderCopy(renderer, thunderImg, NULL, &position);
+			else if (map->mapPptr[i][j] == 'S') SDL_RenderCopy(renderer, sandImg, NULL, &position);
+			else if (map->mapPptr[i][j] == 'A') SDL_RenderCopy(renderer, woodImg, NULL, &position);
   		}
 	}
 	
@@ -416,7 +451,7 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[1]);
 	
 	SDL_RenderPresent(renderer);
-	SDL_Delay(16);	
+	SDL_Delay(16);
 }
 
 void freeSDL () {
@@ -441,7 +476,6 @@ void freeSDL () {
 	
 
 	SDL_DestroyTexture(hotdogImg);
-	SDL_DestroyTexture(ogreImg);;
 	SDL_DestroyTexture(internalFireImg);
 	SDL_DestroyTexture(middleFireImg);
 	SDL_DestroyTexture(externalFireImg);
