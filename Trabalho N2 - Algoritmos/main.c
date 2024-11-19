@@ -5,7 +5,7 @@
 #include "mapFunctions.h"
 #include "phase.h"
 
-//Arrumar parede, Comer hots do dogs, portal do mago implacavel, Criar projeteis, Criar movimento dos ogros, Colocar musica
+//Hitbox do dragao, portal do mago implacavel, Criar movimento dos ogros
 //Organizar pasta de assets
 //Cutscene da luta final e Gaguinho no final
 

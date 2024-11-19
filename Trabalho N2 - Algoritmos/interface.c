@@ -11,6 +11,7 @@ SDL_Texture *duckImg[4][2];
 SDL_Texture *backgroundImg[5];
 SDL_Texture *ogreImg;
 SDL_Texture *dragonImg[2];
+SDL_Texture *portalImg[2];
 SDL_Texture *externalFireImg;
 SDL_Texture *middleFireImg;
 SDL_Texture *internalFireImg;
@@ -24,6 +25,8 @@ SDL_Texture *ogreCloneImg;
 Mix_Music *soundTrack;
 Mix_Chunk *eatingSound;
 Mix_Chunk *portalSound;
+Mix_Chunk *dragonSound;
+Mix_Chunk *thunderSound;
 
 SDL_DisplayMode displayMode;
 
@@ -117,7 +120,28 @@ void initSound () {
 		exit(1);
 	}
 	
-	Mix_Volume(-1, 2);
+	thunderSound = Mix_LoadWAV("SoundEffects\\ThunderSoundEffect.wav");
+	
+	if (thunderSound == NULL) {
+		
+		printf ("Error to open thunder sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	dragonSound = Mix_LoadWAV("SoundEffects\\DragonSoundEffect.wav");
+	
+	if (dragonSound == NULL) {
+		
+		printf ("Error to open dragon sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	Mix_VolumeChunk(eatingSound, 2);
+	Mix_VolumeChunk(portalSound, 64);
+	Mix_VolumeChunk(thunderSound, 64);
+	Mix_VolumeChunk(dragonSound, 64);
 }
 
 void playSound (int soundChoice) {
@@ -127,7 +151,7 @@ void playSound (int soundChoice) {
 		case 1:
 			
 			Mix_PlayMusic(soundTrack, -1);
-			Mix_VolumeMusic(28);
+			Mix_VolumeMusic(15);
 			break;
 			
 		case 2:
@@ -138,6 +162,16 @@ void playSound (int soundChoice) {
 		case 3:
 			
 			Mix_PlayChannel(-1, portalSound, 0);
+			break;
+			
+		case 4:
+			
+			Mix_PlayChannel(-1, thunderSound, 0);
+			break;
+			
+		case 5: 
+			
+			Mix_PlayChannel(-1, dragonSound, 0);
 			break;
 	}
 }
@@ -166,6 +200,7 @@ void makeTextures () {
 	char pathBackground[] = "assets\\Background .png";
 	char pathDuck[] = "assets\\Duck( , ).png";
 	char pathDragon[] = "assets\\Dragon .png";
+	char pathPortal[] = "assets\\Portal .png";
 	int i, j;
 	//Aumentar loop
 	for (i = 0; i < 2; i++) {
@@ -173,10 +208,11 @@ void makeTextures () {
 		pathWall[11] = (i+49);
 		pathBackground[17] = (i+49);
 		pathDragon[13] = (i+49);
+		pathPortal[13] = (i+49);
 		wallImg[i] = takeImage(pathWall);
 		backgroundImg[i] = takeImage(pathBackground);
 		dragonImg[i] = takeImage(pathDragon);
-		
+		portalImg[i] = takeImage(pathPortal);
 	}
 	
 	for (i = 0; i < 4; i++) {
@@ -209,7 +245,7 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	int i, j, k = 0;
 	int x, y;
 	static int tempLimits = 0;
-	static int temp = 2;
+	int temp = 2;
 	int over = 0;
 	
 	height = displayMode.h / map->height;
@@ -272,18 +308,20 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 				
 				position.x = wizard->x;
 				position.y = wizard->y;
-			
-				SDL_RenderCopy(renderer, duckImg[wizard->direction][beak], NULL, &position);	
+				
+				if (beak >= 0) SDL_RenderCopy(renderer, duckImg[wizard->direction][beak], NULL, &position);
+				else SDL_RenderCopy(renderer, portalImg[(beak * -1) - 1], NULL, &position);	
 			}
-			else if (map->mapPptr[i][j] == 'O'){
+			
+			else if (map->mapPptr[i][j] == 'O') {
 				
 				position.x = (ogres[k].x) - (imageSize/2);
 				position.y = (ogres[k].y) - (imageSize/2);
 				
 				SDL_RenderCopy(renderer, ogreImg, NULL, &position);
-				k++;
-				
+				k++;	
 			}
+			
 			else if (map->mapPptr[i][j] == '+') SDL_RenderCopy(renderer, lightningPillImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '?') SDL_RenderCopy(renderer, middleFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '#') SDL_RenderCopy(renderer, externalFireImg, NULL, &position);
@@ -291,9 +329,9 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
   		}
 	}
 	
-	if(*lightning != 0) *lightning += temp;
+	if (*lightning != 0) *lightning += (temp * 100);
 	
-	if (*dragonCountDown != 0) *dragonCountDown += temp;
+	if (*dragonCountDown > 0) *dragonCountDown += temp;
 	
 	for (i = 0; i < 2; i++) {
     	
@@ -309,15 +347,16 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    	lightningImage.w = map->screenWidth;
 	    	lightningImage.h = map->screenHeight / 2;
 	    	
-	    	if (lightningImage.x <= (dragonImage.x + map->screenWidth)){
+	    	if (lightningImage.x <= (dragonImage.x + map->screenWidth)) {
 	    	
 				dragonImage.x = (lightningImage.x-1) - map->screenWidth;
-			
 			}
 	    	
 	    	if (dragonImage.x  >= map->screenWidth || lightningImage.x <= -(map->screenWidth)) {
 	    		
-	    		*dragonCountDown = 0;
+	    		if ((*lightning) != 0 && (*dragonCountDown) == 0) *dragonCountDown = -1; 
+	    		else *dragonCountDown = 0;
+	    		
 	    		dragonImage.x = -(map->screenWidth + x) + *dragonCountDown;
 	    		
 	    		*lightning = 0;
@@ -350,7 +389,8 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	    	
 	    	if (dragonImage.x <= -(map->screenWidth) || lightningImage.x >= map->screenWidth) {
 	    		
-	    		*dragonCountDown = 0;
+	    		if ((*lightning) != 0 && (*dragonCountDown) == 0) *dragonCountDown = -1; 
+	    		else *dragonCountDown = 0;
 	    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
 	    		
 	    		*lightning = 0;

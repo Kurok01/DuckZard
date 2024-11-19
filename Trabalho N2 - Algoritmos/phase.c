@@ -54,7 +54,12 @@ void phase1 () {
 	}
 	
 	playSound(1);
-			
+	
+	printScreen(&mapPhase1, &wizard, ogre, 8, 1, -1, &dragonCountDown, &lightning);
+	sleep(2);
+	printScreen(&mapPhase1, &wizard, ogre, 8, 1, -2, &dragonCountDown, &lightning);
+	sleep(1);
+	playSound(3);
 	while (missing != 0) {
 		
 		srand(time(0));
@@ -72,14 +77,15 @@ void phase1 () {
 				else beak = 1;
 			}
 			
-			if ((finalTime + 100) % 500 == 0) {
+			if ((finalTime + 200) % 400 == 0) {
 				
 				spawnLightning(&mapPhase1, &score, &missing);
+				playSound(5);
 			}
 		
-			if (finalTime % 500 == 0) {
+			if (finalTime % 400 == 0) {
 				
-				if (dragonCountDown == 0) dragonCountDown++;
+				if (dragonCountDown <= 0) dragonCountDown++;
 			} 
 			
 			for (i = 0; i < 8; i++) {
@@ -96,10 +102,8 @@ void phase1 () {
 		
 		dragonOver = printScreen(&mapPhase1, &wizard, ogre, 8, 1, beak, &dragonCountDown, &lightning);
 		
-		printf("%d", over);
-		
-		if (over == 1) sleep();
-		else if (dragonOver == 1) sleep();
+		if (over == 1) exit(1);
+		else if (dragonOver == 1) exit(1);
 		
 		SDL_Event event;
 	

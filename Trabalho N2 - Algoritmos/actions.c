@@ -73,7 +73,7 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int
 		if(map->mapPptr[yD][x] == '+') map->mapPptr[yD][x] = ' ';
 		
 		(*lightning) = 1;
-
+		playSound(4);
 	}
 	
 }
@@ -131,7 +131,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 
 	float speedX, speedY;
 	float preX = character->x, preY = character->y;
-	int middleX, middleY, x, y, direction;
+	int middleX, middleY, x, y, direction, sizeDirection;
 	float xD, yD, xO[2], yO[2];
 	int i, correct = 0;
 	char limits[] = "*$";
@@ -140,6 +140,8 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 	float deltaTime = (currentTime - *lastTIME) / 1000.00;
 	
 	srand (time(0));
+	
+	sizeDirection = rand () % 8;
 	
 	if (character->destX != 0 && character->destY != 0) {
 		
@@ -216,7 +218,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 				
 					if (x >= 1 && x < (map->width - 7)) {
 					
-						for(i = 0; i < 5; i++){
+						for(i = 0; i < sizeDirection; i++){
 							
 							if (map->mapPptr[y][x+1+i] == ' ' || map->mapPptr[y][x+1+i] == '-') correct = 0;
 							
@@ -232,7 +234,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 					if (correct == 0) {
 						
 						correct = 1;
-						character->destX = ((4) * map->imageSize) + middleX;
+						character->destX = ((sizeDirection-1) * map->imageSize) + middleX;
 						character->destY = middleY;
 						break;
 						
@@ -251,7 +253,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 					
 					if (x > 7 && x < (map->width)) {	
 					
-						for(i = 0; i < 5; i++){
+						for(i = 0; i < sizeDirection; i++){
 							
 							if(map->mapPptr[y][x-1-i] == ' ' || map->mapPptr[y][x-1-i] == '-') correct = 0;
 							
@@ -267,7 +269,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 					
 					if (correct == 0){
 						correct = 1;
-						character->destX = middleX - ((5) * map->imageSize);
+						character->destX = middleX - ((sizeDirection-1) * map->imageSize);
 						character->destY = middleY;
 						break;
 						
@@ -286,7 +288,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 					
 					if (y >= 1 && y < (map->height - 7)) {	
 					
-						for (i = 0; i < 5; i++){
+						for (i = 0; i < sizeDirection; i++){
 							
 							if(map->mapPptr[y+1+i][x] == ' ' || map->mapPptr[y+1+i][x] == '-') correct = 0;
 							else{
@@ -301,7 +303,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 					if (correct == 0){
 						correct = 1;
 						character->destX = middleX;
-						character->destY = middleY + ((5) * map->imageSize);
+						character->destY = middleY + ((sizeDirection-1) * map->imageSize);
 						break;
 						
 					} else {
@@ -319,7 +321,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 				
 				if (y > 7 && y < (map->height)) {
 
-					for (i = 0; i < 5; i++){
+					for (i = 0; i < sizeDirection; i++){
 						
 						if (map->mapPptr[y-1-i][x] == ' ' || map->mapPptr[y-1-i][x] == '-') correct = 0;
 						
@@ -336,7 +338,7 @@ void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME) {
 						
 						correct = 1;
 						character->destX = middleX;
-						character->destY = middleY - ((5) * map->imageSize);
+						character->destY = middleY - ((sizeDirection) * map->imageSize);
 						break;
 						
 					} else {
