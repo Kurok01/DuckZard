@@ -8,11 +8,11 @@
 #define MOVESPEED 150
 #define MOVESPEEDNPC 100
 
-void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int *lightning) {
+void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
-	int xD, yD, x, y, xO[2], yO[2];
+	int xD, yD, x, y;
 	int i;
 	char limits[] = "*$";
 	
@@ -63,19 +63,29 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int
 		}
 		
 	}
+}
+
+void eatPill(Map_t *map, Role_t *wizard, int *lightning){
+	int xD, yD, x, y;
+	
+	xD = (((wizard->x + map->imageSize - 5) - map->outOfLimitsX) / map->imageSize);
+	yD = (((wizard->y + map->imageSize - 5) - map->outOfLimitsY) / map->imageSize);
+	
+	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
+	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
 	if (map->mapPptr[y][x] == '+' || map->mapPptr[yD][xD] == '+' || map->mapPptr[y][xD] == '+' || map->mapPptr[yD][x] == '+') {
 		
 		
-		if(map->mapPptr[y][x] == '+') map->mapPptr[y][x] = ' ';
-		if(map->mapPptr[yD][xD] == '+') map->mapPptr[yD][xD] = ' ';
-		if(map->mapPptr[y][xD] == '+') map->mapPptr[y][xD] = ' ';
-		if(map->mapPptr[yD][x] == '+') map->mapPptr[yD][x] = ' ';
+	if(map->mapPptr[y][x] == '+') map->mapPptr[y][x] = ' ';
+	if(map->mapPptr[yD][xD] == '+') map->mapPptr[yD][xD] = ' ';
+	if(map->mapPptr[y][xD] == '+') map->mapPptr[y][xD] = ' ';
+	if(map->mapPptr[yD][x] == '+') map->mapPptr[yD][x] = ' ';
 		
-		(*lightning) = 1;
-		playSound(4);
-	}
+	(*lightning) = 1;
+	playSound(4);
 	
+	}
 }
 
 void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {

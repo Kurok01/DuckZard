@@ -15,7 +15,9 @@ SDL_Texture *takeImage (char pathImage[]);
 
 void makeTextures ();
 
-int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown, int *lightning);
+int dragonSpawn(Map_t *map ,int *dragonCountDown, int *lightning, Role_t *wizard, Ogre_t ogres[], int beak, int qtd);
+
+void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase, int beak);
 
 void freeSDL ();
 

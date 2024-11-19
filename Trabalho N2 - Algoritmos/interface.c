@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include "structs.h"
 #include "mapFunctions.h"
+#include "interface.h"
 
 SDL_Texture *wallImg[5];
 SDL_Texture *duckImg[4][2];
@@ -21,6 +22,8 @@ SDL_Texture *lightningPillImg;
 SDL_Texture *lightningProjectileImg;
 SDL_Texture *fireballProjectileImg;
 SDL_Texture *ogreCloneImg;
+
+SDL_Rect backGroundImage, dragonImage[2], lightningImage[2];
 
 Mix_Music *soundTrack;
 Mix_Chunk *eatingSound;
@@ -239,13 +242,92 @@ void makeTextures () {
 	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
 
-int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase, int beak, int *dragonCountDown, int *lightning) {
+
+int dragonSpawn(Map_t *map ,int *dragonCountDown, int *lightning, Role_t *wizard, Ogre_t ogres[], int beak, int qtd){
+	int over = 0, i, j, temp = 2;
+	
+	if (*lightning != 0) *lightning += (temp * 100);
+	
+	if (*dragonCountDown > 0) *dragonCountDown += temp;
+	
+	for (i = 0; i < 2; i++) {
+    	
+    	if (i == 0) {
+    		
+    		dragonImage[i].x = -(map->screenWidth + map->outOfLimitsX) + *dragonCountDown;
+	    	dragonImage[i].y = map->outOfLimitsY;
+	    	dragonImage[i].w = map->screenWidth;
+	    	dragonImage[i].h = map->screenHeight / 2;
+	    	
+	    	lightningImage[i].x = (map->screenWidth + (map->outOfLimitsX * 2)) - *lightning;
+	    	lightningImage[i].y = map->outOfLimitsY;
+	    	lightningImage[i].w = map->screenWidth;
+	    	lightningImage[i].h = map->screenHeight / 2;
+	    	
+	    	if (lightningImage[i].x <= (dragonImage[i].x + map->screenWidth)) {
+	    	
+				dragonImage[i].x = (lightningImage[i].x-1) - map->screenWidth;
+			}
+	    	
+	    	if (dragonImage[i].x  >= map->screenWidth || lightningImage[i].x <= -(map->screenWidth)) {
+	    		
+	    		if ((*lightning) != 0 && (*dragonCountDown) == 0) *dragonCountDown = -1; 
+	    		else *dragonCountDown = 0;
+	    		
+	    		dragonImage[i].x = -(map->screenWidth + map->outOfLimitsX) + *dragonCountDown;
+	    		
+	    		*lightning = 0;
+	    		lightningImage[i].x = (map->screenWidth + map->outOfLimitsX) - (*lightning);
+	    		
+	    		temp++;
+			} 
+	    	
+			over = gameOver(wizard, map, dragonImage[i].x, dragonImage[i].y, (map->screenWidth - 100), (map->screenHeight / 2));
+			
+		} else {
+	
+    		dragonImage[i].x = (map->screenWidth + (map->outOfLimitsX * 2)) - *dragonCountDown;
+	    	dragonImage[i].y = (map->screenHeight / 2) + map->outOfLimitsY;
+	    	dragonImage[i].w = map->screenWidth;
+	    	dragonImage[i].h = map->screenHeight / 2;
+	    	
+	    	lightningImage[i].x = -(map->screenWidth + map->outOfLimitsX) + *lightning;
+	    	lightningImage[i].y = (map->screenHeight / 2) + map->outOfLimitsY;
+	    	lightningImage[i].w = map->screenWidth;
+	    	lightningImage[i].h = map->screenHeight / 2;
+	    	
+	    	if ((lightningImage[i].x + map->screenWidth) >= dragonImage[i].x){
+	    	
+				dragonImage[i].x = lightningImage[i].x + map->screenWidth + 1;
+			}
+	    	
+	    	if (dragonImage[i].x <= -(map->screenWidth) || lightningImage[i].x >= map->screenWidth) {
+	    		
+	    		if ((*lightning) != 0 && (*dragonCountDown) == 0) *dragonCountDown = -1; 
+	    		else *dragonCountDown = 0;
+	    		dragonImage[i].x = (map->screenWidth + map->outOfLimitsX) - *dragonCountDown;
+	    		
+	    		*lightning = 0;
+	    		lightningImage[i].x = -(map->screenWidth + map->outOfLimitsX) + (*lightning);
+			}
+	    
+			over = gameOver(wizard, map, dragonImage[i].x, dragonImage[i].y, (map->screenWidth - 100), (map->screenHeight / 2));
+	    }
+	    
+	    if (over == 1) break;
+	}
+	
+	printScreen(map, wizard, ogres, qtd , 1, beak);
+	
+	return over;
+}
+
+void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase, int beak) {
 	
 	int imageSize, height, width;
 	int i, j, k = 0;
 	int x, y;
 	static int tempLimits = 0;
-	int temp = 2;
 	int over = 0;
 	
 	height = displayMode.h / map->height;
@@ -265,8 +347,6 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 	
 	map->outOfLimitsX = x;
 	map->outOfLimitsY = y;
-	
-	SDL_Rect backGroundImage, dragonImage, lightningImage;
 
     backGroundImage.x = x;
     backGroundImage.y = y;
@@ -323,93 +403,20 @@ int printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd, int phase,
 			}
 			
 			else if (map->mapPptr[i][j] == '+') SDL_RenderCopy(renderer, lightningPillImg, NULL, &position);
+			else if (map->mapPptr[i][j] == '=') SDL_RenderCopy(renderer, internalFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '?') SDL_RenderCopy(renderer, middleFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '#') SDL_RenderCopy(renderer, externalFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '$') SDL_RenderCopy(renderer, thunderImg, NULL, &position);
   		}
 	}
 	
-	if (*lightning != 0) *lightning += (temp * 100);
+	SDL_RenderCopy(renderer, dragonImg[0], NULL, &dragonImage[0]);
+	SDL_RenderCopy(renderer, dragonImg[1], NULL, &dragonImage[1]);
+	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[0]);
+	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[1]);
 	
-	if (*dragonCountDown > 0) *dragonCountDown += temp;
-	
-	for (i = 0; i < 2; i++) {
-    	
-    	if (i == 0) {
-    		
-    		dragonImage.x = -(map->screenWidth + x) + *dragonCountDown;
-	    	dragonImage.y = y;
-	    	dragonImage.w = map->screenWidth;
-	    	dragonImage.h = map->screenHeight / 2;
-	    	
-	    	lightningImage.x = (map->screenWidth + x) - *lightning;
-	    	lightningImage.y = y;
-	    	lightningImage.w = map->screenWidth;
-	    	lightningImage.h = map->screenHeight / 2;
-	    	
-	    	if (lightningImage.x <= (dragonImage.x + map->screenWidth)) {
-	    	
-				dragonImage.x = (lightningImage.x-1) - map->screenWidth;
-			}
-	    	
-	    	if (dragonImage.x  >= map->screenWidth || lightningImage.x <= -(map->screenWidth)) {
-	    		
-	    		if ((*lightning) != 0 && (*dragonCountDown) == 0) *dragonCountDown = -1; 
-	    		else *dragonCountDown = 0;
-	    		
-	    		dragonImage.x = -(map->screenWidth + x) + *dragonCountDown;
-	    		
-	    		*lightning = 0;
-	    		lightningImage.x = (map->screenWidth + x) - (*lightning);
-	    		
-	    		temp++;
-			} 
-	    	
-			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, (map->screenWidth - 100), (map->screenHeight / 2));
-	    	
-	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
-	    	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage);
-			
-		} else {
-	
-    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
-	    	dragonImage.y = (map->screenHeight / 2) + y;
-	    	dragonImage.w = map->screenWidth;
-	    	dragonImage.h = map->screenHeight / 2;
-	    	
-	    	lightningImage.x = -(map->screenWidth + x) + *lightning;
-	    	lightningImage.y = (map->screenHeight / 2) + y;
-	    	lightningImage.w = map->screenWidth;
-	    	lightningImage.h = map->screenHeight / 2;
-	    	
-	    	if ((lightningImage.x + map->screenWidth) >= dragonImage.x){
-	    	
-				dragonImage.x = lightningImage.x + map->screenWidth + 1;
-			}
-	    	
-	    	if (dragonImage.x <= -(map->screenWidth) || lightningImage.x >= map->screenWidth) {
-	    		
-	    		if ((*lightning) != 0 && (*dragonCountDown) == 0) *dragonCountDown = -1; 
-	    		else *dragonCountDown = 0;
-	    		dragonImage.x = (map->screenWidth + x) - *dragonCountDown;
-	    		
-	    		*lightning = 0;
-	    		lightningImage.x = -(map->screenWidth + x) + (*lightning);
-			}
-	    
-			over = gameOver(wizard, map, dragonImage.x, dragonImage.y, (map->screenWidth - 100), (map->screenHeight / 2));
-			
-	    	SDL_RenderCopy(renderer, dragonImg[i], NULL, &dragonImage);
-	    	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage);
-	    }
-	    
-	    if (over == 1) break;
-	}
-
 	SDL_RenderPresent(renderer);
-	SDL_Delay(16);
-	
-	return over;
+	SDL_Delay(16);	
 }
 
 void freeSDL () {
