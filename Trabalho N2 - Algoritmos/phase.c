@@ -60,6 +60,7 @@ void phase1 () {
 	printScreen(&mapPhase1, &wizard, ogre, 8, 1, -2, &dragonCountDown, &lightning);
 	sleep(1);
 	playSound(3);
+	
 	while (missing != 0) {
 		
 		srand(time(0));
