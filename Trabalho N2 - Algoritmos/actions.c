@@ -191,237 +191,260 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 		playSound(2);
 		(*score)++;
 		(*missing)--;
+		
 	}
 }
 
-void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, int MOVESPEED) {
-
-	float speedX, speedY;
+void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int MOVESPEED) {
+		
+	float speedX = 0, speedY = 0;
 	float preX = character->x, preY = character->y;
-	int middleX, middleY, x, y, direction, sizeDirection;
-	float xD, yD, xO[2], yO[2];
-	int i, correct = 0;
+	int matrizXO, matrizYO, matrizXD, matrizYD;
+	int matrizXOU, matrizYOU, matrizXOT, matrizYOT;
+	int prematrizXOU, prematrizYOU, prematrizXOT, prematrizYOT;
+	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
+	int i, j;
 	char limits[] = "*$ASV";
 	
-	Uint32 currentTime = SDL_GetTicks();
-	float deltaTime = (currentTime - *lastTIME) / 1000.00;
+	srand(time(0));
 	
-	srand (time(0));
+	matrizXD = ((wizard->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
+	matrizYD = ((wizard->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;
 	
-	sizeDirection = rand () % 8;
+	matrizXO = ((character->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
+	matrizYO = ((character->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;
 	
-	if (character->destX != 0 && character->destY != 0) {
+	aux = matrizXO;
+	aux2 = matrizYO;
+	
+	for(i = 0; i < 8; i++){
 		
-		if (character->x != character->destX) {
-			
-			if (character->x < character->destX) {
-				
-				character->x += MOVESPEED;
-				
-				if (character->x > character->destX) {
-					
-					character->x = character->destX;
-				} 
+		for(j = 0; j < 5; j++){
+			if(map->mapPptr[aux2][aux] == limits[j]){
+				correctGPS = 0;
+				break;
 			}
-			
-			else {
-				
-				character->x -= MOVESPEED;
-				
-				if (character->x < character->destX) {
-					
-					character->x = character->destX;
-				}
-			} 
-
-		} else if (character->y != character->destY){
-			
-			if (character->y < character->destY){
-				
-				character->y += MOVESPEED;
-				
-				if(character->y > character->destY){
-					
-					character->y = character->destY;	
-				} 		
-			}
-			
-			else {
-				
-				character->y -= MOVESPEED;
-				
-				if(character->y < character->destY){
-					
-					character->y = character->destY;	
-				}	
-			}
-			
-		} else {
-			
-			character->destX = 0;
-			character->destY = 0;
 		}
 		
-	} else {
+		if(aux < matrizXD && (aux + 8) < matrizXD) correctGPS = 0;
+		else if(aux > matrizXD && (aux - 8) > matrizXD) correctGPS = 0;
+		if(aux2 < matrizYD && (aux2 + 8) < matrizYD) correctGPS = 0;
+		else if(aux2 > matrizYD && (aux2 - 8) > matrizYD) correctGPS = 0;
 		
-		while (correct == 0) {
+		if(correctGPS == 0) break;
+		
+		
+		if(aux < matrizXD) aux++;
+		else if(aux > matrizXD) aux--;
+		else if(aux2 < matrizYD) aux2++;
+		else if(aux2 > matrizYD) aux2--;
+		
+	}
 	
-		middleX = character->x;
-		middleY = character->y;
+	
+	
+	if(correctGPS == 1){
 		
-		x = (middleX - map->outOfLimitsX) / map->imageSize;
-		y = (middleY - map->outOfLimitsY) / map->imageSize;
+		if(matrizYO < matrizYD) character->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
+		if(matrizXO < matrizXD) character->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
+		if(matrizYO > matrizYD) character->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
+		if(matrizXO > matrizXD) character->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
+	
+	}
+	
+	if(character->destX != 0 && character->destY == 0) character->destY = character->y;
+	else if(character->destY != 0 && character->destX == 0) character->destX = character->x;
+	
+	
+	if(character->destX != 0 && character->destY != 0){
+	
+		if(character->y < character->destY){
 		
-		if (x == 0) x = 1;
-		if (y == 0) y = 1;
+			character->y += MOVESPEED;
 		
-		direction = rand() % 200;
+			if(character->y > character->destY) character->y = character->destY;
 		
-		if(direction <= 50) direction = 0;
-		else if(direction > 50 && direction <= 100) direction = 1;
-		else if(direction > 100 && direction <= 150) direction = 2;
-		else if(direction > 150) direction = 3;
+		}else if(character->x < character->destX){
 		
-		switch (direction){
+			character->x += MOVESPEED;
+		
+			if(character->x > character->destX) character->x = character->destX;
+		
+		}else if(character->y > character->destY){
+		
+			character->y -= MOVESPEED;
 			
-			case 0:
-				if (map->mapPptr[y][x+1] == ' ' || map->mapPptr[y][x+1] == '-') {
-					correct = 1;
-				
-					if (x >= 1 && x < (map->width - 7)) {
-					
-						for(i = 0; i < sizeDirection; i++){
+			if(character->y < character->destY) character->y = character->destY;
+		
+		}else if(character->x > character->destX){
+		
+			character->x -= MOVESPEED;
+		
+			if(character->x < character->destX) character->x = character->destX;
+		
+		}
+	
+	}else if (character->destX == 0 && character->destY == 0){
+		
+		while(1){
+			direction = rand() % 200;
+		
+			if(direction < 50) direction = 0;
+			if(direction >= 50 && direction < 100) direction = 1;
+			if(direction >= 100 && direction < 150) direction = 2;
+			if(direction >= 150) direction = 3;
+			
+			correct = 0;
+			
+			switch(direction){
+				case 0:
+					for(i = 0; i < 5; i++){
+						if(map->mapPptr[matrizYO][matrizXO+1] == limits[i]){
 							
-							if (map->mapPptr[y][x+1+i] == ' ' || map->mapPptr[y][x+1+i] == '-') correct = 0;
-							
-							else {
-								correct = 1;
-								character->destX = ((i) * map->imageSize) +  middleX;
-								character->destY = middleY;
-								break;
-							}  
-						}
-					}
-					
-					if (correct == 0) {
-						
-						correct = 1;
-						character->destX = ((sizeDirection-1) * map->imageSize) + middleX;
-						character->destY = middleY;
-						break;
-						
-					} else {
-						
-						break;
-					}	
-				}
-				
-				else correct = 0;
-				break;
-				
-			case 1:
-				if (map->mapPptr[y][x-1] == ' ' || map->mapPptr[y][x-1] == '-'){
-					correct = 1;
-					
-					if (x > 7 && x < (map->width)) {	
-					
-						for(i = 0; i < sizeDirection; i++){
-							
-							if(map->mapPptr[y][x-1-i] == ' ' || map->mapPptr[y][x-1-i] == '-') correct = 0;
-							
-							else {
-								
-								correct = 1;
-								character->destX = middleX - ((i) * map->imageSize);
-								character->destY = middleY;
-								break;
-							}  
-						}
-					}
-					
-					if (correct == 0){
-						correct = 1;
-						character->destX = middleX - ((sizeDirection-1) * map->imageSize);
-						character->destY = middleY;
-						break;
-						
-					} else {
-						
-						break;
-					}
-				}
-				
-				else correct = 0;
-				break;
-				
-			case 2:
-				if(map->mapPptr[y+1][x] == ' ' || map->mapPptr[y+1][x] == '-'){
-					correct = 1;
-					
-					if (y >= 1 && y < (map->height - 7)) {	
-					
-						for (i = 0; i < sizeDirection; i++){
-							
-							if(map->mapPptr[y+1+i][x] == ' ' || map->mapPptr[y+1+i][x] == '-') correct = 0;
-							else{
-								correct = 1;
-								character->destX = middleX;
-								character->destY = middleY + ((i) * map->imageSize);
-								break;
-							}  
-						}
-					}
-					
-					if (correct == 0){
-						correct = 1;
-						character->destX = middleX;
-						character->destY = middleY + ((sizeDirection-1) * map->imageSize);
-						break;
-						
-					} else {
-						
-						break;
-					}
-				}
-				
-				else correct = 0;
-				break;
-				
-			case 3:
-				if(map->mapPptr[y-1][x] == ' ' || map->mapPptr[y-1][x] == '-'){
-					correct = 1;
-				
-				if (y > 7 && y < (map->height)) {
-
-					for (i = 0; i < sizeDirection; i++){
-						
-						if (map->mapPptr[y-1-i][x] == ' ' || map->mapPptr[y-1-i][x] == '-') correct = 0;
-						
-						else {
-							
-							correct = 1;
-							character->destX = middleX;
-							character->destY = middleY - ((i) * map->imageSize); 
+							character->destX = 0;
+							character->destY = 0;
+							correct = 0;
 							break;
-						}  
-					}	
-				}
-					if (correct == 0){
-						
-						correct = 1;
-						character->destX = middleX;
-						character->destY = middleY - ((sizeDirection) * map->imageSize);
-						break;
-						
-					} else {
-						
-						break;
+							
+						}else{
+							
+							character->destX = character->x + map->imageSize;
+							character->destY = character->y;
+							correct = 1;
+							
+						}
 					}
-				}
+					break;
 				
-				else correct = 0;
+				case 1:
+					for(i = 0; i < 5; i++){
+						if(map->mapPptr[matrizYO][matrizXO-1] == limits[i]){
+							
+							character->destX = 0;
+							character->destY = 0;
+							correct = 0;
+							break;
+							
+						}else{
+							
+							character->destX = character->x - map->imageSize;
+							character->destY = character->y;
+							correct = 1;
+							
+						}
+					}
+					break;
+					
+				case 2:
+					for(i = 0; i < 5; i++){
+						if(map->mapPptr[matrizYO+1][matrizXO] == limits[i]){
+							
+							character->destX = 0;
+							character->destY = 0;
+							correct = 0;
+							break;
+							
+						}else{
+							
+							character->destX = character->x;
+							character->destY = character->y + map->imageSize;
+							correct = 1;
+							
+						}
+					}
+					break;
+					
+				case 3:
+					for(i = 0; i < 5; i++){
+						if(map->mapPptr[matrizYO-1][matrizXO] == limits[i]){
+							
+							character->destX = 0;
+							character->destY = 0;
+							correct = 0;
+							break;
+							
+						}else{
+							
+							character->destX = character->x;
+							character->destY = character->y - map->imageSize;
+							correct = 1;
+							
+						}
+					}
+					break;
 			}
+			
+			if(correct == 1) break;
 		}
 	}
-	*lastTIME = currentTime;
+	
+	matrizXOT = ((character->x) - map->outOfLimitsX + 4) / map->imageSize;
+	matrizYOT = ((character->y) - map->outOfLimitsY + 4) / map->imageSize;
+	
+	matrizXOU = ((character->x + (map->imageSize) - 4) - map->outOfLimitsX) / map->imageSize;
+	matrizYOU = ((character->y + (map->imageSize) - 4) - map->outOfLimitsY) / map->imageSize;
+	
+	prematrizXOT = ((preX) - map->outOfLimitsX + 4) / map->imageSize;
+	prematrizYOT = ((preY) - map->outOfLimitsY + 4) / map->imageSize;
+	
+	prematrizXOU = ((preX + (map->imageSize) - 4) - map->outOfLimitsX) / map->imageSize;
+	prematrizYOU = ((preY + (map->imageSize) - 4) - map->outOfLimitsY) / map->imageSize;
+	
+	correct = 1;
+	
+	for(i = 0; i < 5; i++){
+		
+		if(map->mapPptr[matrizYOT][matrizXOT] == limits[i]){
+		
+			character->x = (prematrizXOU * map->imageSize) + map->outOfLimitsX;
+			character->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
+			character->destX = 0;
+			character->destY = 0;
+			correct = 0;
+		
+		}
+		
+		if(map->mapPptr[matrizYOU][matrizXOU] == limits[i]){
+			
+			character->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
+			character->y = (prematrizYOT * map->imageSize) + map->outOfLimitsY;
+			character->destX = 0;
+			character->destY = 0;
+			correct = 0;
+			
+		}
+		
+		if(map->mapPptr[matrizYOT][matrizXOU] == limits[i]){
+			
+			character->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
+			character->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
+			character->destX = 0;
+			character->destY = 0;
+			correct = 0;
+			
+		}
+		
+		if(map->mapPptr[matrizYOU][matrizXOT] == limits[i]){
+			
+			character->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
+			character->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
+			character->destX = 0;
+			character->destY = 0;
+			correct = 0;
+			
+		}
+		
+		if(correct == 0) break;
+		
+	}
+	
+	if(character->x == character->destX && character->y == character->destY){
+		
+		character->destX = 0;
+		character->destY = 0;
+		
+	}
+	
+	printf("%.1f %.1f %d %d\n", character->x, character->destX, map->imageSize, map->outOfLimitsX);
+	printf("%.1f %.1f %d %d\n", character->y, character->destY, map->imageSize, map->outOfLimitsY);
 }

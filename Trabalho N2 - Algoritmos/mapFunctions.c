@@ -74,8 +74,8 @@ void lookingForOgre(Ogre_t *character, int which, Map_t *map){
 				
 				if (k == which) {
 					
-					character->x = (float)j;
-					character->y = (float)i;
+					character->x = j;
+					character->y = i;
 					
 					break;
 				}
@@ -134,7 +134,7 @@ void spawnLightning(Map_t *map, int *score, int *missing) {
 	}
 }
 
-int gameOver (Role_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, int imageSizeY) {
+int gameOver(Role_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, int imageSizeY) {
 
 	float xD, yD, xO, yO, xd, yd;
 	

@@ -14,7 +14,7 @@ void phase1 () {
 	Ogre_t ogre[8];
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 0;
+	int finalTime, preTime = 1;
 	int beak = 0, x, y;
 	int score = 0, missing, spawnPower = 0;
 	int dragonCountDown = 0;
@@ -62,7 +62,7 @@ void phase1 () {
 	playSound(3);
 	
 	while (missing != 0) {
-		
+			
 		srand(time(0));
 		
 		secondTime = clock();
@@ -86,13 +86,13 @@ void phase1 () {
 		
 			if (finalTime % 200 == 0) {
 				
-				if (dragonCountDown <= 0) dragonCountDown++;
+				//if (dragonCountDown <= 0) dragonCountDown++;
 				
 			} 
 			
 			for (i = 0; i < 8; i++) {
 				
-				moveNPC(&mapPhase1, &(ogre[i]), &lastTIME, (mapPhase1.imageSize/4));
+				moveNPC(&mapPhase1, &(ogre[i]), &wizard ,&lastTIME, (mapPhase1.imageSize/4));
 				
 				over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
@@ -102,7 +102,7 @@ void phase1 () {
 			preTime = finalTime;
 		}
 		
-		dragonOver = dragonSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogre , beak, 8);	
+		dragonOver = dragonSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogre , beak, 8);
 		
 		if (over == 1) exit(1);
 		else if (dragonOver == 1) exit(1);
@@ -203,7 +203,7 @@ void phase3(){
 			if (stop != 1){
 				for (i = 0; i < 11; i++) {
 				
-					moveNPC(&mapPhase3, &(dogs[i]), &lastTIME, (mapPhase3.imageSize/1.5));
+					moveNPC(&mapPhase3, &(dogs[i]), &wizard ,&lastTIME, (mapPhase3.imageSize/1.5));
 				
 					over = gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 				

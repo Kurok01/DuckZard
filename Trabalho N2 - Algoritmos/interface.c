@@ -397,9 +397,6 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 			
 			ogres[i].x = ((ogres[i].x * imageSize) + x);
 			ogres[i].y = ((ogres[i].y * imageSize) + y);
-			
-			ogres[i].x += (imageSize/2);
-			ogres[i].y += (imageSize/2);
 		}
 		
 		tempLimits++;
@@ -428,8 +425,8 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 			
 			else if (map->mapPptr[i][j] == 'O') {
 				
-				position.x = (ogres[k].x) - (imageSize/2);
-				position.y = (ogres[k].y) - (imageSize/2);
+				position.x = (ogres[k].x);
+				position.y = (ogres[k].y);
 				
 				SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
 				k++;	

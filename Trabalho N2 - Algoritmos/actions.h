@@ -9,6 +9,6 @@ void eatPill(Map_t *map, Role_t *wizard, int *lightning);
 
 void eat(Map_t *map, Role_t *wizard, int *score, int *missing);
 
-void moveNPC(Map_t *map, Ogre_t *character, Uint32 *lastTIME, int MOVESPEED);
+void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int MOVESPEED);
 
 #endif

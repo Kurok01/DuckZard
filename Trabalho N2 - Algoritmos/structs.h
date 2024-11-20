@@ -15,10 +15,10 @@ typedef struct {
 typedef struct{
 	
 	char type;
-	int x;
-	int y;
-	int destX;
-	int destY;
+	float x;
+	float y;
+	float destX;
+	float destY;
 	int width;
 	int height;
 	

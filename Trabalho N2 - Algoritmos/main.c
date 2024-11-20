@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 	
 	initSound ();
 	
-	phase3();
+	phase1();
 	
 	return 0;
 }
