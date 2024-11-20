@@ -324,17 +324,16 @@ void makeTextures () {
 void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd) {
 	
 	int i, temp = 5, aux = 5; 
-	static int blizzard2;
+	static int blizzard2, secondRound;
 	
-	if (*blizzard == 0) blizzard2 = 0;
+	if (*blizzard == 0){
+		
+		blizzard2 = 0;
+		secondRound = 0;
+		
+	} 
 	
-	if (blizzard2 == 0) {
-	   	
-		blizzardImage[1].x = (map->screenWidth * 2) + (map->outOfLimitsX * 2);
-		blizzardImage[1].y = map->outOfLimitsY;
-		blizzardImage[1].w = map->screenWidth;
-		blizzardImage[1].h = map->screenHeight;
-	}
+	
 	
 	if (*blizzard != 0) {
 		
@@ -352,13 +351,23 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 	blizzardImage[0].w = map->screenWidth;
 	blizzardImage[0].h = map->screenHeight;
 	
-	
-	if (*blizzard != 0) {
+	if (secondRound == 0) {
+	   	
+		blizzardImage[1].x = (map->screenWidth * 2) + (map->outOfLimitsX * 2) - blizzard2;
+		blizzardImage[1].y = map->outOfLimitsY;
+		blizzardImage[1].w = map->screenWidth;
+		blizzardImage[1].h = map->screenHeight;
 		
+	}else{
+
 		blizzardImage[1].x = (map->screenWidth) + (map->outOfLimitsX * 2) - blizzard2;
 		blizzardImage[1].y = map->outOfLimitsY;
 		blizzardImage[1].w = map->screenWidth;
 		blizzardImage[1].h = map->screenHeight;
+		
+	}
+	
+	if (*blizzard != 0) {
 		
 	   	if (blizzardImage[0].x <= (-(map->screenWidth + (map->outOfLimitsX * 2)))) {
 	   		
@@ -376,6 +385,7 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 			blizzardImage[1].y = map->outOfLimitsY;
 			blizzardImage[1].w = map->screenWidth;
 			blizzardImage[1].h = map->screenHeight;
+			secondRound = 1;
 		}
 	   	
 	   	freezedImage.x =  map->outOfLimitsX;

@@ -200,7 +200,7 @@ void phase2 () {
 				else beak = 1;
 			}
 			
-			if (finalTime % 300 == 0 && blizzard == 0) blizzard = 1;
+			if (finalTime % 100 == 0 && blizzard == 0) blizzard = 1;
 			if (finalTime % 900 == 0 && blizzard >= 1) blizzard = 0;
 			
 			for (i = 0; i < 8; i++) {
