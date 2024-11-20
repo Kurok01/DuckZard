@@ -7,13 +7,13 @@
 
 #define MOVESPEEDNPC 100
 
-void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int MOVESPEED) {
+void move (const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *lastTIME, int MOVESPEED) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$ASV";
+	char limits[] = "*$#ASV";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -64,13 +64,13 @@ void move (const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int
 	}
 }
 
-void reverseMoves(const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTIME, int MOVESPEED) {
+void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *lastTIME, int MOVESPEED) {
 	
 	float speedX = 0, speedY = 0;
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$ASV";
+	char limits[] = "*$#ASV";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -122,7 +122,7 @@ void reverseMoves(const Uint8 *state, Role_t *wizard, Map_t *map, Uint32 *lastTI
 }
 
 
-void eatPill(Map_t *map, Role_t *wizard, int *lightning){
+void eatPill(Map_t *map, Wizard_t *wizard, int *lightning){
 	int xD, yD, x, y;
 	
 	xD = (((wizard->x + map->imageSize - 5) - map->outOfLimitsX) / map->imageSize);
@@ -145,7 +145,7 @@ void eatPill(Map_t *map, Role_t *wizard, int *lightning){
 	}
 }
 
-void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
+void eat (Map_t *map, Wizard_t *wizard, int *score, int *missing) {
 	
 	int x, y, xD, yD;
 	
@@ -195,24 +195,24 @@ void eat (Map_t *map, Role_t *wizard, int *score, int *missing) {
 	}
 }
 
-void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int MOVESPEED) {
+void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME, int MOVESPEED) {
 		
 	float speedX = 0, speedY = 0;
-	float preX = character->x, preY = character->y;
+	float preX = monster->x, preY = monster->y;
 	int matrizXO, matrizYO, matrizXD, matrizYD;
 	int matrizXOU, matrizYOU, matrizXOT, matrizYOT;
 	int prematrizXOU, prematrizYOU, prematrizXOT, prematrizYOT;
 	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
 	int i, j;
-	char limits[] = "*$ASV";
+	char limits[] = "*$#ASV";
 	
 	srand(time(0));
 	
 	matrizXD = ((wizard->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
 	matrizYD = ((wizard->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;
 	
-	matrizXO = ((character->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
-	matrizYO = ((character->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;
+	matrizXO = ((monster->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
+	matrizYO = ((monster->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;
 	
 	aux = matrizXO;
 	aux2 = matrizYO;
@@ -245,46 +245,46 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 	
 	if(correctGPS == 1){
 		
-		if(matrizYO < matrizYD) character->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
-		if(matrizXO < matrizXD) character->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
-		if(matrizYO > matrizYD) character->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
-		if(matrizXO > matrizXD) character->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
+		if(matrizYO < matrizYD) monster->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
+		if(matrizXO < matrizXD) monster->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
+		if(matrizYO > matrizYD) monster->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
+		if(matrizXO > matrizXD) monster->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
 	
 	}
 	
-	if(character->destX != 0 && character->destY == 0) character->destY = character->y;
-	else if(character->destY != 0 && character->destX == 0) character->destX = character->x;
+	if(monster->destX != 0 && monster->destY == 0) monster->destY = monster->y;
+	else if(monster->destY != 0 && monster->destX == 0) monster->destX = monster->x;
 	
 	
-	if(character->destX != 0 && character->destY != 0){
+	if(monster->destX != 0 && monster->destY != 0){
 	
-		if(character->y < character->destY){
+		if(monster->y < monster->destY){
 		
-			character->y += MOVESPEED;
+			monster->y += MOVESPEED;
 		
-			if(character->y > character->destY) character->y = character->destY;
+			if(monster->y > monster->destY) monster->y = monster->destY;
 		
-		}else if(character->x < character->destX){
+		}else if (monster->x < monster->destX){
 		
-			character->x += MOVESPEED;
+			monster->x += MOVESPEED;
 		
-			if(character->x > character->destX) character->x = character->destX;
+			if (monster->x > monster->destX) monster->x = monster->destX;
 		
-		}else if(character->y > character->destY){
+		}else if (monster->y > monster->destY){
 		
-			character->y -= MOVESPEED;
+			monster->y -= MOVESPEED;
 			
-			if(character->y < character->destY) character->y = character->destY;
+			if(monster->y < monster->destY) monster->y = monster->destY;
 		
-		}else if(character->x > character->destX){
+		}else if (monster->x > monster->destX){
 		
-			character->x -= MOVESPEED;
+			monster->x -= MOVESPEED;
 		
-			if(character->x < character->destX) character->x = character->destX;
+			if(monster->x < monster->destX) monster->x = monster->destX;
 		
 		}
 	
-	}else if (character->destX == 0 && character->destY == 0){
+	}else if (monster->destX == 0 && monster->destY == 0){
 		
 		while(1){
 			direction = rand() % 200;
@@ -301,15 +301,15 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 					for(i = 0; i < 5; i++){
 						if(map->mapPptr[matrizYO][matrizXO+1] == limits[i]){
 							
-							character->destX = 0;
-							character->destY = 0;
+							monster->destX = 0;
+							monster->destY = 0;
 							correct = 0;
 							break;
 							
 						}else{
 							
-							character->destX = character->x + map->imageSize;
-							character->destY = character->y;
+							monster->destX = monster->x + map->imageSize;
+							monster->destY = monster->y;
 							correct = 1;
 							
 						}
@@ -320,15 +320,15 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 					for(i = 0; i < 5; i++){
 						if(map->mapPptr[matrizYO][matrizXO-1] == limits[i]){
 							
-							character->destX = 0;
-							character->destY = 0;
+							monster->destX = 0;
+							monster->destY = 0;
 							correct = 0;
 							break;
 							
 						}else{
 							
-							character->destX = character->x - map->imageSize;
-							character->destY = character->y;
+							monster->destX = monster->x - map->imageSize;
+							monster->destY = monster->y;
 							correct = 1;
 							
 						}
@@ -339,15 +339,15 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 					for(i = 0; i < 5; i++){
 						if(map->mapPptr[matrizYO+1][matrizXO] == limits[i]){
 							
-							character->destX = 0;
-							character->destY = 0;
+							monster->destX = 0;
+							monster->destY = 0;
 							correct = 0;
 							break;
 							
 						}else{
 							
-							character->destX = character->x;
-							character->destY = character->y + map->imageSize;
+							monster->destX = monster->x;
+							monster->destY = monster->y + map->imageSize;
 							correct = 1;
 							
 						}
@@ -358,15 +358,15 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 					for(i = 0; i < 5; i++){
 						if(map->mapPptr[matrizYO-1][matrizXO] == limits[i]){
 							
-							character->destX = 0;
-							character->destY = 0;
+							monster->destX = 0;
+							monster->destY = 0;
 							correct = 0;
 							break;
 							
 						}else{
 							
-							character->destX = character->x;
-							character->destY = character->y - map->imageSize;
+							monster->destX = monster->x;
+							monster->destY = monster->y - map->imageSize;
 							correct = 1;
 							
 						}
@@ -378,11 +378,11 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 		}
 	}
 	
-	matrizXOT = ((character->x) - map->outOfLimitsX + 4) / map->imageSize;
-	matrizYOT = ((character->y) - map->outOfLimitsY + 4) / map->imageSize;
+	matrizXOT = ((monster->x) - map->outOfLimitsX + 4) / map->imageSize;
+	matrizYOT = ((monster->y) - map->outOfLimitsY + 4) / map->imageSize;
 	
-	matrizXOU = ((character->x + (map->imageSize) - 4) - map->outOfLimitsX) / map->imageSize;
-	matrizYOU = ((character->y + (map->imageSize) - 4) - map->outOfLimitsY) / map->imageSize;
+	matrizXOU = ((monster->x + (map->imageSize) - 4) - map->outOfLimitsX) / map->imageSize;
+	matrizYOU = ((monster->y + (map->imageSize) - 4) - map->outOfLimitsY) / map->imageSize;
 	
 	prematrizXOT = ((preX) - map->outOfLimitsX + 4) / map->imageSize;
 	prematrizYOT = ((preY) - map->outOfLimitsY + 4) / map->imageSize;
@@ -396,40 +396,40 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 		
 		if(map->mapPptr[matrizYOT][matrizXOT] == limits[i]){
 		
-			character->x = (prematrizXOU * map->imageSize) + map->outOfLimitsX;
-			character->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
-			character->destX = 0;
-			character->destY = 0;
+			monster->x = (prematrizXOU * map->imageSize) + map->outOfLimitsX;
+			monster->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
+			monster->destX = 0;
+			monster->destY = 0;
 			correct = 0;
 		
 		}
 		
 		if(map->mapPptr[matrizYOU][matrizXOU] == limits[i]){
 			
-			character->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
-			character->y = (prematrizYOT * map->imageSize) + map->outOfLimitsY;
-			character->destX = 0;
-			character->destY = 0;
+			monster->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
+			monster->y = (prematrizYOT * map->imageSize) + map->outOfLimitsY;
+			monster->destX = 0;
+			monster->destY = 0;
 			correct = 0;
 			
 		}
 		
 		if(map->mapPptr[matrizYOT][matrizXOU] == limits[i]){
 			
-			character->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
-			character->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
-			character->destX = 0;
-			character->destY = 0;
+			monster->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
+			monster->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
+			monster->destX = 0;
+			monster->destY = 0;
 			correct = 0;
 			
 		}
 		
 		if(map->mapPptr[matrizYOU][matrizXOT] == limits[i]){
 			
-			character->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
-			character->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
-			character->destX = 0;
-			character->destY = 0;
+			monster->x = (prematrizXOT * map->imageSize) + map->outOfLimitsX;
+			monster->y = (prematrizYOU * map->imageSize) + map->outOfLimitsY;
+			monster->destX = 0;
+			monster->destY = 0;
 			correct = 0;
 			
 		}
@@ -438,13 +438,10 @@ void moveNPC(Map_t *map, Ogre_t *character, Role_t *wizard,Uint32 *lastTIME, int
 		
 	}
 	
-	if(character->x == character->destX && character->y == character->destY){
+	if(monster->x == monster->destX && monster->y == monster->destY){
 		
-		character->destX = 0;
-		character->destY = 0;
+		monster->destX = 0;
+		monster->destY = 0;
 		
 	}
-	
-	printf("%.1f %.1f %d %d\n", character->x, character->destX, map->imageSize, map->outOfLimitsX);
-	printf("%.1f %.1f %d %d\n", character->y, character->destY, map->imageSize, map->outOfLimitsY);
 }

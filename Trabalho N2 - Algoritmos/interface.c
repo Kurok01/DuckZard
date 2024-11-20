@@ -13,26 +13,32 @@ SDL_Texture *backgroundImg[5];
 SDL_Texture *monsterImg[5];
 SDL_Texture *dragonImg[2];
 SDL_Texture *portalImg[2];
-SDL_Texture *externalFireImg;
-SDL_Texture *middleFireImg;
-SDL_Texture *internalFireImg;
 SDL_Texture *thunderImg;
 SDL_Texture *hotdogImg;
 SDL_Texture *lightningPillImg;
 SDL_Texture *lightningProjectileImg;
+SDL_Texture *blizzardImg;
+SDL_Texture *freezedImg;
+SDL_Texture *snowballImg;
+SDL_Texture *externalFireImg;
+SDL_Texture *middleFireImg;
+SDL_Texture *internalFireImg;
 SDL_Texture *fireballProjectileImg;
-SDL_Texture *ogreCloneImg;
 SDL_Texture *sandImg;
 SDL_Texture *woodImg;
 
-SDL_Rect backGroundImage, dragonImage[2], lightningImage[2];
+SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage;
 
 Mix_Music *soundTrack;
 Mix_Chunk *eatingSound;
 Mix_Chunk *portalSound;
 Mix_Chunk *dragonSound;
 Mix_Chunk *thunderSound;
+Mix_Chunk *blizzardSound;
+Mix_Chunk *fireballSound;
+Mix_Chunk *snowballSound;
 Mix_Chunk *timeStopSound;
+
 
 SDL_DisplayMode displayMode;
 
@@ -144,12 +150,47 @@ void initSound () {
 		exit(1);
 	}
 	
+	blizzardSound = Mix_LoadWAV("SoundEffects\\BlizzardSoundEffect.wav");
+	
+	if (blizzardSound == NULL) {
+		
+		printf ("Error to open blizzard sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	fireballSound = Mix_LoadWAV("SoundEffects\\FireballSoundEffect.wav");
+	
+	if (fireballSound == NULL) {
+		
+		printf ("Error to open fireball sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	snowballSound = Mix_LoadWAV("SoundEffects\\SnowballSoundEffect.wav");
+	
+	if (snowballSound == NULL) {
+		
+		printf ("Error to open snowball sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
 	timeStopSound = Mix_LoadWAV("SoundEffects\\timeStopEffect.wav");
+	
+	if (timeStopSound == NULL) {
+		
+		printf ("Error to open time stop sound: %s", Mix_GetError());
+	}
 	
 	Mix_VolumeChunk(eatingSound, 2);
 	Mix_VolumeChunk(portalSound, 64);
 	Mix_VolumeChunk(thunderSound, 64);
 	Mix_VolumeChunk(dragonSound, 64);
+	Mix_VolumeChunk(blizzardSound, 64);
+	Mix_VolumeChunk(fireballSound, 2);
+	Mix_VolumeChunk(snowballSound, 32);
 	Mix_VolumeChunk(timeStopSound, 80);
 }
 
@@ -184,6 +225,21 @@ void playSound (int soundChoice) {
 			break;
 			
 		case 6:
+			
+			Mix_PlayChannel(-1, blizzardSound, 0);
+			break;
+			
+		case 7:
+			
+			Mix_PlayChannel(-1, fireballSound, 0);
+			break;
+			
+		case 8:
+			
+			Mix_PlayChannel(-1, snowballSound, 0);
+			break;
+			
+		case 9:
 			
 			Mix_PlayChannel(-1, timeStopSound, 0);
 			break;
@@ -236,7 +292,6 @@ void makeTextures () {
 		
 		dragonImg[i] = takeImage(pathDragon);
 		portalImg[i] = takeImage(pathPortal);
-
 	}
 	
 	for (i = 0; i < 4; i++) {
@@ -258,14 +313,81 @@ void makeTextures () {
 	lightningPillImg = takeImage("assets\\LightningPill.png");
 	hotdogImg = takeImage("assets\\Hotdog.png");
 	lightningProjectileImg = takeImage("assets\\LightningProjectile.png");
+	fireballProjectileImg = takeImage("assets\\FireballProjectile.png");
+	freezedImg = takeImage("assets\\FreezedScreen.png");
+	blizzardImg = takeImage("assets\\Blizzard.png");
+	snowballImg = takeImage("assets\\Snowball.png");
 	sandImg = takeImage("assets\\sand.png");
 	woodImg = takeImage("assets\\wood.png");
-	/*fireballProjectileImg = takeImage("assets\\FireballProjectile.png");
-	ogreCloneImg = takeImage("assets\\OgreClone.png");*/
 }
 
+void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd) {
+	
+	int i, temp = 5, aux = 5; 
+	static int blizzard2;
+	
+	if (*blizzard == 0) blizzard2 = 0;
+	
+	if (blizzard2 == 0) {
+	   	
+		blizzardImage[1].x = (map->screenWidth * 2) + (map->outOfLimitsX * 2);
+		blizzardImage[1].y = map->outOfLimitsY;
+		blizzardImage[1].w = map->screenWidth;
+		blizzardImage[1].h = map->screenHeight;
+	}
+	
+	if (*blizzard != 0) {
+		
+		blizzard2 += aux;	
+		*blizzard += temp;
+	}
+	
+	freezedImage.x =  -(map->screenWidth + (map->outOfLimitsX * 2));
+   	freezedImage.y = map->outOfLimitsY;
+    freezedImage.w = map->screenWidth;
+   	freezedImage.h =  map->screenHeight;
+	
+	blizzardImage[0].x = (map->screenWidth + (map->outOfLimitsX * 2)) - *blizzard;
+	blizzardImage[0].y = map->outOfLimitsY;
+	blizzardImage[0].w = map->screenWidth;
+	blizzardImage[0].h = map->screenHeight;
+	
+	
+	if (*blizzard != 0) {
+		
+		blizzardImage[1].x = (map->screenWidth) + (map->outOfLimitsX * 2) - blizzard2;
+		blizzardImage[1].y = map->outOfLimitsY;
+		blizzardImage[1].w = map->screenWidth;
+		blizzardImage[1].h = map->screenHeight;
+		
+	   	if (blizzardImage[0].x <= (-(map->screenWidth + (map->outOfLimitsX * 2)))) {
+	   		
+	   		*blizzard = 1;
+	   		blizzardImage[0].x = (map->screenWidth + map->outOfLimitsX) - *blizzard;
+			blizzardImage[0].y = map->outOfLimitsY;
+			blizzardImage[0].w = map->screenWidth;
+			blizzardImage[0].h = map->screenHeight;
+		}
+		   
+		if (blizzardImage[1].x <= (-(map->screenWidth + (map->outOfLimitsX * 2)))) {
+		
+			blizzard2 = 1;
+			blizzardImage[1].x = (map->screenWidth) + (map->outOfLimitsX * 2) - blizzard2;
+			blizzardImage[1].y = map->outOfLimitsY;
+			blizzardImage[1].w = map->screenWidth;
+			blizzardImage[1].h = map->screenHeight;
+		}
+	   	
+	   	freezedImage.x =  map->outOfLimitsX;
+    	freezedImage.y = map->outOfLimitsY;
+    	freezedImage.w = map->screenWidth;
+    	freezedImage.h =  map->screenHeight;
+	}
+	
+	printScreen(map, wizard, monster, 8, 2, beak);
+}
 
-int dragonSpawn(Map_t *map ,int *dragonCountDown, int *lightning, Role_t *wizard, Ogre_t ogres[], int beak, int qtd){
+int phase1ElementsSpawn (Map_t *map ,int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd){
 	int over = 0, i, j, temp = 2;
 	
 	if (*lightning != 0) *lightning += (temp * 100);
@@ -355,7 +477,7 @@ void stopTimeMode(){
 	
 }
 
-void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase, int beak) {
+void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak) {
 	
 	int imageSize, height, width;
 	int i, j, k = 0;
@@ -395,8 +517,8 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 		
 		for(i = 0; i < qtd; i++){
 			
-			ogres[i].x = ((ogres[i].x * imageSize) + x);
-			ogres[i].y = ((ogres[i].y * imageSize) + y);
+			monster[i].x = ((monster[i].x * imageSize) + x);
+			monster[i].y = ((monster[i].y * imageSize) + y);
 		}
 		
 		tempLimits++;
@@ -425,8 +547,8 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 			
 			else if (map->mapPptr[i][j] == 'O') {
 				
-				position.x = (ogres[k].x);
-				position.y = (ogres[k].y);
+				position.x = (monster[k].x);
+				position.y = (monster[k].y);
 				
 				SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
 				k++;	
@@ -446,6 +568,9 @@ void printScreen (Map_t *map, Role_t *wizard, Ogre_t ogres[], int qtd ,int phase
 	SDL_RenderCopy(renderer, dragonImg[1], NULL, &dragonImage[1]);
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[0]);
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[1]);
+	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[0]);
+	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[1]);
+	SDL_RenderCopy(renderer, freezedImg, NULL, &freezedImage);
 	
 	SDL_RenderPresent(renderer);
 	SDL_Delay(16);
@@ -471,7 +596,7 @@ void freeSDL () {
 		}
 	}
 	
-
+//Destuir tudo
 	SDL_DestroyTexture(hotdogImg);
 	SDL_DestroyTexture(internalFireImg);
 	SDL_DestroyTexture(middleFireImg);
@@ -479,11 +604,10 @@ void freeSDL () {
 	SDL_DestroyTexture(thunderImg);
 	SDL_DestroyTexture(lightningProjectileImg);
 	SDL_DestroyTexture(lightningPillImg);
-
-	/*SDL_DestroyTexture(ogreCloneImg);
-	SDL_DestroyTexture(dragonImg);
-	SDL_DestroyTexture(fireballProjectileImg);*/
-	
+	SDL_DestroyTexture(fireballProjectileImg);
+	SDL_DestroyTexture(snowballImg);
+	SDL_DestroyTexture(blizzardImg);
+	SDL_DestroyTexture(freezedImg);
 	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

@@ -10,8 +10,8 @@
 void phase1 () {
 	
 	Map_t mapPhase1;
-	Role_t wizard;
-	Ogre_t ogre[8];
+	Wizard_t wizard;
+	Monster_t ogres[8];
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 1;
@@ -32,11 +32,11 @@ void phase1 () {
 	
 	for (i = 0; i < 8; i++) {
 		
-		ogre[i].type = 'O';
-		lookingForOgre(&(ogre[i]), (i+1), &mapPhase1);
+		ogres[i].type = 'O';
+		lookingForMonster (&(ogres[i]), (i+1), &mapPhase1);
 		
-		ogre[i].destX = 0;
-		ogre[i].destY = 0;
+		ogres[i].destX = 0;
+		ogres[i].destY = 0;
 		
 	}
 	
@@ -55,9 +55,9 @@ void phase1 () {
 	
 	playSound(1);
 	
-	printScreen(&mapPhase1, &wizard, ogre, 8, 1, -1);
+	printScreen(&mapPhase1, &wizard, ogres, 8, 1, -1);
 	sleep(2);
-	printScreen(&mapPhase1, &wizard, ogre, 8, 1, -2);
+	printScreen(&mapPhase1, &wizard, ogres, 8, 1, -2);
 	sleep(1);
 	playSound(3);
 	
@@ -86,15 +86,15 @@ void phase1 () {
 		
 			if (finalTime % 200 == 0) {
 				
-				//if (dragonCountDown <= 0) dragonCountDown++;
+				if (dragonCountDown <= 0) dragonCountDown++;
 				
 			} 
 			
 			for (i = 0; i < 8; i++) {
 				
-				moveNPC(&mapPhase1, &(ogre[i]), &wizard ,&lastTIME, (mapPhase1.imageSize/4));
+				moveNPC(&mapPhase1, &(ogres[i]), &wizard ,&lastTIME, (mapPhase1.imageSize/4));
 				
-				over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
+				over = gameOver(&wizard, &mapPhase1, ogres[i].x, ogres[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
 				if(over == 1) break;
 			}
@@ -102,7 +102,7 @@ void phase1 () {
 			preTime = finalTime;
 		}
 		
-		dragonOver = dragonSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogre , beak, 8);
+		dragonOver = phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8);
 		
 		if (over == 1) exit(1);
 		else if (dragonOver == 1) exit(1);
@@ -121,7 +121,7 @@ void phase1 () {
 		
 		for (i = 0; i < 8; i++) {
 						
-			over = gameOver(&wizard, &mapPhase1, ogre[i].x, ogre[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
+			over = gameOver(&wizard, &mapPhase1, ogres[i].x, ogres[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 
 			if(over == 1) break;
 		}
@@ -130,11 +130,119 @@ void phase1 () {
 	}
 }
 
+void phase2 () {
+	
+	Map_t mapPhase2;
+	Wizard_t wizard;
+	Monster_t yetis[8];
+	int coordenates = 0, i;
+	float firstTime, secondTime, aux = 0;
+	int finalTime, preTime = 1;
+	int beak = 0, x, y;
+	int score = 0, missing;
+	int over = 0;
+	int blizzard = 0;
+	
+	alocMap("Fase2.txt", &mapPhase2);
+	
+	missing = hotDogCounter(&mapPhase2);
+	
+	wizard.type = 'D';
+	
+	lookingFor(&wizard, 1, &mapPhase2);
+	
+	
+	for (i = 0; i < 8; i++) {
+		
+		yetis[i].type = 'O';
+		lookingForMonster (&(yetis[i]), (i+1), &mapPhase2);
+		
+		yetis[i].destX = 0;
+		yetis[i].destY = 0;
+		
+	}
+	
+	firstTime = clock(); 
+	
+	wizard.direction = 2;
+	
+	Uint32 lastTIME, lastTIME2[8];
+	
+	lastTIME = SDL_GetTicks();
+	
+	for (i = 0; i < 8; i++){
+		
+		lastTIME2[i] = SDL_GetTicks();
+	}
+	
+	playSound(1);
+	
+	printScreen(&mapPhase2, &wizard, yetis, 8, 2, -1);
+	sleep(2);
+	printScreen(&mapPhase2, &wizard, yetis, 8, 2, -2);
+	sleep(1);
+	playSound(3);
+	
+	while (missing != 0) {
+			
+		srand(time(0));
+		
+		secondTime = clock();
+		aux = secondTime - firstTime;
+		aux /= CLOCKS_PER_SEC;
+		finalTime = aux * 10;
+	
+		if (finalTime > preTime) {
+			
+			if (finalTime % 2 == 0) {
+				
+				if (beak == 1) beak = 0;
+				else beak = 1;
+			}
+			
+			if (finalTime % 300 == 0 && blizzard == 0) blizzard = 1;
+			if (finalTime % 900 == 0 && blizzard >= 1) blizzard = 0;
+			
+			for (i = 0; i < 8; i++) {
+				
+				moveNPC(&mapPhase2, &(yetis[i]), &wizard ,&lastTIME, (mapPhase2.imageSize/4));
+				
+				over = gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
+				
+				if(over == 1) exit(1);
+			}
+			
+			preTime = finalTime;
+		}
+		
+		SDL_Event event;
+	
+	while (SDL_PollEvent(&event)) {
+		
+		if (event.type == SDL_QUIT);
+	}
+	
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		
+		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8);
+		move(state, &wizard, &mapPhase2, &lastTIME, 150);
+		
+		for (i = 0; i < 8; i++) {
+						
+			over = gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
+
+			if(over == 1) exit(1);
+		}
+		
+		eat(&mapPhase2, &wizard, &score, &missing);
+	}
+}
+
 void phase3(){
 	
 	Map_t mapPhase3;
-	Role_t wizard;
-	Ogre_t dogs[11];
+	Wizard_t wizard;
+	Monster_t dogs[11];
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 0, timeStopTime = 0;
@@ -155,7 +263,7 @@ void phase3(){
 	for (i = 0; i < 11; i++) {
 		
 		dogs[i].type = 'O';
-		lookingForOgre(&(dogs[i]), (i+1), &mapPhase3);
+		lookingForMonster(&(dogs[i]), (i+1), &mapPhase3);
 		
 		dogs[i].destX = 0;
 		dogs[i].destY = 0;

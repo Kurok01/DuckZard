@@ -34,7 +34,7 @@ void alocMap (char path[], Map_t *map) {
 	fclose(f);
 }
 
-void lookingFor (Role_t *character, int which, Map_t *map) {
+void lookingFor (Wizard_t *wizard, int which, Map_t *map) {
 	
 	int i, j, k = 0;
 	
@@ -42,14 +42,14 @@ void lookingFor (Role_t *character, int which, Map_t *map) {
 		
 		for (j = 0; j < map->width; j++) {
 			
-			if (map->mapPptr[i][j] == character->type) {
+			if (map->mapPptr[i][j] == wizard->type) {
 				
 				k++;
 				
 				if (k == which) {
 					
-					character->x = (float)j;
-					character->y = (float)i;
+					wizard->x = (float)j;
+					wizard->y = (float)i;
 					
 					break;
 				}
@@ -60,7 +60,7 @@ void lookingFor (Role_t *character, int which, Map_t *map) {
 	}	
 }
 
-void lookingForOgre(Ogre_t *character, int which, Map_t *map){
+void lookingForMonster (Monster_t *monster, int which, Map_t *map){
 	
 	int i, j, k = 0;
 	
@@ -68,14 +68,14 @@ void lookingForOgre(Ogre_t *character, int which, Map_t *map){
 		
 		for (j = 0; j < map->width; j++) {
 			
-			if (map->mapPptr[i][j] == character->type) {
+			if (map->mapPptr[i][j] == monster->type) {
 				
 				k++;
 				
 				if (k == which) {
 					
-					character->x = j;
-					character->y = i;
+					monster->x = j;
+					monster->y = i;
 					
 					break;
 				}
@@ -87,7 +87,8 @@ void lookingForOgre(Ogre_t *character, int which, Map_t *map){
 }
 
 int hotDogCounter(Map_t *map){
-	int i,j, qtd = 0;
+	
+	int i, j, qtd = 0;
 	
 	for(i = 0; i < map->height; i++){
 		for(j = 0; j < map->width; j++){
@@ -134,7 +135,7 @@ void spawnLightning(Map_t *map, int *score, int *missing) {
 	}
 }
 
-int gameOver(Role_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, int imageSizeY) {
+int gameOver (Wizard_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, int imageSizeY) {
 
 	float xD, yD, xO, yO, xd, yd;
 	

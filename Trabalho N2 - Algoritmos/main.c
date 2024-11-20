@@ -11,13 +11,14 @@
 
 
 int main(int argc, char *argv[]) {
+	
 	initSDL();
 	
 	makeTextures();
 	
 	initSound ();
 	
-	phase1();
+	phase2();
 	
 	return 0;
 }

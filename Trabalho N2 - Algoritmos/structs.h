@@ -10,7 +10,7 @@ typedef struct {
 	int width;
 	int height;
 		
-} Role_t;
+} Wizard_t;
 
 typedef struct{
 	
@@ -22,7 +22,7 @@ typedef struct{
 	int width;
 	int height;
 	
-} Ogre_t;
+} Monster_t;
 
 typedef struct {
 	
