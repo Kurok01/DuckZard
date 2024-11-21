@@ -17,6 +17,8 @@ void makeTextures ();
 
 void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd);
 
+void spawnFire (Map_t *map, int direction, float x, float y);
+
 int phase1ElementsSpawn (Map_t *map, int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t *monster, int beak, int qtd);
 
 void stopTimeMode();

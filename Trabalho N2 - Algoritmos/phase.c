@@ -141,7 +141,7 @@ void phase2 () {
 	int beak = 0, x, y;
 	int score = 0, missing;
 	int over = 0;
-	int blizzard = 0;
+	int blizzard = 0, coolDownFireTime = 0, fireDuration = 0;
 	
 	alocMap("Fase2.txt", &mapPhase2);
 	
@@ -200,8 +200,13 @@ void phase2 () {
 				else beak = 1;
 			}
 			
-			if (finalTime % 100 == 0 && blizzard == 0) blizzard = 1;
-			if (finalTime % 900 == 0 && blizzard >= 1) blizzard = 0;
+			if (finalTime % 300 == 0 && blizzard == 0) {
+				
+				blizzard = 1;
+				playSound(6);
+			}
+			
+			if ((finalTime + 200) % 900 == 0 && blizzard >= 1) blizzard = 0;
 			
 			for (i = 0; i < 8; i++) {
 				
@@ -220,12 +225,37 @@ void phase2 () {
 	while (SDL_PollEvent(&event)) {
 		
 		if (event.type == SDL_QUIT);
-	}
+		}
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 		
 		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8);
+		
+		if (blizzard >= 1) move(state, &wizard, &mapPhase2, &lastTIME, 100);
 		move(state, &wizard, &mapPhase2, &lastTIME, 150);
+		
+		if (state[SDL_SCANCODE_F] && coolDownFireTime == 0) {
+			
+			playSound(7);
+			fireDuration = finalTime;
+			spawnFire(&mapPhase2, wizard.direction, wizard.x, wizard.y);
+			coolDownFireTime = finalTime;
+		}
+		
+		if (finalTime <= (fireDuration + 50) && fireDuration != 0) {
+			
+			spawnFire(&mapPhase2, wizard.direction, wizard.x, wizard.y);
+			
+		} else {
+			
+			spawnFire(&mapPhase2, wizard.direction, -100, -100);
+			fireDuration = 0;
+		}
+		
+		if (finalTime >= (coolDownFireTime + 150) && (coolDownFireTime) != 0) {
+			
+			coolDownFireTime = 0;
+		}
 		
 		for (i = 0; i < 8; i++) {
 						

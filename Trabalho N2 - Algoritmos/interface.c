@@ -23,11 +23,11 @@ SDL_Texture *snowballImg;
 SDL_Texture *externalFireImg;
 SDL_Texture *middleFireImg;
 SDL_Texture *internalFireImg;
-SDL_Texture *fireballProjectileImg;
+SDL_Texture *fireProjectileImg[4];
 SDL_Texture *sandImg;
 SDL_Texture *woodImg;
 
-SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage;
+SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage;
 
 Mix_Music *soundTrack;
 Mix_Chunk *eatingSound;
@@ -35,7 +35,7 @@ Mix_Chunk *portalSound;
 Mix_Chunk *dragonSound;
 Mix_Chunk *thunderSound;
 Mix_Chunk *blizzardSound;
-Mix_Chunk *fireballSound;
+Mix_Chunk *fireSound;
 Mix_Chunk *snowballSound;
 Mix_Chunk *timeStopSound;
 
@@ -159,11 +159,11 @@ void initSound () {
 		exit(1);
 	}
 	
-	fireballSound = Mix_LoadWAV("SoundEffects\\FireballSoundEffect.wav");
+	fireSound = Mix_LoadWAV("SoundEffects\\FireSoundEffect.wav");
 	
-	if (fireballSound == NULL) {
+	if (fireSound == NULL) {
 		
-		printf ("Error to open fireball sound: %s", Mix_GetError());
+		printf ("Error to open fire sound: %s", Mix_GetError());
 		
 		exit(1);
 	}
@@ -189,7 +189,7 @@ void initSound () {
 	Mix_VolumeChunk(thunderSound, 64);
 	Mix_VolumeChunk(dragonSound, 64);
 	Mix_VolumeChunk(blizzardSound, 64);
-	Mix_VolumeChunk(fireballSound, 2);
+	Mix_VolumeChunk(fireSound, 50);
 	Mix_VolumeChunk(snowballSound, 32);
 	Mix_VolumeChunk(timeStopSound, 80);
 }
@@ -231,7 +231,7 @@ void playSound (int soundChoice) {
 			
 		case 7:
 			
-			Mix_PlayChannel(-1, fireballSound, 0);
+			Mix_PlayChannel(-1, fireSound, 0);
 			break;
 			
 		case 8:
@@ -272,6 +272,7 @@ void makeTextures () {
 	char pathDragon[] = "assets\\Dragon .png";
 	char pathPortal[] = "assets\\Portal .png";
 	char pathMonster[] = "assets\\Monster .png";
+	char pathFireProjectile[] = "assets\\FireProjectile .png";
 	int i, j;
 	//Aumentar loop
 	for (i = 0; i < 3; i++) {
@@ -297,6 +298,8 @@ void makeTextures () {
 	for (i = 0; i < 4; i++) {
 		
 			pathDuck[12] = (i+48);
+			pathFireProjectile[21] = (i+49);
+			fireProjectileImg[i] = takeImage(pathFireProjectile);
 		
 		for (j = 0; j < 2; j++) {
 			
@@ -313,7 +316,6 @@ void makeTextures () {
 	lightningPillImg = takeImage("assets\\LightningPill.png");
 	hotdogImg = takeImage("assets\\Hotdog.png");
 	lightningProjectileImg = takeImage("assets\\LightningProjectile.png");
-	fireballProjectileImg = takeImage("assets\\FireballProjectile.png");
 	freezedImg = takeImage("assets\\FreezedScreen.png");
 	blizzardImg = takeImage("assets\\Blizzard.png");
 	snowballImg = takeImage("assets\\Snowball.png");
@@ -330,10 +332,7 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 		
 		blizzard2 = 0;
 		secondRound = 0;
-		
 	} 
-	
-	
 	
 	if (*blizzard != 0) {
 		
@@ -358,7 +357,7 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 		blizzardImage[1].w = map->screenWidth;
 		blizzardImage[1].h = map->screenHeight;
 		
-	}else{
+	} else {
 
 		blizzardImage[1].x = (map->screenWidth) + (map->outOfLimitsX * 2) - blizzard2;
 		blizzardImage[1].y = map->outOfLimitsY;
@@ -371,7 +370,7 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 		
 	   	if (blizzardImage[0].x <= (-(map->screenWidth + (map->outOfLimitsX * 2)))) {
 	   		
-	   		*blizzard = 1;
+	   	   *blizzard = 1;
 	   		blizzardImage[0].x = (map->screenWidth + map->outOfLimitsX) - *blizzard;
 			blizzardImage[0].y = map->outOfLimitsY;
 			blizzardImage[0].w = map->screenWidth;
@@ -397,7 +396,40 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 	printScreen(map, wizard, monster, 8, 2, beak);
 }
 
-int phase1ElementsSpawn (Map_t *map ,int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd){
+void spawnFire (Map_t *map, int direction, float x, float y) {
+	
+	if (direction == 0) {
+		
+		fireProjectileImage.x = x + map->imageSize;
+		fireProjectileImage.y = y;
+		fireProjectileImage.w = map->imageSize;
+		fireProjectileImage.h = map->imageSize;
+	
+	} else if (direction == 1) {
+		
+		fireProjectileImage.x = x - map->imageSize;
+		fireProjectileImage.y = y;
+		fireProjectileImage.w = map->imageSize;
+		fireProjectileImage.h = map->imageSize;
+		
+	} else if (direction == 2) {
+		
+		fireProjectileImage.x = x;
+		fireProjectileImage.y = y + map->imageSize;
+		fireProjectileImage.w = map->imageSize;
+		fireProjectileImage.h = map->imageSize;
+		
+	} else if (direction == 3) {
+		
+		fireProjectileImage.x = x;
+		fireProjectileImage.y = y - map->imageSize;
+		fireProjectileImage.w = map->imageSize;
+		fireProjectileImage.h = map->imageSize;
+	}
+}
+
+int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd) {
+	
 	int over = 0, i, j, temp = 2;
 	
 	if (*lightning != 0) *lightning += (temp * 100);
@@ -484,7 +516,6 @@ void stopTimeMode(){
 	woodImg = takeImage("assets\\woodO.png");
 	wallImg[2] = takeImage("assets\\wall3O.png");
 	backgroundImg[2] = takeImage("assets\\Background3O.png");
-	
 }
 
 void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak) {
@@ -578,6 +609,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	SDL_RenderCopy(renderer, dragonImg[1], NULL, &dragonImage[1]);
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[0]);
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[1]);
+	SDL_RenderCopy(renderer, fireProjectileImg[wizard->direction], NULL, &fireProjectileImage);
 	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[0]);
 	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[1]);
 	SDL_RenderCopy(renderer, freezedImg, NULL, &freezedImage);
@@ -607,6 +639,7 @@ void freeSDL () {
 	}
 	
 //Destuir tudo
+/*
 	SDL_DestroyTexture(hotdogImg);
 	SDL_DestroyTexture(internalFireImg);
 	SDL_DestroyTexture(middleFireImg);
@@ -614,10 +647,10 @@ void freeSDL () {
 	SDL_DestroyTexture(thunderImg);
 	SDL_DestroyTexture(lightningProjectileImg);
 	SDL_DestroyTexture(lightningPillImg);
-	SDL_DestroyTexture(fireballProjectileImg);
+	SDL_DestroyTexture(fireProjectileImg);
 	SDL_DestroyTexture(snowballImg);
 	SDL_DestroyTexture(blizzardImg);
-	SDL_DestroyTexture(freezedImg);
+	SDL_DestroyTexture(freezedImg);*/
 	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

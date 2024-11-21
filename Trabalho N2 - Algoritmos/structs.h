@@ -7,8 +7,6 @@ typedef struct {
 	int direction;
 	float x;
 	float y;
-	int width;
-	int height;
 		
 } Wizard_t;
 
