@@ -19,6 +19,8 @@ SDL_Texture *lightningPillImg;
 SDL_Texture *lightningProjectileImg;
 SDL_Texture *blizzardImg;
 SDL_Texture *freezedImg;
+SDL_Texture *freezedHotdogImg;
+SDL_Texture *halfFreezedHotdogImg;
 SDL_Texture *snowballImg;
 SDL_Texture *externalFireImg;
 SDL_Texture *middleFireImg;
@@ -39,12 +41,6 @@ Mix_Chunk *fireSound;
 Mix_Chunk *snowballSound;
 Mix_Chunk *timeStopSound;
 
-
-SDL_DisplayMode displayMode;
-
-SDL_Renderer *renderer;
-
-SDL_Window *window;
 
 void initSDL () {
 	
@@ -317,6 +313,8 @@ void makeTextures () {
 	hotdogImg = takeImage("assets\\Hotdog.png");
 	lightningProjectileImg = takeImage("assets\\LightningProjectile.png");
 	freezedImg = takeImage("assets\\FreezedScreen.png");
+	freezedHotdogImg = takeImage("assets\\FreezedHotdog.png");
+	halfFreezedHotdogImg = takeImage("assets\\HalfFreezedHotdog.png");
 	blizzardImg = takeImage("assets\\Blizzard.png");
 	snowballImg = takeImage("assets\\Snowball.png");
 	sandImg = takeImage("assets\\sand.png");
@@ -326,7 +324,7 @@ void makeTextures () {
 void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd) {
 	
 	int i, temp = 5, aux = 5; 
-	static int blizzard2, secondRound;
+	static int blizzard2, secondRound = 0;
 	
 	if (*blizzard == 0){
 		
@@ -577,6 +575,8 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 			
 			if (map->mapPptr[i][j] == '*') SDL_RenderCopy(renderer, wallImg[phase - 1], NULL, &position);
 			else if (map->mapPptr[i][j] == ' ') SDL_RenderCopy(renderer, hotdogImg, NULL, &position);
+			else if (map->mapPptr[i][j] == 'I') SDL_RenderCopy(renderer, freezedHotdogImg, NULL, &position);
+			else if (map->mapPptr[i][j] == 'H') SDL_RenderCopy(renderer, halfFreezedHotdogImg, NULL, &position);
 			else if (map->mapPptr[i][j] == 'D') {
 				
 				position.x = wizard->x;

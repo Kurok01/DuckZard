@@ -5,6 +5,12 @@
 #include <SDL_mixer.h>
 #include "structs.h"
 
+SDL_DisplayMode displayMode;
+
+SDL_Renderer *renderer;
+
+SDL_Window *window;
+
 void initSDL ();
 
 void initSound ();

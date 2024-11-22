@@ -24,18 +24,6 @@ typedef struct{
 
 typedef struct {
 	
-	char type;
-	float x;
-	float y;
-	int width;
-	int height;
-	char direction;
-	int speed;
-	
-} Projectile_t;
-
-typedef struct {
-	
 	char **mapPptr;
 	int screenWidth;
 	int screenHeight;

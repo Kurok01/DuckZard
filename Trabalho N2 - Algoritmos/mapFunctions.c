@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <windows.h>
 #include "structs.h"
 
@@ -86,7 +87,7 @@ void lookingForMonster (Monster_t *monster, int which, Map_t *map){
 	}	
 }
 
-int hotDogCounter(Map_t *map){
+int hotDogCounter(Map_t *map) {
 	
 	int i, j, qtd = 0;
 	
@@ -100,6 +101,96 @@ int hotDogCounter(Map_t *map){
 		}
 	}
 	return qtd;
+}
+
+void freeze (Map_t *map, int blizzard) {
+	
+	int temp = 0, auxHeight, auxWidth;
+	int y = 0, x = 0, i , j;
+	
+	if (blizzard >= 1) {
+
+		srand(time(0));
+	
+		while (temp <= 4) {
+			
+			do {
+			
+				y = rand() % ((map->height) - 1);
+				x = rand() % ((map->width) - 1); 
+				
+				if (y == 0) y = 1;
+				if (x == 0) x = 1; 
+			
+			} while (map->mapPptr[y][x] == 'I');
+			
+					
+			if (map->mapPptr[y][x] == ' ') {
+							
+			for (i = y - 1; i < (y + 2);  i++) {
+				
+				for (j = x - 1; j < (x + 2); j++) {
+					
+					if (map->mapPptr[i][j] == ' ') map->mapPptr[i][j] = 'I';
+				}
+			}
+			
+		  	temp++;
+			  	
+			} else temp--;			
+		}
+	}
+}
+
+void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration) {
+	
+	int x = 0, y = 0;
+	
+	if (fireDuration != 0) {
+		
+		switch (wizard->direction) {
+			
+			case 0:
+					
+				x = (wizard->x + (map->imageSize) - map->outOfLimitsX) / map->imageSize;
+				y = (wizard->y - map->outOfLimitsY) / map->imageSize;
+				
+				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
+				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				
+				break;
+				
+			case 1:
+				
+				x = (wizard->x - (map->imageSize * 1.5) - map->outOfLimitsX) / map->imageSize;
+				y = (wizard->y - map->outOfLimitsY) / map->imageSize;
+				
+				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
+				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				
+				break;
+				
+			case 2:
+				
+				x = (wizard->x - map->outOfLimitsX) / map->imageSize;
+				y = (wizard->y + (map->imageSize) - map->outOfLimitsY) / map->imageSize;
+				
+				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
+				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				
+				break;
+				
+			case 3: 
+			
+				x = (wizard->x - map->outOfLimitsX) / map->imageSize;
+				y = (wizard->y - (map->imageSize) - map->outOfLimitsY) / map->imageSize;
+				
+				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
+				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				
+				break;	
+		}
+	}
 }
 
 void spawnLightning(Map_t *map, int *score, int *missing) {

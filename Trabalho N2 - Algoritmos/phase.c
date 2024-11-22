@@ -12,9 +12,10 @@ void phase1 () {
 	Map_t mapPhase1;
 	Wizard_t wizard;
 	Monster_t ogres[8];
+	int print, selection = 1;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 1;
+	int finalTime, preTime = 1, pauseTime;
 	int beak = 0, x, y;
 	int score = 0, missing, spawnPower = 0;
 	int dragonCountDown = 0;
@@ -115,6 +116,42 @@ void phase1 () {
 	}
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		
+		if(state[SDL_SCANCODE_ESCAPE]){
+            while(1){
+                if(print == 0) pauseScreen(selection);
+                else pauseScreen(4);
+
+                if(finalTime > (pauseTime + 4)){
+                    pauseTime = finalTime;
+
+                    if(print == 0) print = 1;
+                    else print = 0;
+                }
+
+                while(SDL_PollEvent(&event));
+
+                state = SDL_GetKeyboardState(NULL);
+
+                if(state[SDL_SCANCODE_W]){
+                    if(selection > 1) selection--;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_S]){
+                    if(selection < 3) selection++;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 1){
+                    break;
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                    exit(1);
+                }
+            }
+        }
 
 		move(state, &wizard, &mapPhase1, &lastTIME, 150);
 		eatPill(&mapPhase1, &wizard, &lightning);
@@ -135,9 +172,10 @@ void phase2 () {
 	Map_t mapPhase2;
 	Wizard_t wizard;
 	Monster_t yetis[8];
+	int print, selection = 1;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 1;
+	int finalTime, preTime = 1, pauseTime;
 	int beak = 0, x, y;
 	int score = 0, missing;
 	int over = 0;
@@ -204,7 +242,9 @@ void phase2 () {
 				
 				blizzard = 1;
 				playSound(6);
+				freeze(&mapPhase2, blizzard);
 			}
+			
 			
 			if ((finalTime + 200) % 900 == 0 && blizzard >= 1) blizzard = 0;
 			
@@ -229,9 +269,49 @@ void phase2 () {
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 		
+		if(state[SDL_SCANCODE_ESCAPE]){
+            while(1){
+                if(print == 0) pauseScreen(selection);
+                else pauseScreen(4);
+
+                if(finalTime > (pauseTime + 4)){
+                    pauseTime = finalTime;
+
+                    if(print == 0) print = 1;
+                    else print = 0;
+                }
+
+                while(SDL_PollEvent(&event));
+
+                state = SDL_GetKeyboardState(NULL);
+
+                if(state[SDL_SCANCODE_W]){
+                    if(selection > 1) selection--;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_S]){
+                    if(selection < 3) selection++;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 1){
+                    break;
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                    exit(1);
+                }
+            }
+        }
+		
 		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8);
 		
-		if (blizzard >= 1) move(state, &wizard, &mapPhase2, &lastTIME, 100);
+		if (blizzard >= 1) {
+			
+			move(state, &wizard, &mapPhase2, &lastTIME, 100);	
+		}
+		
 		move(state, &wizard, &mapPhase2, &lastTIME, 150);
 		
 		if (state[SDL_SCANCODE_F] && coolDownFireTime == 0) {
@@ -239,6 +319,7 @@ void phase2 () {
 			playSound(7);
 			fireDuration = finalTime;
 			spawnFire(&mapPhase2, wizard.direction, wizard.x, wizard.y);
+			deFreeze(&mapPhase2, &wizard, fireDuration);
 			coolDownFireTime = finalTime;
 		}
 		
@@ -273,13 +354,14 @@ void phase3(){
 	Map_t mapPhase3;
 	Wizard_t wizard;
 	Monster_t dogs[11];
+	int print, selection = 1;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 0, timeStopTime = 0;
+	int finalTime, preTime = 0, timeStopTime = 0, pauseTime;
 	int beak = 0, x, y;
 	int score = 0, missing, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
 	int over = 0, stop = 0;
-	int remove1, remove2;
+
 	
 	alocMap("Fase3.txt", &mapPhase3);
 	
@@ -365,6 +447,42 @@ void phase3(){
 	}
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		
+		if(state[SDL_SCANCODE_ESCAPE]){
+            while(1){
+                if(print == 0) pauseScreen(selection);
+                else pauseScreen(4);
+
+                if(finalTime > (pauseTime + 4)){
+                    pauseTime = finalTime;
+
+                    if(print == 0) print = 1;
+                    else print = 0;
+                }
+
+                while(SDL_PollEvent(&event));
+
+                state = SDL_GetKeyboardState(NULL);
+
+                if(state[SDL_SCANCODE_W]){
+                    if(selection > 1) selection--;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_S]){
+                    if(selection < 3) selection++;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 1){
+                    break;
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                    exit(1);
+                }
+            }
+        }
 		
 		if(timeStopTime != 0)move(state, &wizard, &mapPhase3, &lastTIME, 75);
 		else if(reverseMove == 0) move(state, &wizard, &mapPhase3, &lastTIME, 150);

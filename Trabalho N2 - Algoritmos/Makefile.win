@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = main.o mapFunctions.o interface.o actions.o phase.o
-LINKOBJ  = main.o mapFunctions.o interface.o actions.o phase.o
+OBJ      = main.o mapFunctions.o interface.o actions.o phase.o menuScreens.o
+LINKOBJ  = main.o mapFunctions.o interface.o actions.o phase.o menuScreens.o
 LIBS     = -L"D:/Dev-Cpp/MinGW64/lib" -L"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -L"C:/Users/ribei/Documents/GitHub/DuckZard/Trabalho N2 - Algoritmos/libs" -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -L"C:/Users/User/Documents/Ppd/DuckZard/Trabalho N2 - Algoritmos/libs"  -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
 INCS     = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"D:/Dev-Cpp/MinGW64/include" -I"D:/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -38,3 +38,6 @@ actions.o: actions.c
 
 phase.o: phase.c
 	$(CC) -c phase.c -o phase.o $(CFLAGS)
+
+menuScreens.o: menuScreens.c
+	$(CC) -c menuScreens.c -o menuScreens.o $(CFLAGS)

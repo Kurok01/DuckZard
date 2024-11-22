@@ -13,7 +13,7 @@ void move (const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *lastTIME, i
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$#ASV";
+	char limits[] = "*$#ASVIH";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -52,7 +52,7 @@ void move (const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *lastTIME, i
 	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
 	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 7; i++) {
 		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
@@ -70,7 +70,7 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$#ASV";
+	char limits[] = "*$#ASVIH";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -109,7 +109,7 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
 	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 7; i++) {
 		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
@@ -204,7 +204,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	int prematrizXOU, prematrizYOU, prematrizXOT, prematrizYOT;
 	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
 	int i, j;
-	char limits[] = "*$#ASV";
+	char limits[] = "*$#ASVI";
 	
 	srand(time(0));
 	
@@ -219,7 +219,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	
 	for(i = 0; i < 8; i++){
 		
-		for(j = 0; j < 5; j++){
+		for(j = 0; j < 7; j++){
 			if(map->mapPptr[aux2][aux] == limits[j]){
 				correctGPS = 0;
 				break;
@@ -392,7 +392,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	
 	correct = 1;
 	
-	for(i = 0; i < 5; i++){
+	for(i = 0; i < 7; i++){
 		
 		if(map->mapPptr[matrizYOT][matrizXOT] == limits[i]){
 		
