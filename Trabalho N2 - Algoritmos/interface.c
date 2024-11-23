@@ -30,8 +30,9 @@ SDL_Texture *sandImg;
 SDL_Texture *woodImg;
 SDL_Texture *metalImg;
 SDL_Texture *cloneImg;
+SDL_Texture *nexusImg[4];
 
-SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage, snowBallImage[40];
+SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage, snowBallImage[40], nexusImage[4];
 
 Mix_Music *soundTrack;
 Mix_Chunk *eatingSound;
@@ -584,10 +585,38 @@ void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 	}
 }
 
+void spawnNexus(Map_t *map, int type, int which[4]){
+	
+	nexusImage[0].x = (3 * map->imageSize) + map->outOfLimitsX;
+	nexusImage[1].x = (47 * map->imageSize) + map->outOfLimitsX;
+	nexusImage[2].x = (3 * map->imageSize) + map->outOfLimitsX;
+	nexusImage[3].x = (47 * map->imageSize) + map->outOfLimitsX;
+	
+	nexusImage[0].y = (2 * map->imageSize) + map->outOfLimitsY;
+	nexusImage[1].y = (24 * map->imageSize) + map->outOfLimitsY;
+	nexusImage[2].y = (2 * map->imageSize) + map->outOfLimitsY;
+	nexusImage[3].y = (24 * map->imageSize) + map->outOfLimitsY;
+	
+	char nexusPhase1[] = "assets\\IcePhase1_ .png";
+	char nexusPhase2[] = "assets\\IcePhase2_ .png";
+	char nexusPhase3[] = "assets\\IcePhase3_ .png";
+	char nexusPhase4[] = "assets\\IcePhase4_ .png";
+	
+	nexusPhase1[17] = (which[0] + 48);
+	nexusPhase2[17] = (which[1] + 48);
+	nexusPhase3[17] = (which[2] + 48);
+	nexusPhase4[17] = (which[3] + 48);
+	
+	nexusImg[0] = takeImage(nexusPhase1);
+	nexusImg[1] = takeImage(nexusPhase2);
+	nexusImg[2] = takeImage(nexusPhase3);
+	nexusImg[3] = takeImage(nexusPhase4);
+}
+
 void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak) {
 	
 	int imageSize, height, width;
-	int i, j, k = 0;
+	int i, j, k = 0, l = 0;
 	int x, y;
 	static int tempLimits = 0;
 	int over = 0;
@@ -634,6 +663,11 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	for (i = 0; i < map->height; i++) {
 		
 		for (j = 0; j < map->width; j++) {
+			
+			if(j == && (i == 2 || i == 24)) l = 0;
+			if(j == && (i == 2 || i == 24)) l = 1;
+			if(j == && (i == 2 || i == 24)) l = 2;
+			if(j == && (i == 2 || i == 24)) l = 3;
 			
 			SDL_Rect position;
 			position.x = (j * imageSize) + x;
@@ -701,7 +735,10 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[0]);
 	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[1]);
 	SDL_RenderCopy(renderer, freezedImg, NULL, &freezedImage);
-	
+	SDL_RenderCopy(renderer, nexusImg[0], NULL, &nexusImage[0]);
+	SDL_RenderCopy(renderer, nexusImg[1], NULL, &nexusImage[1]);
+	SDL_RenderCopy(renderer, nexusImg[2], NULL, &nexusImage[2]);
+	SDL_RenderCopy(renderer, nexusImg[3], NULL, &nexusImage[3]);
 	i = 0;
 	
 	while(snowBallImage[i].x != -100){
