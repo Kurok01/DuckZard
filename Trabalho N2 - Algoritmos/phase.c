@@ -171,8 +171,8 @@ void phase2 () {
 	
 	Map_t mapPhase2;
 	Wizard_t wizard;
-	Monster_t yetis[8];
-	int print, selection = 1;
+	Monster_t yetis[8], snowBall[40];
+	int print, selection = 1, numSnowBall = 0;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 1, pauseTime;
@@ -254,6 +254,27 @@ void phase2 () {
 				moveNPC(&mapPhase2, &(yetis[i]), &wizard ,&lastTIME, (mapPhase2.imageSize/4));
 				
 				over = gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
+				
+				if(over == 1) exit(1);
+			}
+			
+			if(finalTime % 5 == 0 && blizzard == 0){
+				
+				if(finalTime % 40 == 0) playSound(8);
+				spawnSnowBall(&mapPhase2, snowBall, &numSnowBall);
+				
+			}
+			
+			if(blizzard == 1 && numSnowBall != 0){
+				
+				numSnowBall = 0;
+			}
+			
+			for (i = 0; i < numSnowBall; i++) {
+				
+				if(i == 0) moveSnowBall(&mapPhase2, snowBall, &numSnowBall);
+
+				over = gameOver(&wizard, &mapPhase2, snowBall[i].x, snowBall[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
 				
 				if(over == 1) exit(1);
 			}

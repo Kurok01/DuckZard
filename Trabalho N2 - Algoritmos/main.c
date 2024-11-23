@@ -9,11 +9,9 @@
 #include "mapFunctions.h"
 #include "phase.h"
 
-//Hitbox do dragao, portal do mago implacavel, Criar movimento dos ogros
 //Organizar pasta de assets
-//Bola de neve se sobra tempo
+//Hitbox do dragao
 //Mudar Musica de cada fase
-//Fazer a imersao gamer com o fogo
 //Cutscene da luta final e Gaguinho no final
 
 
@@ -78,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     initSound();
 	
-    phase4();
+    phase2();
 	
 	return 0;
 }

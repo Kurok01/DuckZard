@@ -29,6 +29,10 @@ int phase1ElementsSpawn (Map_t *map, int *dragonCountDown, int *lightning, Wizar
 
 void stopTimeMode();
 
+void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls);
+
+void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls);
+
 void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak);
 
 void freeSDL ();

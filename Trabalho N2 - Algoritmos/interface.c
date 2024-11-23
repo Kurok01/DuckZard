@@ -31,7 +31,7 @@ SDL_Texture *woodImg;
 SDL_Texture *metalImg;
 SDL_Texture *cloneImg;
 
-SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage;
+SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage, snowBallImage[40];
 
 Mix_Music *soundTrack;
 Mix_Chunk *eatingSound;
@@ -45,6 +45,7 @@ Mix_Chunk *timeStopSound;
 
 
 void initSDL () {
+	snowBallImage[0].x = -100;
 	
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		
@@ -336,6 +337,16 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 		secondRound = 0;
 	} 
 	
+	if((*blizzard) != 0 && (*blizzard) <= 20){
+		
+		for(i = 0; i < 40; i++){
+			
+			snowBallImage[i].x = -100;
+			snowBallImage[i].y = -100;
+			
+		}
+	}
+	
 	if (*blizzard != 0) {
 		
 		blizzard2 += aux;	
@@ -520,6 +531,59 @@ void stopTimeMode(){
 	backgroundImg[2] = takeImage("assets\\Background3O.png");
 }
 
+void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls){
+	int x;
+	static int i = 0, j =1;
+	
+	srand(time(0) + (i * j));
+	
+	i += 2;
+	j += 7;
+	
+	if(i >= 10000) i = 0;
+	if(j >= 10000) j = 1;
+	
+	x = rand() % map->width;
+	if(x == 0) x = 1;
+	
+	snowBall[*numSnowBalls].x = (x * map->imageSize) + map->outOfLimitsX;
+	snowBall[*numSnowBalls].y = -(map->outOfLimitsY);
+	snowBall[(*numSnowBalls) + 1].x = -100;
+	
+	snowBallImage[*numSnowBalls].x = (x * map->imageSize) + map->outOfLimitsX;
+	snowBallImage[*numSnowBalls].y = -(map->outOfLimitsY);
+	snowBallImage[*numSnowBalls].w = map->imageSize;
+	snowBallImage[*numSnowBalls].h = map->imageSize;
+	snowBallImage[(*numSnowBalls) + 1].x = -100;
+	
+	(*numSnowBalls)++;
+	
+}
+
+
+void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
+	int i = 0;
+	
+	while(snowBallImage[i].x != -100){
+		
+			snowBall[i].y += 10;
+			snowBallImage[i].y += 10;
+			i++;
+			printf("%.1f\n", snowBall[i].y);
+			if(snowBall[i].y >= (map->screenHeight + (map->outOfLimitsY * 2))){
+				snowBall[i].x = snowBall[(*numSnowBalls)-1].x;
+				snowBall[i].y = snowBall[(*numSnowBalls)-1].y;
+				
+				snowBallImage[i].x = snowBall[(*numSnowBalls)-1].x;
+				snowBallImage[i].y = snowBall[(*numSnowBalls)-1].y;
+				
+				(*numSnowBalls)--;
+				snowBallImage[(*numSnowBalls)-1].x = -100;
+				snowBall[(*numSnowBalls)-1].x = -100;
+			}
+	}
+}
+
 void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak) {
 	
 	int imageSize, height, width;
@@ -637,6 +701,14 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[0]);
 	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[1]);
 	SDL_RenderCopy(renderer, freezedImg, NULL, &freezedImage);
+	
+	i = 0;
+	
+	while(snowBallImage[i].x != -100){
+
+		SDL_RenderCopy(renderer, snowballImg, NULL, &snowBallImage[i]);
+		i++;
+	}
 	
 	SDL_RenderPresent(renderer);
 	SDL_Delay(16);
