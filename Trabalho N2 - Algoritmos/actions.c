@@ -204,9 +204,14 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	int prematrizXOU, prematrizYOU, prematrizXOT, prematrizYOT;
 	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
 	int i, j;
+	static int k = 0;
 	char limits[] = "*$#ASVIM";
 	
-	srand(time(0));
+	srand(time(0) + k);
+	
+	k+= 15;
+	
+	if(k == 10000) k = 0;
 	
 	matrizXD = ((wizard->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
 	matrizYD = ((wizard->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;
@@ -217,43 +222,47 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	aux = matrizXO;
 	aux2 = matrizYO;
 	
-	for(i = 0; i < 8; i++){
-		
-		for(j = 0; j < 9; j++){
-			if(map->mapPptr[aux2][aux] == limits[j]){
-				correctGPS = 0;
-				break;
+	if(wizard->type == 'D'){
+	
+		for(i = 0; i < 8; i++){
+			
+			for(j = 0; j < 9; j++){
+				if(map->mapPptr[aux2][aux] == limits[j]){
+					correctGPS = 0;
+					break;
+				}
 			}
+			
+			if(aux < matrizXD && (aux + 8) < matrizXD) correctGPS = 0;
+			else if(aux > matrizXD && (aux - 8) > matrizXD) correctGPS = 0;
+			if(aux2 < matrizYD && (aux2 + 8) < matrizYD) correctGPS = 0;
+			else if(aux2 > matrizYD && (aux2 - 8) > matrizYD) correctGPS = 0;
+			
+			if(correctGPS == 0) break;
+			
+			
+			if(aux < matrizXD) aux++;
+			else if(aux > matrizXD) aux--;
+			else if(aux2 < matrizYD) aux2++;
+			else if(aux2 > matrizYD) aux2--;
+			
 		}
 		
-		if(aux < matrizXD && (aux + 8) < matrizXD) correctGPS = 0;
-		else if(aux > matrizXD && (aux - 8) > matrizXD) correctGPS = 0;
-		if(aux2 < matrizYD && (aux2 + 8) < matrizYD) correctGPS = 0;
-		else if(aux2 > matrizYD && (aux2 - 8) > matrizYD) correctGPS = 0;
-		
-		if(correctGPS == 0) break;
 		
 		
-		if(aux < matrizXD) aux++;
-		else if(aux > matrizXD) aux--;
-		else if(aux2 < matrizYD) aux2++;
-		else if(aux2 > matrizYD) aux2--;
+		if(correctGPS == 1){
+			
+			if(matrizYO < matrizYD) monster->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
+			if(matrizXO < matrizXD) monster->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
+			if(matrizYO > matrizYD) monster->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
+			if(matrizXO > matrizXD) monster->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
+		
+		}
+		
+		if(monster->destX != 0 && monster->destY == 0) monster->destY = monster->y;
+		else if(monster->destY != 0 && monster->destX == 0) monster->destX = monster->x;	
 		
 	}
-	
-	
-	
-	if(correctGPS == 1){
-		
-		if(matrizYO < matrizYD) monster->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
-		if(matrizXO < matrizXD) monster->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
-		if(matrizYO > matrizYD) monster->destY = (matrizYD * map->imageSize) + map->outOfLimitsY;
-		if(matrizXO > matrizXD) monster->destX = (matrizXD * map->imageSize) + map->outOfLimitsX;
-	
-	}
-	
-	if(monster->destX != 0 && monster->destY == 0) monster->destY = monster->y;
-	else if(monster->destY != 0 && monster->destX == 0) monster->destX = monster->x;
 	
 	
 	if(monster->destX != 0 && monster->destY != 0){
@@ -466,13 +475,10 @@ void spawnClone(Map_t *map ,Monster_t *clone, int *numClones){
 					clone[*numClones].x = (positionX * map->imageSize) + map->outOfLimitsX;
 					clone[*numClones].y = (positionY * map->imageSize) + map->outOfLimitsY;
 					
-					printf("%.1f %.1f\n",  clone[*numClones].x, clone[*numClones].y);
-					
 					(*numClones)++;
 					correct = 1;
 					break;
 				}
-				
 			}
 			
 			if(correct == 1) break;

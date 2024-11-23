@@ -239,7 +239,7 @@ void phase2 () {
 				else beak = 1;
 			}
 			
-			if (finalTime % 300 == 0 && blizzard == 0) {
+			if (finalTime % 400 == 0 && blizzard == 0) {
 				
 				blizzard = 1;
 				playSound(6);
@@ -247,7 +247,7 @@ void phase2 () {
 			}
 			
 			
-			if ((finalTime + 200) % 900 == 0 && blizzard >= 1) blizzard = 0;
+			if (finalTime % 800 == 0 && blizzard >= 1) blizzard = 0;
 			
 			for (i = 0; i < 8; i++) {
 				
@@ -542,7 +542,7 @@ void phase4(){
 	int print, selection = 1, numClones = 4;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 0, pauseTime;
+	int finalTime, preTime = 0, pauseTime, transformationCoolDown = 0, transformationDuration = 0;
 	int beak = 0, x, y;
 	int score = 0, missing;
 	int over = 0, stop = 0;
@@ -610,7 +610,7 @@ void phase4(){
 				
 					moveNPC(&mapPhase4, &(clone[i]), &wizard ,&lastTIME, (mapPhase4.imageSize/4));
 				
-					over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
+					if(wizard.type == 'D')over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
 				
 					if(over == 1) break;
 				}
@@ -621,7 +621,6 @@ void phase4(){
 				spawnClone(&mapPhase4, clone, &numClones);
 				
 			}
-		
 			
 			preTime = finalTime;
 		}
@@ -638,6 +637,27 @@ void phase4(){
 	}
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		
+		if(state[SDL_SCANCODE_F] && transformationCoolDown == 0){
+			
+			wizard.type = 'O';
+			transformationDuration = finalTime;
+			
+		}
+		
+		if(finalTime >= (transformationDuration + 100) && transformationDuration != 0){
+			
+			wizard.type = 'D';
+			transformationCoolDown = finalTime;
+			transformationDuration = 0;
+			
+		}
+		
+		if(finalTime >= (transformationCoolDown + 100) && transformationCoolDown != 0){
+			
+			transformationCoolDown = 0;
+			
+		}
 		
 		if(state[SDL_SCANCODE_ESCAPE]){
             while(1){
@@ -680,7 +700,7 @@ void phase4(){
 		if (stop != 1){
 			for (i = 0; i < numClones; i++) {
 						
-				over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
+				if(wizard.type == 'D') over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
 
 				if(over == 1) break;
 			}

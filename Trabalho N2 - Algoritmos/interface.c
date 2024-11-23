@@ -29,6 +29,7 @@ SDL_Texture *fireProjectileImg[4];
 SDL_Texture *sandImg;
 SDL_Texture *woodImg;
 SDL_Texture *metalImg;
+SDL_Texture *cloneImg;
 
 SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage;
 
@@ -321,6 +322,7 @@ void makeTextures () {
 	sandImg = takeImage("assets\\sand.png");
 	woodImg = takeImage("assets\\wood.png");
 	metalImg = takeImage("assets\\cloneTexture.png");
+	cloneImg = takeImage("assets\\Monster4C.png");
 }
 
 void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd) {
@@ -584,8 +586,16 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 				position.x = wizard->x;
 				position.y = wizard->y;
 				
-				if (beak >= 0) SDL_RenderCopy(renderer, duckImg[wizard->direction][beak], NULL, &position);
-				else SDL_RenderCopy(renderer, portalImg[(beak * -1) - 1], NULL, &position);	
+				if(wizard->type == 'D'){
+			
+					if (beak >= 0) SDL_RenderCopy(renderer, duckImg[wizard->direction][beak], NULL, &position);
+					else SDL_RenderCopy(renderer, portalImg[(beak * -1) - 1], NULL, &position);	
+			
+				}else{
+					
+					SDL_RenderCopy(renderer, monsterImg[3], NULL, &position);
+					
+				}
 			}
 			
 			else if (map->mapPptr[i][j] == 'O') {
@@ -608,7 +618,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
   		}
 	}
 	
-	for(i = (k-1); i < qtd; i++ ){
+	for(i = k; i < qtd; i++ ){
 			SDL_Rect position;
 		
 			position.x = (monster[i].x);
@@ -616,7 +626,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 			position.w = (imageSize);
 			position.h = (imageSize);
 				
-			SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
+			SDL_RenderCopy(renderer, cloneImg, NULL, &position);
 	}
 	
 	SDL_RenderCopy(renderer, dragonImg[0], NULL, &dragonImage[0]);
