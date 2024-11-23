@@ -108,9 +108,9 @@ void freeze (Map_t *map, int blizzard) {
 	int temp = 0, auxHeight, auxWidth;
 	int y = 0, x = 0, i , j;
 	
+	srand(time(0));
+	
 	if (blizzard >= 1) {
-
-		srand(time(0));
 	
 		while (temp <= 4) {
 			
@@ -122,7 +122,7 @@ void freeze (Map_t *map, int blizzard) {
 				if (y == 0) y = 1;
 				if (x == 0) x = 1; 
 			
-			} while (map->mapPptr[y][x] == 'I');
+			} while (map->mapPptr[y][x] != ' ');
 			
 					
 			if (map->mapPptr[y][x] == ' ') {
@@ -139,12 +139,15 @@ void freeze (Map_t *map, int blizzard) {
 			  	
 			} else temp--;			
 		}
-	}
+		
+	} else return;
 }
 
-void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration) {
+void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime) {
 	
-	int x = 0, y = 0;
+	float x = 0, y = 0;
+	int coordX[3], coordY[3], i, j;
+	static int coolDown[9];
 	
 	if (fireDuration != 0) {
 		
@@ -152,41 +155,105 @@ void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration) {
 			
 			case 0:
 					
-				x = (wizard->x + (map->imageSize) - map->outOfLimitsX) / map->imageSize;
-				y = (wizard->y - map->outOfLimitsY) / map->imageSize;
+				x = (wizard->x + (map->imageSize) - (map->outOfLimitsX));
+				y = (wizard->y - (map->outOfLimitsY));
 				
-				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
-				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+				
+				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+				
+				for (i = 0; i < 3; i++) {
+					
+					for (j = 0; j < 3; j++) {
+						
+						fireDuration = finalTime;
+						
+						if (map->mapPptr[coordY[i]][coordX[j]] == 'I' && fireDuration % 30 == 0) map->mapPptr[coordY[i]][coordX[j]] = 'H';
+						else if (map->mapPptr[coordY[i]][coordX[j]] == 'H' && fireDuration % 29 == 0) map->mapPptr[coordY[i]][coordX[j]] = ' ';
+					} 
+				}
 				
 				break;
 				
 			case 1:
 				
-				x = (wizard->x - (map->imageSize * 1.5) - map->outOfLimitsX) / map->imageSize;
-				y = (wizard->y - map->outOfLimitsY) / map->imageSize;
+				x = (wizard->x - (map->imageSize + map->outOfLimitsX));
+				y = (wizard->y - (map->outOfLimitsY));
 				
-				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
-				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+				
+				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+				
+				for (i = 0; i < 3; i++) {
+					
+					for (j = 0; j < 3; j++) {
+						
+						fireDuration = finalTime;
+					
+						if (map->mapPptr[coordY[i]][coordX[j]] == 'I' && fireDuration % 30 == 0) map->mapPptr[coordY[i]][coordX[j]] = 'H';
+						else if (map->mapPptr[coordY[i]][coordX[j]] == 'H' && fireDuration % 29 == 0) map->mapPptr[coordY[i]][coordX[j]] = ' ';
+					} 
+				}
 				
 				break;
 				
 			case 2:
 				
-				x = (wizard->x - map->outOfLimitsX) / map->imageSize;
-				y = (wizard->y + (map->imageSize) - map->outOfLimitsY) / map->imageSize;
+				x = (wizard->x - (map->outOfLimitsX));
+				y = (wizard->y + (map->imageSize) - (map->outOfLimitsY));
 				
-				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
-				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+				
+				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+				
+				for (i = 0; i < 3; i++) {
+					
+					for (j = 0; j < 3; j++) {
+						
+						fireDuration = finalTime;
+					
+						if (map->mapPptr[coordY[i]][coordX[j]] == 'I' && fireDuration % 30 == 0) map->mapPptr[coordY[i]][coordX[j]] = 'H';
+						else if (map->mapPptr[coordY[i]][coordX[j]] == 'H' && fireDuration % 29 == 0) map->mapPptr[coordY[i]][coordX[j]] = ' ';
+					} 
+				}
 				
 				break;
 				
 			case 3: 
 			
-				x = (wizard->x - map->outOfLimitsX) / map->imageSize;
-				y = (wizard->y - (map->imageSize) - map->outOfLimitsY) / map->imageSize;
+				x = (wizard->x - (map->outOfLimitsX));
+				y = (wizard->y - (map->imageSize + map->outOfLimitsY));
 				
-				if (map->mapPptr[y][x] == 'I') map->mapPptr[y][x] = 'H';
-				if (map->mapPptr[y][x] == 'H') map->mapPptr[y][x] = ' ';
+				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+				
+				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+				
+				for (i = 0; i < 3; i++) {
+					
+					for (j = 0; j < 3; j++) {
+						
+						fireDuration = finalTime;
+					
+						if (map->mapPptr[coordY[i]][coordX[j]] == 'I' && fireDuration % 30 == 0) map->mapPptr[coordY[i]][coordX[j]] = 'H';
+						else if (map->mapPptr[coordY[i]][coordX[j]] == 'H' && fireDuration % 29 == 0) map->mapPptr[coordY[i]][coordX[j]] = ' ';
+					} 
+				}
 				
 				break;	
 		}

@@ -11,7 +11,9 @@
 
 //Hitbox do dragao, portal do mago implacavel, Criar movimento dos ogros
 //Organizar pasta de assets
+//Bola de neve se sobra tempo
 //Mudar Musica de cada fase
+//Fazer a imersao gamer com o fogo
 //Cutscene da luta final e Gaguinho no final
 
 
@@ -31,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     firstTime = clock(); 
 
-    while(1){
+    /*while(1){
         secondTime = clock();
         aux = secondTime - firstTime;
         aux /= CLOCKS_PER_SEC;
@@ -72,7 +74,7 @@ int main(int argc, char *argv[]) {
         if(state[SDL_SCANCODE_RETURN] && selection == 3){
             exit(1);
         }
-    }
+    }*/
 
     initSound();
 

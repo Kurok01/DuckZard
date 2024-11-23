@@ -13,7 +13,7 @@ void spawnLightning(Map_t *map, int *score, int *missing);
 
 void freeze (Map_t *map, int blizzard);
 
-void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration);
+void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime);
 
 void lookingForMonster (Monster_t *monster, int which, Map_t *map);
 

@@ -221,6 +221,7 @@ void phase2 () {
 	sleep(1);
 	playSound(3);
 	
+	
 	while (missing != 0) {
 			
 		srand(time(0));
@@ -238,7 +239,7 @@ void phase2 () {
 				else beak = 1;
 			}
 			
-			if (finalTime % 300 == 0 && blizzard == 0) {
+			if ((finalTime % 300 == 0 && blizzard == 0) {
 				
 				blizzard = 1;
 				playSound(6);
@@ -319,13 +320,14 @@ void phase2 () {
 			playSound(7);
 			fireDuration = finalTime;
 			spawnFire(&mapPhase2, wizard.direction, wizard.x, wizard.y);
-			deFreeze(&mapPhase2, &wizard, fireDuration);
+			deFreeze(&mapPhase2, &wizard, fireDuration, finalTime);
 			coolDownFireTime = finalTime;
 		}
 		
 		if (finalTime <= (fireDuration + 50) && fireDuration != 0) {
 			
 			spawnFire(&mapPhase2, wizard.direction, wizard.x, wizard.y);
+			deFreeze(&mapPhase2, &wizard, fireDuration, finalTime);
 			
 		} else {
 			
@@ -333,7 +335,7 @@ void phase2 () {
 			fireDuration = 0;
 		}
 		
-		if (finalTime >= (coolDownFireTime + 150) && (coolDownFireTime) != 0) {
+		if (finalTime >= (coolDownFireTime + 70) && (coolDownFireTime) != 0) {
 			
 			coolDownFireTime = 0;
 		}
