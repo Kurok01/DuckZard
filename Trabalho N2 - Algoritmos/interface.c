@@ -28,6 +28,7 @@ SDL_Texture *internalFireImg;
 SDL_Texture *fireProjectileImg[4];
 SDL_Texture *sandImg;
 SDL_Texture *woodImg;
+SDL_Texture *metalImg;
 
 SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage;
 
@@ -271,7 +272,7 @@ void makeTextures () {
 	char pathFireProjectile[] = "assets\\FireProjectile .png";
 	int i, j;
 	//Aumentar loop
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 4; i++) {
 		
 		pathWall[11] = (i+49);
 		pathBackground[17] = (i+49);
@@ -319,6 +320,7 @@ void makeTextures () {
 	snowballImg = takeImage("assets\\Snowball.png");
 	sandImg = takeImage("assets\\sand.png");
 	woodImg = takeImage("assets\\wood.png");
+	metalImg = takeImage("assets\\cloneTexture.png");
 }
 
 void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd) {
@@ -602,7 +604,19 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 			else if (map->mapPptr[i][j] == '$') SDL_RenderCopy(renderer, thunderImg, NULL, &position);
 			else if (map->mapPptr[i][j] == 'S') SDL_RenderCopy(renderer, sandImg, NULL, &position);
 			else if (map->mapPptr[i][j] == 'A') SDL_RenderCopy(renderer, woodImg, NULL, &position);
+			else if (map->mapPptr[i][j] == 'M') SDL_RenderCopy(renderer, metalImg, NULL, &position);
   		}
+	}
+	
+	for(i = (k-1); i < qtd; i++ ){
+			SDL_Rect position;
+		
+			position.x = (monster[i].x);
+			position.y = (monster[i].y);
+			position.w = (imageSize);
+			position.h = (imageSize);
+				
+			SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
 	}
 	
 	SDL_RenderCopy(renderer, dragonImg[0], NULL, &dragonImage[0]);

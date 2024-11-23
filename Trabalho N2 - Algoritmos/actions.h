@@ -11,4 +11,6 @@ void eat(Map_t *map, Wizard_t *wizard, int *score, int *missing);
 
 void moveNPC(Map_t *map, Monster_t *character, Wizard_t *wizard,Uint32 *lastTIME, int MOVESPEED);
 
+void spawnClone(Map_t *map ,Monster_t *clone, int *numClones);
+
 #endif

@@ -79,13 +79,13 @@ void phase1 () {
 				else beak = 1;
 			}
 			
-			if ((finalTime + 50) % 200 == 0) {
+			if ((finalTime + 150) % 400 == 0) {
 				
 				spawnLightning(&mapPhase1, &score, &missing);
 				playSound(5);
 			}
 		
-			if (finalTime % 200 == 0) {
+			if (finalTime % 400 == 0) {
 				
 				if (dragonCountDown <= 0) dragonCountDown++;
 				
@@ -239,7 +239,7 @@ void phase2 () {
 				else beak = 1;
 			}
 			
-			if ((finalTime % 300 == 0 && blizzard == 0) {
+			if (finalTime % 300 == 0 && blizzard == 0) {
 				
 				blizzard = 1;
 				playSound(6);
@@ -530,6 +530,164 @@ void phase3(){
 		
 		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;
+	}
+	
+}
+
+void phase4(){
+	
+	Map_t mapPhase4;
+	Wizard_t wizard;
+	Monster_t clone[40];
+	int print, selection = 1, numClones = 4;
+	int coordenates = 0, i;
+	float firstTime, secondTime, aux = 0;
+	int finalTime, preTime = 0, pauseTime;
+	int beak = 0, x, y;
+	int score = 0, missing;
+	int over = 0, stop = 0;
+
+	
+	alocMap("Fase4.txt", &mapPhase4);
+	
+	missing = hotDogCounter(&mapPhase4);
+	
+	wizard.type = 'D';
+	
+	lookingFor(&wizard, 1, &mapPhase4);
+	
+	
+	for (i = 0; i < 4; i++) {
+		
+		clone[i].type = 'O';
+		lookingForMonster(&(clone[i]), (i+1), &mapPhase4);
+		
+		clone[i].destX = 0;
+		clone[i].destY = 0;
+		
+	}
+	
+	firstTime = clock(); 
+	
+	wizard.direction = 2;
+	
+	Uint32 lastTIME, lastTIME2[8];
+	
+	lastTIME = SDL_GetTicks();
+	
+	for (i = 0; i < 4; i++){
+		
+		lastTIME2[i] = SDL_GetTicks();
+	}
+	
+	playSound(1);
+	
+	printScreen(&mapPhase4, &wizard, clone, 4, 4, -1);
+	sleep(2);
+	printScreen(&mapPhase4, &wizard, clone, 4, 4, -2);
+	sleep(1);
+	playSound(3);
+	
+	while (missing != 0) {
+		
+		srand(time(0));
+		
+		secondTime = clock();
+		aux = secondTime - firstTime;
+		aux /= CLOCKS_PER_SEC;
+		finalTime = aux * 10;
+	
+		if (finalTime > preTime) {
+			
+			if (finalTime % 2 == 0) {
+				
+				if (beak == 1) beak = 0;
+				else beak = 1;
+			}
+			
+			if (stop != 1){
+				for (i = 0; i < numClones; i++) {
+				
+					moveNPC(&mapPhase4, &(clone[i]), &wizard ,&lastTIME, (mapPhase4.imageSize/4));
+				
+					over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
+				
+					if(over == 1) break;
+				}
+			}
+			
+			if(finalTime % 300 == 0){
+				
+				spawnClone(&mapPhase4, clone, &numClones);
+				
+			}
+		
+			
+			preTime = finalTime;
+		}
+		
+		printScreen(&mapPhase4, &wizard, clone, numClones, 4, beak);
+		
+		if (over == 1) exit(1);
+		
+		SDL_Event event;
+	
+	while (SDL_PollEvent(&event)) {
+		
+		if (event.type == SDL_QUIT);
+	}
+	
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		
+		if(state[SDL_SCANCODE_ESCAPE]){
+            while(1){
+                if(print == 0) pauseScreen(selection);
+                else pauseScreen(4);
+
+                if(finalTime > (pauseTime + 4)){
+                    pauseTime = finalTime;
+
+                    if(print == 0) print = 1;
+                    else print = 0;
+                }
+
+                while(SDL_PollEvent(&event));
+
+                state = SDL_GetKeyboardState(NULL);
+
+                if(state[SDL_SCANCODE_W]){
+                    if(selection > 1) selection--;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_S]){
+                    if(selection < 3) selection++;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 1){
+                    break;
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                    exit(1);
+                }
+            }
+        }
+        
+        move(state, &wizard, &mapPhase4, &lastTIME, 150);
+		
+		if (stop != 1){
+			for (i = 0; i < numClones; i++) {
+						
+				over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
+
+				if(over == 1) break;
+			}
+		}
+		
+		
+		eat(&mapPhase4, &wizard, &score, &missing);
 	}
 	
 }

@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 	
 	makeTextures();
 	
-	 makeScreenTextures();
+	makeScreenTextures();
 
     firstTime = clock(); 
 
@@ -77,8 +77,8 @@ int main(int argc, char *argv[]) {
     }*/
 
     initSound();
-
-    phase2();
+	
+    phase4();
 	
 	return 0;
 }
