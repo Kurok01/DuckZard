@@ -15,7 +15,7 @@ void freeze (Map_t *map, int blizzard);
 
 void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime);
 
-void deFreezeCrystal (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime, int *which);
+int deFreezeCrystal (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime, int *which);
 
 void lookingForMonster (Monster_t *monster, int which, Map_t *map);
 

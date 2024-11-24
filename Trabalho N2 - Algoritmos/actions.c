@@ -203,14 +203,16 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	int prematrizXOU, prematrizYOU, prematrizXOT, prematrizYOT;
 	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
 	int i, j;
-	static int k = 0;
+	static int k = 0, l = 1;
 	char limits[] = "*$#ASVIM54321";
 	
-	srand(time(0) + k);
+	srand(time(0) + (k * l));
 	
-	k+= 15;
+	k += 2;
+	l += 7;
 	
 	if(k == 10000) k = 0;
+	if(l == 10000) l = 0;
 	
 	matrizXD = ((wizard->x + (map->imageSize/2)) - map->outOfLimitsX) / map->imageSize;
 	matrizYD = ((wizard->y + (map->imageSize/2)) - map->outOfLimitsY) / map->imageSize;

@@ -1,9 +1,10 @@
 #ifndef PHASE_H
 #define PHASE_H
 
-void phase1();
-void phase2();
-void phase3();
-void phase4();
-void finalPhase();
+int phase1();
+int phase2();
+int phase3();
+int phase4();
+int finalPhase();
+
 #endif

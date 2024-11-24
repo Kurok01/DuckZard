@@ -7,7 +7,7 @@
 #include "structs.h"
 #include "actions.h"
 
-void phase1 () {
+int phase1 () {
 	
 	Map_t mapPhase1;
 	Wizard_t wizard;
@@ -15,12 +15,12 @@ void phase1 () {
 	int print, selection = 1;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 1, pauseTime;
+	int finalTime, preTime = 1, pauseTime, shieldTime = 0;
 	int beak = 0, x, y;
 	int score = 0, missing, spawnPower = 0;
 	int dragonCountDown = 0;
-	int over = 0, dragonOver = 0;
-	int lightning = 0;
+	int over = 3, dragonOver = 0, preOver, shield = 0;
+	int lightning = 0, option;
 	
 	alocMap("Fase1.txt", &mapPhase1);
 	
@@ -29,7 +29,6 @@ void phase1 () {
 	wizard.type = 'D';
 	
 	lookingFor(&wizard, 1, &mapPhase1);
-	
 	
 	for (i = 0; i < 8; i++) {
 		
@@ -64,6 +63,8 @@ void phase1 () {
 	
 	while (missing != 0) {
 			
+		preOver = over;
+		
 		srand(time(0));
 		
 		secondTime = clock();
@@ -89,24 +90,38 @@ void phase1 () {
 				
 				if (dragonCountDown <= 0) dragonCountDown++;
 				
-			} 
+			}
+			
+			if(shieldTime == 0 && shield == 1){
+				
+				shieldTime = finalTime;
+				
+			}
+			
+			if(finalTime > (shieldTime + 70) && shieldTime != 0){
+				
+				shield = 0;
+				shieldTime = 0;
+			}
 			
 			for (i = 0; i < 8; i++) {
 				
 				moveNPC(&mapPhase1, &(ogres[i]), &wizard ,&lastTIME, (mapPhase1.imageSize/4));
+	
+				if(shield != 1) over -= gameOver(&wizard, &mapPhase1, ogres[i].x, ogres[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 				
-				over = gameOver(&wizard, &mapPhase1, ogres[i].x, ogres[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
-				
-				if(over == 1) break;
+				if(preOver != over) shield = 1;
 			}
 			
 			preTime = finalTime;
 		}
 		
-		dragonOver = phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1);
+		if(shield != 1) over -= phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1);
+		else phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1);
 		
-		if (over == 1) exit(1);
-		else if (dragonOver == 1) exit(1);
+		if(preOver != over) shield = 1;
+		
+		if (over <= 0) break;
 		
 		SDL_Event event;
 	
@@ -148,7 +163,7 @@ void phase1 () {
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                    exit(1);
+                    return 0;
                 }
             }
         }
@@ -157,17 +172,41 @@ void phase1 () {
 		eatPill(&mapPhase1, &wizard, &lightning);
 		
 		for (i = 0; i < 8; i++) {
-						
-			over = gameOver(&wizard, &mapPhase1, ogres[i].x, ogres[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
 
-			if(over == 1) break;
+			if(shield != 1) over -= gameOver(&wizard, &mapPhase1, ogres[i].x, ogres[i].y, mapPhase1.imageSize, mapPhase1.imageSize);
+			
+			if(preOver != over) shield = 1;
 		}
 		
 		eat(&mapPhase1, &wizard, &score, &missing);
 	}
+	
+	freeMap(&mapPhase1);
+	
+	if(missing == 0){
+		option = winningScreen();
+		if(option == 0){
+			printScreen(&mapPhase1, &wizard, ogres, 8, 0, beak);
+			return 0;
+		}else{
+			return 1;
+		}	
+	}else{
+		
+		option = gameOverScreen();
+		
+		if(option == 0){
+			printScreen(&mapPhase1, &wizard, ogres, 8, 0, beak);
+			return -1;
+		}else{
+			return 0;
+		}	
+		
+		
+	}
 }
 
-void phase2 () {
+int phase2 () {
 	
 	Map_t mapPhase2;
 	Wizard_t wizard;
@@ -178,8 +217,8 @@ void phase2 () {
 	int finalTime, preTime = 1, pauseTime;
 	int beak = 0, x, y;
 	int score = 0, missing;
-	int over = 0;
-	int blizzard = 0, coolDownFireTime = 0, fireDuration = 0;
+	int over = 3, preOver, shield = 0, option;
+	int blizzard = 0, coolDownFireTime = 0, fireDuration = 0, shieldTime = 0;
 	
 	alocMap("Fase2.txt", &mapPhase2);
 	
@@ -223,6 +262,8 @@ void phase2 () {
 	
 	
 	while (missing != 0) {
+		
+		preOver = over;
 			
 		srand(time(0));
 		
@@ -253,9 +294,9 @@ void phase2 () {
 				
 				moveNPC(&mapPhase2, &(yetis[i]), &wizard ,&lastTIME, (mapPhase2.imageSize/4));
 				
-				over = gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
+				if(shield != 1) over -= gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
 				
-				if(over == 1) exit(1);
+				if(preOver != over) shield = 1;
 			}
 			
 			if(finalTime % 5 == 0 && blizzard == 0){
@@ -270,17 +311,31 @@ void phase2 () {
 				numSnowBall = 0;
 			}
 			
+			if(shieldTime == 0 && shield == 1){
+				
+				shieldTime = finalTime;
+				
+			}
+			
+			if(finalTime > (shieldTime + 70) && shieldTime != 0){
+				
+				shield = 0;
+				shieldTime = 0;
+			}
+			
 			for (i = 0; i < numSnowBall; i++) {
 				
 				if(i == 0) moveSnowBall(&mapPhase2, snowBall, &numSnowBall);
 
-				over = gameOver(&wizard, &mapPhase2, snowBall[i].x, snowBall[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
+				if(shield != 1) over -= gameOver(&wizard, &mapPhase2, snowBall[i].x, snowBall[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
 				
-				if(over == 1) exit(1);
+				if(preOver != over) shield = 1;
 			}
 			
 			preTime = finalTime;
 		}
+		
+		if(over <= 0) break;
 		
 		SDL_Event event;
 	
@@ -322,7 +377,9 @@ void phase2 () {
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                    exit(1);
+                	
+                	resetSnowBall();
+                    return 0;
                 }
             }
         }
@@ -363,16 +420,41 @@ void phase2 () {
 		
 		for (i = 0; i < 8; i++) {
 						
-			over = gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
+			if(shield != 1) over -= gameOver(&wizard, &mapPhase2, yetis[i].x, yetis[i].y, mapPhase2.imageSize, mapPhase2.imageSize);
 
-			if(over == 1) exit(1);
+			if(preOver != over) shield = 1;
 		}
 		
 		eat(&mapPhase2, &wizard, &score, &missing);
 	}
+	
+	freeMap(&mapPhase2);
+	
+	resetSnowBall();
+	
+	if(missing == 0){
+		
+		option = winningScreen();
+		if(option == 0){
+			printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak);
+			return 0;
+		}else{
+			return 1;
+		}
+	}else{
+		
+		option = gameOverScreen();
+		if(option == 0){
+			printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak);
+			return -1;
+		}else{
+			return 0;
+		}	
+	}
+	
 }
 
-void phase3(){
+int phase3(){
 	
 	Map_t mapPhase3;
 	Wizard_t wizard;
@@ -381,9 +463,9 @@ void phase3(){
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 0, timeStopTime = 0, pauseTime;
-	int beak = 0, x, y;
-	int score = 0, missing, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
-	int over = 0, stop = 0;
+	int beak = 0, x, y, shield = 0;
+	int score = 0, missing, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0, shieldTime = 0;
+	int over = 3, stop = 0, preOver, option;
 
 	
 	alocMap("Fase3.txt", &mapPhase3);
@@ -428,6 +510,8 @@ void phase3(){
 	
 	while (missing != 0) {
 		
+		preOver = over;
+		
 		srand(time(0));
 		
 		secondTime = clock();
@@ -448,11 +532,23 @@ void phase3(){
 				
 					moveNPC(&mapPhase3, &(dogs[i]), &wizard ,&lastTIME, (mapPhase3.imageSize/1.5));
 				
-					over = gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
+					if(shield != 1) over -= gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 				
-					if(over == 1) break;
+					if(preOver != over) shield = 1;
 				}
-			} 
+			}
+			
+			if(shieldTime == 0 && shield == 1){
+				
+				shieldTime = finalTime;
+				
+			}
+			
+			if(finalTime > (shieldTime + 70) && shieldTime != 0){
+				
+				shield = 0;
+				shieldTime = 0;
+			}
 		
 			
 			preTime = finalTime;
@@ -460,7 +556,7 @@ void phase3(){
 		
 		printScreen(&mapPhase3, &wizard, dogs, 11, 3, beak);
 		
-		if (over == 1) exit(1);
+		if (over <= 0) break;
 		
 		SDL_Event event;
 	
@@ -502,7 +598,7 @@ void phase3(){
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                    exit(1);
+                    return 0;
                 }
             }
         }
@@ -515,9 +611,9 @@ void phase3(){
 		if (stop != 1){
 			for (i = 0; i < 11; i++) {
 						
-				over = gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
+				if(shield != 1) over -= gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 
-				if(over == 1) break;
+				if(preOver != over) shield = 1;
 			}
 		}
 		
@@ -552,10 +648,29 @@ void phase3(){
 		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;
 	}
+	freeMap(&mapPhase3);
 	
+	if(missing == 0){
+		option = winningScreen();
+		if(option == 0){
+			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak);
+			return 0;
+		}else{
+			return 1;
+		}
+	}else{
+		
+		option = gameOverScreen();
+		if(option == 0){
+			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak);
+			return -1;
+		}else{
+			return 0;
+		}	
+	}
 }
 
-void phase4(){
+int phase4(){
 	
 	Map_t mapPhase4;
 	Wizard_t wizard;
@@ -563,10 +678,10 @@ void phase4(){
 	int print, selection = 1, numClones = 4;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
-	int finalTime, preTime = 0, pauseTime, transformationCoolDown = 0, transformationDuration = 0;
-	int beak = 0, x, y;
+	int finalTime, preTime = 0, pauseTime, transformationCoolDown = 0, transformationDuration = 0, shieldTime = 0;
+	int beak = 0, x, y, shield = 0;
 	int score = 0, missing;
-	int over = 0, stop = 0;
+	int over = 3, preOver, stop = 0, option;
 
 	
 	alocMap("Fase4.txt", &mapPhase4);
@@ -611,6 +726,8 @@ void phase4(){
 	
 	while (missing != 0) {
 		
+		preOver = over;
+		
 		srand(time(0));
 		
 		secondTime = clock();
@@ -626,14 +743,26 @@ void phase4(){
 				else beak = 1;
 			}
 			
-				for (i = 0; i < numClones; i++) {
+			for (i = 0; i < numClones; i++) {
 				
-					moveNPC(&mapPhase4, &(clone[i]), &wizard ,&lastTIME, (mapPhase4.imageSize/4));
+				moveNPC(&mapPhase4, &(clone[i]), &wizard ,&lastTIME, (mapPhase4.imageSize/4));
 				
-					if(wizard.type == 'D')over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
+				if(wizard.type == 'D' && shield != 1) over -= gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
 				
-					if(over == 1) break;
-				}
+				if(preOver != over) shield = 1;
+			}
+			
+			if(shieldTime == 0 && shield == 1){
+				
+				shieldTime = finalTime;
+				
+			}
+			
+			if(finalTime > (shieldTime + 70) && shieldTime != 0){
+				
+				shield = 0;
+				shieldTime = 0;
+			}
 			
 			
 			if(finalTime % 300 == 0){
@@ -646,7 +775,7 @@ void phase4(){
 		
 		printScreen(&mapPhase4, &wizard, clone, numClones, 4, beak);
 		
-		if (over == 1) exit(1);
+		if (over <= 0) break;
 		
 		SDL_Event event;
 	
@@ -709,7 +838,7 @@ void phase4(){
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                    exit(1);
+                    return 0;
                 }
             }
         }
@@ -719,18 +848,40 @@ void phase4(){
 		if (stop != 1){
 			for (i = 0; i < numClones; i++) {
 						
-				if(wizard.type == 'D') over = gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
+				if(wizard.type == 'D' && shield != 1) over -= gameOver(&wizard, &mapPhase4, clone[i].x, clone[i].y, mapPhase4.imageSize, mapPhase4.imageSize);
 
-				if(over == 1) break;
+				if(preOver != over) shield = 1;
 			}
 		}
 		
 		
 		eat(&mapPhase4, &wizard, &score, &missing);
 	}
+	
+	freeMap(&mapPhase4);
+	
+	if(missing == 0){
+		option = winningScreen();
+		if(option == 0){
+			printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak);
+			return 0;
+		}else{
+			return 1;
+		}
+	}else{
+		
+		option = gameOverScreen();
+		if(option == 0){
+			printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak);
+			return -1;
+		}else{
+			return 0;
+		}	
+	}
+	
 }
 
-void finalPhase () {
+int finalPhase () {
 	
 	Map_t mapPhase5;
 	Wizard_t wizard;
@@ -742,9 +893,9 @@ void finalPhase () {
 	int beak = 0, x, y;
 	int score = 0, missing = 4, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
 	int dragonCountDown = 0;
-	int over = 0, dragonOver = 0, coolDownFireTime = 0, fireDuration = 0, stop = 0;
-	int lightning = 0;
-	int auxTime = 0;
+	int over = 3, preOver, dragonOver = 0, coolDownFireTime = 0, fireDuration = 0, stop = 0, deFreezeCorrect = 0;
+	int lightning = 0, shield = 0;
+	int auxTime = 0, shieldTime = 0, option;
 	int blizzard = 0;
 	int which[4] = {4, 4, 4, 4};
 	
@@ -787,6 +938,8 @@ void finalPhase () {
 	
 	while (missing != 0) {
 		
+		preOver = over;
+		
 		srand(time(0));
 		
 		secondTime = clock();
@@ -814,51 +967,94 @@ void finalPhase () {
 				else beak = 1; 
 			}
 			
-			if ((finalTime + 150) % 400 == 0) {
+			if ((finalTime + 150) % 400 == 0 && which[0] > 0) {
 				
 				spawnLightning(&mapPhase5, &score, &missing);
 				playSound(5);
 			}
 		
-			if (finalTime % 400 == 0) {
+			if (finalTime % 400 == 0 && which[0] > 0) {
 				
 				if (dragonCountDown <= 0) dragonCountDown++;
 				
 			}
 			
-			if (finalTime % 400 == 0 && blizzard == 0 && timeStopTime == 0) {
+			if (finalTime % 400 == 0 && blizzard == 0 && timeStopTime == 0 && which[1] > 0) {
 				
 				blizzard = 1;
 				playSound(6);
 			}
 			
-			if(finalTime % 300 == 0 && timeStopTime == 0){
+			if(finalTime % 300 == 0 && timeStopTime == 0 && which[3] > 0){
 				
 				spawnClone(&mapPhase5, monsters, &numClones, 5);	
 			}
 			
 			if (finalTime % 600 == 0 && blizzard >= 1 && timeStopTime == 0) blizzard = 0; 
 				
+			if(shieldTime == 0 && shield == 1){
 				
+				shieldTime = finalTime;
+				
+			}
+			
+			if(finalTime > (shieldTime + 70) && shieldTime != 0){
+				
+				shield = 0;
+				shieldTime = 0;
+			}
+			
 			for (i = 0; i < numClones; i++) {
+				
+				if(which[0] == 0 && (i <= 1)) continue; 
+				if(which[1] == 0 && (i == 2 || i == 3)) continue; 
+				if(which[2] == 0 && (i == 4 || i == 5)) continue; 
+				if(which[3] == 0 && (i == 6 || i >= 7)) continue; 
 				
 				moveNPC(&mapPhase5, &(monsters[i]), &wizard ,&lastTIME, (mapPhase5.imageSize/4));
 				
-				over = gameOver(&wizard, &mapPhase5, monsters[i].x, monsters[i].y, mapPhase5.imageSize, mapPhase5.imageSize);
+				if(shield != 1) over -= gameOver(&wizard, &mapPhase5, monsters[i].x, monsters[i].y, mapPhase5.imageSize, mapPhase5.imageSize);
 				
-				if(over == 1) exit(1);
+				if(preOver != over) shield = 1;
+			}
+				
+			preTime = finalTime;			
+		}
+			
+			if(which[0] == 0){
+				
+				monsters[0].x = -100;
+				monsters[1].y = -100;
+				
+			}
+			if(which[1] == 0){
+				
+				monsters[2].x = -100;
+				monsters[3].y = -100;
+				
+			}
+			if(which[2] == 0){
+				
+				monsters[4].x = -100;
+				monsters[5].y = -100;
+				
+			}
+			if(which[3] == 0){
+				
+				for(i = 6; i <= 15; i++){
+					
+					monsters[i].x = -100;
 				}
 				
-				preTime = finalTime;			
 			}
 			
 			if (timeStopTime == 0) phase2ElementsSpawn(&mapPhase5, &blizzard, &wizard, monsters, beak, numClones, 5);
 			
-			if (timeStopTime == 0) dragonOver = phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5);
+			if (timeStopTime == 0 && shield != 1) over -= phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5);
+			else if(timeStopTime == 0 && shield == 1) phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5);
 			else printScreen(&mapPhase5, &wizard, monsters, numClones, 5, beak);
 				
-		if (over == 1) exit(1);
-		else if (dragonOver == 1) exit(1);
+		if(over <= 0) break;
 		
 		SDL_Event event;
 	
@@ -869,7 +1065,7 @@ void finalPhase () {
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 		
-		if(state[SDL_SCANCODE_C] && transformationCoolDown == 0){
+		if(state[SDL_SCANCODE_C] && transformationCoolDown == 0 && which[3] > 0){
 			
 			wizard.type = 'O';
 			transformationDuration = finalTime;
@@ -920,7 +1116,7 @@ void finalPhase () {
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                    exit(1);
+                    return 0;
                 }  
             }
         }
@@ -935,14 +1131,26 @@ void finalPhase () {
 			playSound(7);
 			fireDuration = finalTime;
 			spawnFire(&mapPhase5, wizard.direction, wizard.x, wizard.y);
-			deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
+			deFreezeCorrect = deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
+			if(deFreezeCorrect == 1){
+				
+				spawnNexus(&mapPhase5, which);
+				deFreezeCorrect = 0;
+				
+			}
 			coolDownFireTime = finalTime;
 		}
 		
 		if (finalTime <= (fireDuration + 50) && fireDuration != 0) {
 			
 			spawnFire(&mapPhase5, wizard.direction, wizard.x, wizard.y);
-			deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
+			deFreezeCorrect = deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
+			if(deFreezeCorrect == 1){
+				
+				spawnNexus(&mapPhase5, which);
+				deFreezeCorrect = 0;
+				
+			}
 			
 		} else {
 			
@@ -950,7 +1158,7 @@ void finalPhase () {
 			fireDuration = 0;
 		}
 		
-		if (finalTime >= (coolDownFireTime + 70) && (coolDownFireTime) != 0) {
+		if (finalTime >= (coolDownFireTime + 100) && (coolDownFireTime) != 0) {
 			
 			coolDownFireTime = 0;
 		}
@@ -962,13 +1170,18 @@ void finalPhase () {
 		if (timeStopTime == 0) eatPill(&mapPhase5, &wizard, &lightning);
 		
 		for (i = 0; i < 8; i++) {
+			
+			if(which[0] == 0 && (i <= 1)) continue; 
+			if(which[1] == 0 && (i == 2 || i == 3)) continue; 
+			if(which[2] == 0 && (i == 4 || i == 5)) continue; 
+			if(which[3] == 0 && (i == 6 || i >= 7)) continue; 
 						
-			over = gameOver(&wizard, &mapPhase5, monsters[i].x, monsters[i].y, mapPhase5.imageSize, mapPhase5.imageSize);
+			if(shield != 1) over -= gameOver(&wizard, &mapPhase5, monsters[i].x, monsters[i].y, mapPhase5.imageSize, mapPhase5.imageSize);
 
-			if(over == 1) break;
+			if(preOver != over) shield = 1;
 		}
 		
-		if (state[SDL_SCANCODE_E] && coolDownStopTime == 0){
+		if (state[SDL_SCANCODE_E] && coolDownStopTime == 0 && which[2] > 0){
 			
 			stopTimeMode();
 			
@@ -996,4 +1209,30 @@ void finalPhase () {
 		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;	
 	}
+	
+	freeMap(&mapPhase5);
+	
+	if(missing == 0){
+		option = winningScreen();
+		if(option == 0){
+			printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak);
+			return 0;
+		}else{
+			return 1;
+		}
+	}else{
+		
+		option = gameOverScreen();
+		if(option == 0){
+			printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak);
+			
+			return -1;
+			
+		}else{
+			
+			return 0;
+			
+		}	
+	}
+	
 }

@@ -147,7 +147,6 @@ void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime) {
 	
 	float x = 0, y = 0;
 	int coordX[3], coordY[3], i, j;
-	static int coolDown[9];
 	
 	if (fireDuration != 0) {
 		
@@ -260,222 +259,136 @@ void deFreeze (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime) {
 	}
 }
 
-void deFreezeCrystal (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime, int *which) {
-	
+int deFreezeCrystal (Map_t *map, Wizard_t *wizard, int fireDuration, int finalTime, int *which) {
 	float x = 0, y = 0;
-	int coordX[3], coordY[3], i, j, k, l, m;
-	static int coolDown[9];
+	int coordX[3], coordY[3], i, j,k, correct = 0, minY, maxY, minX, maxX, whichNum;
 	char crystalType;
+	static int preFinalTime;
+
+	if(finalTime > preFinalTime) fireDuration = finalTime;
+	else fireDuration = 1;
 	
-	if (fireDuration != 0) {
+	switch(wizard->direction){
 		
-		switch (wizard->direction) {
+		case 0:
+			x = (wizard->x + (map->imageSize) - (map->outOfLimitsX));
+			y = (wizard->y - (map->outOfLimitsY));
+				
+			coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+			coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+			coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+				
+			coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+			coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+			coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+			break;
 			
-			case 0:
-					
-				x = (wizard->x + (map->imageSize) - (map->outOfLimitsX));
-				y = (wizard->y - (map->outOfLimitsY));
+		case 1:
+			x = (wizard->x - (map->imageSize + map->outOfLimitsX));
+			y = (wizard->y - (map->outOfLimitsY));
 				
-				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
-				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
-				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+			coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+			coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+			coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
 				
-				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
-				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
-				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+			coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+			coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+			coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
 				
-				for (i = 0; i < 3; i++) {
-					
-					for (j = 0; j < 3; j++) {
-						
-						fireDuration = finalTime;
-						
-						for (m = 1; m <= 5; m++) {
-						
-						crystalType = (m + 48);
-						
-						if (map->mapPptr[coordY[i]][coordX[j]] == crystalType && fireDuration % 30 == 0) {
-							
-							for (k = coordY[i] - 5; k < coordY[i] + 6; k++) {
-								
-								for (l = coordX[j] - 5; l < coordX[j] + 6; l++) {
-									
-									if (k < 0 || k > 49) k = 0;
-									
-									if (l < 0 || l > 25) l = 0; 
-									
-									if (map->mapPptr[k][l] == crystalType) {
-										
-										if (k < 25 && l < 12) which[0] -= 1;
-										if (k > 25 && l < 12) which[1] -= 1;
-										if (k < 25 && l > 12) which[2] -= 1;
-										if (k > 25 && l < 12) which[3] -= 1;
-									
-										map->mapPptr[k][l] = crystalType - 1;
-										}
-									}
-								}
-							}	
-						}
-					} 
-				}
-				
-				break;
-				
-			case 1:
-				
-				x = (wizard->x - (map->imageSize + map->outOfLimitsX));
-				y = (wizard->y - (map->outOfLimitsY));
-				
-				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
-				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
-				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
-				
-				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
-				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
-				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
-				
-				for (i = 0; i < 3; i++) {
-					
-					for (j = 0; j < 3; j++) {
-						
-						fireDuration = finalTime;
-						
-						for (m = 1; m <= 5; m++) {
-						
-						crystalType = (m + 48);
-						
-						if (map->mapPptr[coordY[i]][coordX[j]] == crystalType && fireDuration % 30 == 0) {
-							
-							for (k = coordY[i] - 5; k < coordY[i] + 6; k++) {
-								
-								for (l = coordX[j] - 5; l < coordX[j] + 6; l++) {
-									
-									if (k < 0 || k > 49) k = 0;
-									
-									if (l < 0 || l > 25) l = 0; 
-									
-									if (map->mapPptr[k][l] == crystalType) {
-										
-										if (k < 25 && l < 12) which[0] -= 1;
-										if (k > 25 && l < 12) which[1] -= 1;
-										if (k < 25 && l > 12) which[2] -= 1;
-										if (k > 25 && l < 12) which[3] -= 1;
-									
-										map->mapPptr[k][l] = crystalType - 1;
-										}
-									}
-								}
-							}	
-						}
-					} 
-				}
-				
-				break;
-				
-			case 2:
-				
-				x = (wizard->x - (map->outOfLimitsX));
-				y = (wizard->y + (map->imageSize) - (map->outOfLimitsY));
-				
-				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
-				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
-				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
-				
-				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
-				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
-				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
-				
-				for (i = 0; i < 3; i++) {
-					
-					for (j = 0; j < 3; j++) {
-						
-						fireDuration = finalTime;
-					
-						for (m = 1; m <= 5; m++) {
-						
-						crystalType = (m + 48);
-						
-						if (map->mapPptr[coordY[i]][coordX[j]] == crystalType && fireDuration % 30 == 0) {
-							
-							for (k = coordY[i] - 5; k < coordY[i] + 6; k++) {
-								
-								for (l = coordX[j] - 5; l < coordX[j] + 6; l++) {
-									
-									if (k < 0 || k > 49) k = 0;
-									
-									if (l < 0 || l > 25) l = 0; 
-									
-									if (map->mapPptr[k][l] == crystalType) {
-										
-										if (k < 25 && l < 12) which[0] -= 1;
-										if (k > 25 && l < 12) which[1] -= 1;
-										if (k < 25 && l > 12) which[2] -= 1;
-										if (k > 25 && l < 12) which[3] -= 1;
-									
-										map->mapPptr[k][l] = crystalType - 1;
-										}
-									}
-								}
-							}	
-						}
-					} 
-				}
-				
-				break;
-				
-			case 3: 
+			break;
 			
-				x = (wizard->x - (map->outOfLimitsX));
-				y = (wizard->y - (map->imageSize + map->outOfLimitsY));
+		case 2:
+			
+			x = (wizard->x - (map->outOfLimitsX));
+			y = (wizard->y + (map->imageSize) - (map->outOfLimitsY));
 				
-				coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
-				coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
-				coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
-				
-				coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
-				coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
-				coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
-				
-				for (i = 0; i < 3; i++) {
-					
-					for (j = 0; j < 3; j++) {
-						
-						fireDuration = finalTime;
-					
-						for (m = 1; m <= 5; m++) {
-						
-						crystalType = (m + 48);
-						
-						if (map->mapPptr[coordY[i]][coordX[j]] == crystalType && fireDuration % 30 == 0) {
+			coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+			coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+			coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
 							
-							for (k = coordY[i] - 5; k < coordY[i] + 6; k++) {
-								
-								for (l = coordX[j] - 5; l < coordX[j] + 6; l++) {
-									
-									if (k < 0 || k > 49) k = 0;
-									
-									if (l < 0 || l > 25) l = 0; 
-									
-									if (map->mapPptr[k][l] == crystalType) {
-										
-										if (k < 25 && l < 12) which[0] -= 1;
-										if (k > 25 && l < 12) which[1] -= 1;
-										if (k < 25 && l > 12) which[2] -= 1;
-										if (k > 25 && l < 12) which[3] -= 1;
-									
-										map->mapPptr[k][l] = crystalType - 1;
-										}
-									}
-								}
-							}	
-						}
-					} 
-				}
+			coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+			coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+			coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+	
+			break;
+			
+		case 3:
+			
+			x = (wizard->x - (map->outOfLimitsX));
+			y = (wizard->y - (map->imageSize + map->outOfLimitsY));
 				
-				break;	
-		}
+			coordX[0] = ((x - (map->imageSize / 8)) / map->imageSize);
+			coordX[1] = ((x + (map->imageSize / 2)) / map->imageSize);
+			coordX[2] = ((x + map->imageSize + (map->imageSize / 8)) / map->imageSize); 
+				
+			coordY[0] = ((y - (map->imageSize / 8)) / map->imageSize);
+			coordY[1] = ((y + (map->imageSize / 2)) / map->imageSize);
+			coordY[2] = (((y + map->imageSize) + (map->imageSize / 8)) / map->imageSize);
+				
+			break;	
 	}
+	
+	if(fireDuration % 30 == 0){
+		if(coordX[1] < 25 && coordY[1] < 12){
+			minY = 2;
+			maxY = 5;
+			minX = 3;
+			maxX = 6;
+			whichNum = 0;
+		}else if(coordX[1] > 25 && coordY[1] < 12){
+			minY = 2;
+			maxY = 5;
+			minX = 44;
+			maxX = 47;
+			whichNum = 1;
+		}else if(coordX[1] < 25 && coordY[1] > 12){
+			minY = 21;
+			maxY = 24;
+			minX = 3;
+			maxX = 6;
+			whichNum = 2;
+		}else if(coordX[1] > 25 && coordY[1] > 12){
+			minY = 21;
+			maxY = 24;
+			minX = 44;
+			maxX = 47;
+			whichNum = 3;
+		}
+			
+		for(i = minY; i <= maxY; i++){
+			for(j = minX; j <= maxX; j++){
+				for(k = 0; k < 3; k++){
+						
+					if(coordY[k] == i && coordX[k] == j){
+						correct = 1;
+						break;
+					}
+				}
+				if(correct == 1) break;
+				}
+			if(correct == 1) break;
+		}
+			
+		if(correct == 1){
+				
+			for(i = minY; i <= maxY; i++){
+				for(j = minX; j <= maxX; j++){
+					crystalType = (map->mapPptr[i][j] - 1);
+						
+					if(crystalType >= 49) map->mapPptr[i][j] = crystalType;
+						
+				}
+					
+			}
+				
+			if(which[whichNum] >= 1) which[whichNum] -= 1; 
+			preFinalTime = finalTime;
+			return 1;
+		}	
+	}
+	preFinalTime = finalTime;
+	
+	return 0;
 }
 
 void spawnLightning(Map_t *map, int *score, int *missing) {
@@ -527,7 +440,7 @@ int gameOver (Wizard_t *wizard, Map_t *map, float xo, float yo, int imageSizeX, 
 		if ((((xo < xd) && (xO > xd)) || ((xo < xD) && (xO > xD))) && 
 			(((yo < yd) && (yO > yd)) || ((yo < yD) && (yO > yD)))) {
 				
-			return 1;	
+			if(wizard->type == 'D') return 1;	
 		}
 	
 	return 0;

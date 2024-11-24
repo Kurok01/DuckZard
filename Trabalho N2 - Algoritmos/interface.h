@@ -33,6 +33,8 @@ void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls);
 
 void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls);
 
+void resetSnowBall();
+
 void spawnNexus(Map_t *map, int *which);
 
 void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak);

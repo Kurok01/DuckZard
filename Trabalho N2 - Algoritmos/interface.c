@@ -329,14 +329,19 @@ void makeTextures () {
 
 void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd, int phase) {
 	
-	int i, temp = 5, aux = 5; 
-	static int blizzard2, secondRound = 0;
+	int i, temp = 5; 
+	static int blizzard2, secondRound = 0, start = 0;
 	
 	if (*blizzard == 0){
 		
 		blizzard2 = 0;
 		secondRound = 0;
 	} 
+	
+	if((*blizzard) != 0 && start == 0){
+		blizzard2 = 1;
+		start = 1;
+	}
 	
 	if((*blizzard) != 0 && (*blizzard) <= 20){
 		
@@ -350,7 +355,7 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 	
 	if (*blizzard != 0) {
 		
-		blizzard2 += aux;	
+		blizzard2 += temp;	
 		*blizzard += temp;
 	}
 	
@@ -361,44 +366,45 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 	
 	blizzardImage[0].x = (map->screenWidth + (map->outOfLimitsX * 2)) - *blizzard;
 	blizzardImage[0].y = map->outOfLimitsY;
-	blizzardImage[0].w = map->screenWidth;
+	blizzardImage[0].w = map->screenWidth + (map->outOfLimitsX * 2);
 	blizzardImage[0].h = map->screenHeight;
 	
 	if (secondRound == 0) {
 	   	
 		blizzardImage[1].x = (map->screenWidth * 2) + (map->outOfLimitsX * 2) - blizzard2;
 		blizzardImage[1].y = map->outOfLimitsY;
-		blizzardImage[1].w = map->screenWidth;
+		blizzardImage[1].w = map->screenWidth + (map->outOfLimitsX * 2);
 		blizzardImage[1].h = map->screenHeight;
 		
 	} else {
 
 		blizzardImage[1].x = (map->screenWidth) + (map->outOfLimitsX * 2) - blizzard2;
 		blizzardImage[1].y = map->outOfLimitsY;
-		blizzardImage[1].w = map->screenWidth;
+		blizzardImage[1].w = map->screenWidth + (map->outOfLimitsX * 2);
 		blizzardImage[1].h = map->screenHeight;
 		
 	}
 	
 	if (*blizzard != 0) {
 		
-	   	if (blizzardImage[0].x <= (-(map->screenWidth + (map->outOfLimitsX * 2)))) {
+	   	if (blizzardImage[0].x <= (-(map->screenWidth))) {
 	   		
 	   	   *blizzard = 1;
-	   		blizzardImage[0].x = (map->screenWidth + map->outOfLimitsX) - *blizzard;
+	   		blizzardImage[0].x = (map->screenWidth + (map->outOfLimitsX * 2)) - *blizzard;
 			blizzardImage[0].y = map->outOfLimitsY;
-			blizzardImage[0].w = map->screenWidth;
+			blizzardImage[0].w = map->screenWidth + (map->outOfLimitsX * 2);
 			blizzardImage[0].h = map->screenHeight;
 		}
 		   
-		if (blizzardImage[1].x <= (-(map->screenWidth + (map->outOfLimitsX * 2)))) {
+		if (blizzardImage[1].x <= (-(map->screenWidth))) {
 		
 			blizzard2 = 1;
 			blizzardImage[1].x = (map->screenWidth) + (map->outOfLimitsX * 2) - blizzard2;
 			blizzardImage[1].y = map->outOfLimitsY;
-			blizzardImage[1].w = map->screenWidth;
+			blizzardImage[1].w = map->screenWidth + (map->outOfLimitsX * 2);
 			blizzardImage[1].h = map->screenHeight;
 			secondRound = 1;
+			start = 0;
 		}
 	   	
 	   	freezedImage.x =  map->outOfLimitsX;
@@ -562,7 +568,6 @@ void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls){
 	snowBallImage[(*numSnowBalls) + 1].x = -100;
 	
 	(*numSnowBalls)++;
-	
 }
 
 void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
@@ -573,7 +578,6 @@ void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 			snowBall[i].y += 10;
 			snowBallImage[i].y += 10;
 			i++;
-			printf("%.1f\n", snowBall[i].y);
 			if(snowBall[i].y >= (map->screenHeight + (map->outOfLimitsY * 2))){
 				snowBall[i].x = snowBall[(*numSnowBalls)-1].x;
 				snowBall[i].y = snowBall[(*numSnowBalls)-1].y;
@@ -585,6 +589,14 @@ void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 				snowBallImage[(*numSnowBalls)-1].x = -100;
 				snowBall[(*numSnowBalls)-1].x = -100;
 			}
+	}
+}
+
+void resetSnowBall(){
+	int i;
+	
+	for(i = 0; i < 40; i++){
+		snowBallImage[i].x = -100;	
 	}
 }
 
@@ -631,7 +643,10 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	int i, j, k = 0, l = 0;
 	int x, y, aux = 0;
 	static int tempLimits = 0;
+	static int phaseStatic = 1;
 	int over = 0;
+	
+	if(phaseStatic != phase) tempLimits = 0;
 	
 	height = displayMode.h / map->height;
 	width = displayMode.w / map->width;
@@ -729,7 +744,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 				position.w = map->imageSize * 4;
 				position.h = map->imageSize * 4;
 				
-				SDL_RenderCopy(renderer, monsterImg[5], NULL, &position);
+				SDL_RenderCopy(renderer, monsterImg[4], NULL, &position);
 			}
 			else if (map->mapPptr[i][j] == '+') SDL_RenderCopy(renderer, lightningPillImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '=') SDL_RenderCopy(renderer, internalFireImg, NULL, &position);
@@ -774,6 +789,8 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 		SDL_RenderCopy(renderer, snowballImg, NULL, &snowBallImage[i]);
 		i++;
 	}
+	
+	phaseStatic = phase;
 	
 	SDL_RenderPresent(renderer);
 	SDL_Delay(16);

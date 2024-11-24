@@ -17,69 +17,194 @@
 //Juntar imagens do blizzard
 //Cutscene da luta final e Gaguinho no final
 
-
 int main(int argc, char *argv[]) {
-	
 	const Uint8 *state;
     int  selection = 1;
     float firstTime, secondTime, aux = 0;
-    int finalTime, preTime = 1, print;
+    int finalTime, preTime = 1, print, phases = 5, option = 0;
     SDL_Event event;
 	
 	initSDL();
+	
+	initSound();
 	
 	makeTextures();
 	
 	makeScreenTextures();
 
-    firstTime = clock(); 
-
-    /*while(1){
-        secondTime = clock();
-        aux = secondTime - firstTime;
-        aux /= CLOCKS_PER_SEC;
-        finalTime = aux * 10;
-
-        if(print == 0) mainScreen(selection);
-        else mainScreen(4);
-
-        if(finalTime > (preTime + 4)){
-            preTime = finalTime;
-
-            if(print == 0) print = 1;
-            else print = 0;
-        }
-
-        while(SDL_PollEvent(&event));
-
-        state = SDL_GetKeyboardState(NULL);
-
-        if(state[SDL_SCANCODE_W]){
-
-            if(selection > 1) selection--;
-            mainScreen(selection);
-
-        }
-
-        if(state[SDL_SCANCODE_S]){
-
-            if(selection < 3) selection++;
-            mainScreen(selection);
-
-        }
-
-        if(state[SDL_SCANCODE_RETURN] && selection == 1){
-            break;
-        }
-
-        if(state[SDL_SCANCODE_RETURN] && selection == 3){
-            exit(1);
-        }
-    }*/
-
-    initSound();
+    firstTime = clock();
+    while(1){
+		
+		if(option == 0){
+		    while(1){
+		        secondTime = clock();
+		        aux = secondTime - firstTime;
+		        aux /= CLOCKS_PER_SEC;
+		        finalTime = aux * 10;
+		
+		        if(print == 0) mainScreen(selection);
+		        else mainScreen(4);
+		
+		        if(finalTime > (preTime + 4)){
+		            preTime = finalTime;
+		
+		            if(print == 0) print = 1;
+		            else print = 0;
+		        }
+		
+		        while(SDL_PollEvent(&event));
+		
+		        state = SDL_GetKeyboardState(NULL);
+		
+		        if(state[SDL_SCANCODE_W]){
+		
+		            if(selection > 1) selection--;
+		            mainScreen(selection);
+		
+		        }
+		
+		        if(state[SDL_SCANCODE_S]){
+		
+		            if(selection < 3) selection++;
+		            mainScreen(selection);
+		
+		        }
+		
+		        if(state[SDL_SCANCODE_RETURN] && selection == 1){
+		            break;
+		        }
+		
+		        if(state[SDL_SCANCODE_RETURN] && selection == 3){
+		            exit(1);
+		        }
+		    }
+		    option++;
+		}
+	    
+	    Sleep(100);
+	    
+	    firstTime = clock();
+	    selection = 1;
+	    
+	    while(1){
+	    	secondTime = clock();
+	        aux = secondTime - firstTime;
+	        aux /= CLOCKS_PER_SEC;
+	        finalTime = aux * 10;
 	
-    finalPhase();
+	        if(print == 0) choosePhaseScreen(phases, selection);
+	        else choosePhaseScreen(phases, 0);
 	
+	        if(finalTime > (preTime + 4)){
+	            preTime = finalTime;
+	
+	            if(print == 0) print = 1;
+	            else print = 0;
+	        }
+	
+	        while(SDL_PollEvent(&event));
+	
+	        state = SDL_GetKeyboardState(NULL);
+	
+	        if(state[SDL_SCANCODE_W]){
+	
+	            selection = 1;
+	             if(phases == 1 && selection > 1) selection = 1;
+	        	if(phases == 2 && selection > 2) selection = 2;
+	        	if(phases == 3 && selection > 3) selection = 3;
+	        	if(phases == 4 && selection > 4) selection = 4;
+	            choosePhaseScreen(phases, selection);
+	
+	        }
+	
+	        if(state[SDL_SCANCODE_S]  && phases >= 4){
+	
+	            selection = 4;
+	            if(phases == 1 && selection > 1) selection = 1;
+	        	if(phases == 2 && selection > 2) selection = 2;
+	        	if(phases == 3 && selection > 3) selection = 3;
+	        	if(phases == 4 && selection > 4) selection = 4;
+	            choosePhaseScreen(phases, selection);
+	
+	        }
+	        
+	        if(state[SDL_SCANCODE_A]){
+	
+	            if(selection > 1) selection--;
+	            if(phases == 1 && selection > 1) selection = 1;
+	        	if(phases == 2 && selection > 2) selection = 2;
+	        	if(phases == 3 && selection > 3) selection = 3;
+	        	if(phases == 4 && selection > 4) selection = 4;
+	            choosePhaseScreen(phases, selection);
+	
+	        }
+	
+	        if(state[SDL_SCANCODE_D]){
+	
+	            if(selection < 5) selection++;
+	            if(phases == 1 && selection > 1) selection = 1;
+	        	if(phases == 2 && selection > 2) selection = 2;
+	        	if(phases == 3 && selection > 3) selection = 3;
+	        	if(phases == 4 && selection > 4) selection = 4;
+	            choosePhaseScreen(phases, selection);
+	
+	        }
+	
+	        if(state[SDL_SCANCODE_RETURN]){
+	            break;
+	        }
+		}
+		
+
+		
+		if(selection == 1){
+			option = -1;
+			
+			while(option == -1){
+				option = phase1();
+			}
+			selection++;
+		}
+		
+		if(selection == 2 && option != 0){
+			option = -1;
+			
+			while(option == -1){
+				option = phase2();
+			}
+			selection++;
+			
+		}
+		
+		if(selection == 3 && option != 0){
+			option = -1;
+			
+			while(option == -1){
+				option = phase3();
+			}
+			selection++;
+		
+		}
+		
+		if(selection == 4 && option != 0){
+			option = -1;
+		
+			while(option == -1){
+				option = phase4();
+			}
+			selection++;
+		
+		}
+		
+		if(selection == 5 && option != 0){
+			option = -1;
+			
+			while(option == -1){
+				option = finalPhase();
+			}
+			selection++;
+			
+		}
+	}
 	return 0;
 }
