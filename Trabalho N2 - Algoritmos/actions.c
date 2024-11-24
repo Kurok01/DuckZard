@@ -13,7 +13,7 @@ void move (const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *lastTIME, i
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$#ASVIHM";
+	char limits[] = "*$#ASVIHM54321";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -52,7 +52,7 @@ void move (const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *lastTIME, i
 	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
 	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for (i = 0; i < 9; i++) {
+	for (i = 0; i < 14; i++) {
 		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
@@ -70,7 +70,7 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 	float preX = wizard->x, preY = wizard->y;
 	int xD, yD, x, y;
 	int i;
-	char limits[] = "*$#ASVIHM";
+	char limits[] = "*$#ASVIHM54321";
 	
 	if (state[SDL_SCANCODE_W]) {
 		
@@ -109,7 +109,7 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
 	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for (i = 0; i < 9; i++) {
+	for (i = 0; i < 10; i++) {
 		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
@@ -120,7 +120,6 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 		
 	}
 }
-
 
 void eatPill(Map_t *map, Wizard_t *wizard, int *lightning){
 	int xD, yD, x, y;
@@ -205,7 +204,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
 	int i, j;
 	static int k = 0;
-	char limits[] = "*$#ASVIM";
+	char limits[] = "*$#ASVIM54321";
 	
 	srand(time(0) + k);
 	
@@ -401,7 +400,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	
 	correct = 1;
 	
-	for(i = 0; i < 9; i++){
+	for(i = 0; i < 14; i++){
 		
 		if(map->mapPptr[matrizYOT][matrizXOT] == limits[i]){
 		
@@ -455,11 +454,17 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	}
 }
 
-void spawnClone(Map_t *map ,Monster_t *clone, int *numClones){
+void spawnClone(Map_t *map, Monster_t *clone, int *numClones, int phase){
 	
-	int i, positionX, positionY, j, k, correct = 0;
+	int i, positionX, positionY, j, k, correct = 0, min = 0, max = 4;
 	
-	for(i = 0; i < 4; i++){
+	if (phase == 5) {
+		
+		min = 6;
+		max = 8;
+	}
+	
+	for(i = min; i < max; i++){
 		
 		positionX = (clone[i].x + (map->imageSize/2) - map->outOfLimitsX) / map->imageSize;
 		positionY = (clone[i].y + (map->imageSize/2) - map->outOfLimitsY) / map->imageSize;

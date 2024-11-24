@@ -103,7 +103,7 @@ void phase1 () {
 			preTime = finalTime;
 		}
 		
-		dragonOver = phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8);
+		dragonOver = phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1);
 		
 		if (over == 1) exit(1);
 		else if (dragonOver == 1) exit(1);
@@ -327,7 +327,7 @@ void phase2 () {
             }
         }
 		
-		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8);
+		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8, 2);
 		
 		if (blizzard >= 1) {
 			
@@ -524,7 +524,7 @@ void phase3(){
 		
 		eat(&mapPhase3, &wizard, &score, &missing);
 		
-		if (state[SDL_SCANCODE_F] && coolDownStopTime == 0){
+		if (state[SDL_SCANCODE_E] && coolDownStopTime == 0){
 			
 			stopTimeMode();
 			
@@ -626,7 +626,6 @@ void phase4(){
 				else beak = 1;
 			}
 			
-			if (stop != 1){
 				for (i = 0; i < numClones; i++) {
 				
 					moveNPC(&mapPhase4, &(clone[i]), &wizard ,&lastTIME, (mapPhase4.imageSize/4));
@@ -635,12 +634,11 @@ void phase4(){
 				
 					if(over == 1) break;
 				}
-			}
+			
 			
 			if(finalTime % 300 == 0){
 				
-				spawnClone(&mapPhase4, clone, &numClones);
-				
+				spawnClone(&mapPhase4, clone, &numClones, 4);	
 			}
 			
 			preTime = finalTime;
@@ -730,5 +728,272 @@ void phase4(){
 		
 		eat(&mapPhase4, &wizard, &score, &missing);
 	}
+}
+
+void finalPhase () {
 	
+	Map_t mapPhase5;
+	Wizard_t wizard;
+	Monster_t monsters[16];
+	int print, selection = 1, numClones = 8;
+	int coordenates = 0, i;
+	float firstTime, secondTime, aux = 0;
+	int finalTime, preTime = 1, pauseTime, timeStopTime = 0, transformationCoolDown = 0, transformationDuration = 0;
+	int beak = 0, x, y;
+	int score = 0, missing = 4, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
+	int dragonCountDown = 0;
+	int over = 0, dragonOver = 0, coolDownFireTime = 0, fireDuration = 0, stop = 0;
+	int lightning = 0;
+	int auxTime = 0;
+	int blizzard = 0;
+	int which[4] = {4, 4, 4, 4};
+	
+	alocMap("Fase5.txt", &mapPhase5);
+	
+	wizard.type = 'D';
+	
+	lookingFor (&wizard, 1, &mapPhase5);
+	
+	for (i = 0; i < 8; i++) {
+		
+		monsters[i].type = 'O';
+		
+		lookingForMonster(&monsters[i], i+1, &mapPhase5);
+		
+		monsters[i].destX = 0;
+		monsters[i].destY = 0;
+	}
+	
+	firstTime = clock();
+	
+	wizard.direction = 0;
+	
+	Uint32 lastTIME;
+	
+	lastTIME = SDL_GetTicks();
+	
+	playSound(1);
+	
+	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -1);
+	
+	spawnNexus(&mapPhase5, which);
+	
+	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -1);
+	sleep(2);
+	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -2);
+	sleep(1);
+	
+	playSound(3);
+	
+	while (missing != 0) {
+		
+		srand(time(0));
+		
+		secondTime = clock();
+		
+		aux = secondTime - firstTime;
+		
+		aux /= CLOCKS_PER_SEC;
+			
+		if (timeStopTime == 0) {
+		
+			finalTime = (aux * 10) - auxTime;
+			
+			if (auxTime != 0) auxTime = 0;
+		
+		} else {
+			
+			auxTime = (aux * 10) - finalTime;
+		}
+		
+		if (finalTime > preTime) {
+				
+			if (finalTime % 2) {
+				
+				if (beak == 1) beak = 0;
+				else beak = 1; 
+			}
+			
+			if ((finalTime + 150) % 400 == 0) {
+				
+				spawnLightning(&mapPhase5, &score, &missing);
+				playSound(5);
+			}
+		
+			if (finalTime % 400 == 0) {
+				
+				if (dragonCountDown <= 0) dragonCountDown++;
+				
+			}
+			
+			if (finalTime % 400 == 0 && blizzard == 0 && timeStopTime == 0) {
+				
+				blizzard = 1;
+				playSound(6);
+			}
+			
+			if(finalTime % 300 == 0 && timeStopTime == 0){
+				
+				spawnClone(&mapPhase5, monsters, &numClones, 5);	
+			}
+			
+			if (finalTime % 600 == 0 && blizzard >= 1 && timeStopTime == 0) blizzard = 0; 
+				
+				
+			for (i = 0; i < numClones; i++) {
+				
+				moveNPC(&mapPhase5, &(monsters[i]), &wizard ,&lastTIME, (mapPhase5.imageSize/4));
+				
+				over = gameOver(&wizard, &mapPhase5, monsters[i].x, monsters[i].y, mapPhase5.imageSize, mapPhase5.imageSize);
+				
+				if(over == 1) exit(1);
+				}
+				
+				preTime = finalTime;			
+			}
+			
+			if (timeStopTime == 0) phase2ElementsSpawn(&mapPhase5, &blizzard, &wizard, monsters, beak, numClones, 5);
+			
+			if (timeStopTime == 0) dragonOver = phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5);
+			else printScreen(&mapPhase5, &wizard, monsters, numClones, 5, beak);
+				
+		if (over == 1) exit(1);
+		else if (dragonOver == 1) exit(1);
+		
+		SDL_Event event;
+	
+	while (SDL_PollEvent(&event)) {
+		
+		if (event.type == SDL_QUIT);
+	}
+	
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		
+		if(state[SDL_SCANCODE_C] && transformationCoolDown == 0){
+			
+			wizard.type = 'O';
+			transformationDuration = finalTime;
+			
+		}
+		
+		if(finalTime >= (transformationDuration + 100) && transformationDuration != 0){
+			
+			wizard.type = 'D';
+			transformationCoolDown = finalTime;
+			transformationDuration = 0;
+			
+		}
+		
+		if(finalTime >= (transformationCoolDown + 100) && transformationCoolDown != 0){
+			
+			transformationCoolDown = 0;
+		}
+		
+		if(state[SDL_SCANCODE_ESCAPE]){
+            while(1){
+                if(print == 0) pauseScreen(selection);
+                else pauseScreen(4);
+
+                if(finalTime > (pauseTime + 4)){
+                    pauseTime = finalTime;
+
+                    if(print == 0) print = 1;
+                    else print = 0;
+                }
+
+                while(SDL_PollEvent(&event));
+
+                state = SDL_GetKeyboardState(NULL);
+
+                if(state[SDL_SCANCODE_W]){
+                    if(selection > 1) selection--;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_S]){
+                    if(selection < 3) selection++;
+                    pauseScreen(selection);
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 1){
+                    break;
+                }
+
+                if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                    exit(1);
+                }  
+            }
+        }
+        
+        if (blizzard >= 1) {
+			
+			move(state, &wizard, &mapPhase5, &lastTIME, 100);	
+		}
+		
+		if (state[SDL_SCANCODE_F] && coolDownFireTime == 0) {
+			
+			playSound(7);
+			fireDuration = finalTime;
+			spawnFire(&mapPhase5, wizard.direction, wizard.x, wizard.y);
+			deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
+			coolDownFireTime = finalTime;
+		}
+		
+		if (finalTime <= (fireDuration + 50) && fireDuration != 0) {
+			
+			spawnFire(&mapPhase5, wizard.direction, wizard.x, wizard.y);
+			deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
+			
+		} else {
+			
+			spawnFire(&mapPhase5, wizard.direction, -100, -100);
+			fireDuration = 0;
+		}
+		
+		if (finalTime >= (coolDownFireTime + 70) && (coolDownFireTime) != 0) {
+			
+			coolDownFireTime = 0;
+		}
+		
+		if(timeStopTime != 0)move(state, &wizard, &mapPhase5, &lastTIME, 75);
+		else if(reverseMove == 0) move(state, &wizard, &mapPhase5, &lastTIME, 150);
+		else reverseMoves(state, &wizard, &mapPhase5, &lastTIME, 150);
+		
+		if (timeStopTime == 0) eatPill(&mapPhase5, &wizard, &lightning);
+		
+		for (i = 0; i < 8; i++) {
+						
+			over = gameOver(&wizard, &mapPhase5, monsters[i].x, monsters[i].y, mapPhase5.imageSize, mapPhase5.imageSize);
+
+			if(over == 1) break;
+		}
+		
+		if (state[SDL_SCANCODE_E] && coolDownStopTime == 0){
+			
+			stopTimeMode();
+			
+			playSound(6);
+			
+			stop = 1;
+		
+			timeStopTime = finalTime;
+		
+		}
+		
+		if((finalTime + auxTime) >= (timeStopTime + 70) && timeStopTime != 0){
+			
+			makeTextures();
+			
+			stop = 0;
+			
+			timeStopTime = 0;
+			
+			coolDownStopTime = finalTime;
+			
+			reverseMove = finalTime;
+		}
+		
+		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
+		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;	
+	}
 }

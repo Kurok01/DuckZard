@@ -12,6 +12,9 @@
 //Organizar pasta de assets
 //Hitbox do dragao
 //Mudar Musica de cada fase
+//Mudar ogro
+//Fazer imagens cinzas
+//Juntar imagens do blizzard
 //Cutscene da luta final e Gaguinho no final
 
 
@@ -76,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     initSound();
 	
-    phase2();
+    finalPhase();
 	
 	return 0;
 }

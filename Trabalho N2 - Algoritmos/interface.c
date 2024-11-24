@@ -274,8 +274,8 @@ void makeTextures () {
 	char pathMonster[] = "assets\\Monster .png";
 	char pathFireProjectile[] = "assets\\FireProjectile .png";
 	int i, j;
-	//Aumentar loop
-	for (i = 0; i < 4; i++) {
+	
+	for (i = 0; i < 5; i++) {
 		
 		pathWall[11] = (i+49);
 		pathBackground[17] = (i+49);
@@ -327,7 +327,7 @@ void makeTextures () {
 	cloneImg = takeImage("assets\\Monster4C.png");
 }
 
-void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd) {
+void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd, int phase) {
 	
 	int i, temp = 5, aux = 5; 
 	static int blizzard2, secondRound = 0;
@@ -407,7 +407,10 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
     	freezedImage.h =  map->screenHeight;
 	}
 	
+	if (phase != 5) {
+	
 	printScreen(map, wizard, monster, 8, 2, beak);
+	}
 }
 
 void spawnFire (Map_t *map, int direction, float x, float y) {
@@ -442,7 +445,7 @@ void spawnFire (Map_t *map, int direction, float x, float y) {
 	}
 }
 
-int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd) {
+int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd, int phase) {
 	
 	int over = 0, i, j, temp = 2;
 	
@@ -517,7 +520,7 @@ int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wiza
 	    if (over == 1) break;
 	}
 	
-	printScreen(map, wizard, ogres, qtd , 1, beak);
+	printScreen(map, wizard, ogres, qtd, phase, beak);
 	
 	return over;
 }
@@ -533,6 +536,7 @@ void stopTimeMode(){
 }
 
 void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls){
+	
 	int x;
 	static int i = 0, j =1;
 	
@@ -561,7 +565,6 @@ void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls){
 	
 }
 
-
 void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 	int i = 0;
 	
@@ -585,17 +588,26 @@ void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 	}
 }
 
-void spawnNexus(Map_t *map, int type, int which[4]){
+void spawnNexus(Map_t *map, int *which){
+	
+	int i;
+	
+	for (i = 0; i < 4; i++) {
+		
+		nexusImage[i].w = (map->imageSize * 4);
+		nexusImage[i].h	= (map->imageSize * 4);
+	}
 	
 	nexusImage[0].x = (3 * map->imageSize) + map->outOfLimitsX;
-	nexusImage[1].x = (47 * map->imageSize) + map->outOfLimitsX;
+	nexusImage[1].x = (44 * map->imageSize) + map->outOfLimitsX;
 	nexusImage[2].x = (3 * map->imageSize) + map->outOfLimitsX;
-	nexusImage[3].x = (47 * map->imageSize) + map->outOfLimitsX;
+	nexusImage[3].x = (44 * map->imageSize) + map->outOfLimitsX;
 	
 	nexusImage[0].y = (2 * map->imageSize) + map->outOfLimitsY;
-	nexusImage[1].y = (24 * map->imageSize) + map->outOfLimitsY;
-	nexusImage[2].y = (2 * map->imageSize) + map->outOfLimitsY;
-	nexusImage[3].y = (24 * map->imageSize) + map->outOfLimitsY;
+	nexusImage[1].y = (2 * map->imageSize) + map->outOfLimitsY;
+	nexusImage[2].y = (21 * map->imageSize) + map->outOfLimitsY;
+	nexusImage[3].y = (21 * map->imageSize) + map->outOfLimitsY;
+	
 	
 	char nexusPhase1[] = "assets\\IcePhase1_ .png";
 	char nexusPhase2[] = "assets\\IcePhase2_ .png";
@@ -617,7 +629,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	
 	int imageSize, height, width;
 	int i, j, k = 0, l = 0;
-	int x, y;
+	int x, y, aux = 0;
 	static int tempLimits = 0;
 	int over = 0;
 	
@@ -664,11 +676,6 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 		
 		for (j = 0; j < map->width; j++) {
 			
-			if(j == && (i == 2 || i == 24)) l = 0;
-			if(j == && (i == 2 || i == 24)) l = 1;
-			if(j == && (i == 2 || i == 24)) l = 2;
-			if(j == && (i == 2 || i == 24)) l = 3;
-			
 			SDL_Rect position;
 			position.x = (j * imageSize) + x;
 			position.y = (i * imageSize) + y;
@@ -676,7 +683,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 			position.h = (imageSize);
 			
 			if (map->mapPptr[i][j] == '*') SDL_RenderCopy(renderer, wallImg[phase - 1], NULL, &position);
-			else if (map->mapPptr[i][j] == ' ') SDL_RenderCopy(renderer, hotdogImg, NULL, &position);
+			else if (map->mapPptr[i][j] == ' ' && phase != 5) SDL_RenderCopy(renderer, hotdogImg, NULL, &position);
 			else if (map->mapPptr[i][j] == 'I') SDL_RenderCopy(renderer, freezedHotdogImg, NULL, &position);
 			else if (map->mapPptr[i][j] == 'H') SDL_RenderCopy(renderer, halfFreezedHotdogImg, NULL, &position);
 			else if (map->mapPptr[i][j] == 'D') {
@@ -697,14 +704,33 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 			}
 			
 			else if (map->mapPptr[i][j] == 'O') {
+			
+				if (phase != 5) {
 				
-				position.x = (monster[k].x);
-				position.y = (monster[k].y);
-				
-				SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
-				k++;	
+					position.x = (monster[k].x);
+					position.y = (monster[k].y);
+					
+					SDL_RenderCopy(renderer, monsterImg[phase-1], NULL, &position);
+					k++;
+					
+				} else {
+					
+					position.x = (monster[k].x);
+					position.y = (monster[k].y);
+					
+					if (k % 2 == 0 && k != 0) aux++;
+					SDL_RenderCopy(renderer, monsterImg[aux], NULL, &position);
+					k++;
+				}
 			}
 			
+			else if (map->mapPptr[i][j] == 'G') {
+				
+				position.w = map->imageSize * 4;
+				position.h = map->imageSize * 4;
+				
+				SDL_RenderCopy(renderer, monsterImg[5], NULL, &position);
+			}
 			else if (map->mapPptr[i][j] == '+') SDL_RenderCopy(renderer, lightningPillImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '=') SDL_RenderCopy(renderer, internalFireImg, NULL, &position);
 			else if (map->mapPptr[i][j] == '?') SDL_RenderCopy(renderer, middleFireImg, NULL, &position);
@@ -717,6 +743,7 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	}
 	
 	for(i = k; i < qtd; i++ ){
+		
 			SDL_Rect position;
 		
 			position.x = (monster[i].x);
@@ -727,18 +754,19 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 			SDL_RenderCopy(renderer, cloneImg, NULL, &position);
 	}
 	
-	SDL_RenderCopy(renderer, dragonImg[0], NULL, &dragonImage[0]);
-	SDL_RenderCopy(renderer, dragonImg[1], NULL, &dragonImage[1]);
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[0]);
 	SDL_RenderCopy(renderer, lightningProjectileImg, NULL, &lightningImage[1]);
 	SDL_RenderCopy(renderer, fireProjectileImg[wizard->direction], NULL, &fireProjectileImage);
-	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[0]);
-	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[1]);
-	SDL_RenderCopy(renderer, freezedImg, NULL, &freezedImage);
 	SDL_RenderCopy(renderer, nexusImg[0], NULL, &nexusImage[0]);
 	SDL_RenderCopy(renderer, nexusImg[1], NULL, &nexusImage[1]);
 	SDL_RenderCopy(renderer, nexusImg[2], NULL, &nexusImage[2]);
 	SDL_RenderCopy(renderer, nexusImg[3], NULL, &nexusImage[3]);
+	SDL_RenderCopy(renderer, dragonImg[0], NULL, &dragonImage[0]);
+	SDL_RenderCopy(renderer, dragonImg[1], NULL, &dragonImage[1]);
+	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[0]);
+	SDL_RenderCopy(renderer, blizzardImg, NULL, &blizzardImage[1]);
+	SDL_RenderCopy(renderer, freezedImg, NULL, &freezedImage);
+
 	i = 0;
 	
 	while(snowBallImage[i].x != -100){
