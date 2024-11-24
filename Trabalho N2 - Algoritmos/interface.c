@@ -9,6 +9,7 @@
 
 SDL_Texture *wallImg[5];
 SDL_Texture *duckImg[4][2];
+SDL_Texture *duckProtectedImg[4][2];
 SDL_Texture *backgroundImg[5];
 SDL_Texture *monsterImg[5];
 SDL_Texture *dragonImg[2];
@@ -35,6 +36,11 @@ SDL_Texture *nexusImg[4];
 SDL_Rect backGroundImage, dragonImage[2], lightningImage[2], blizzardImage[2], freezedImage, fireProjectileImage, snowBallImage[40], nexusImage[4];
 
 Mix_Music *soundTrack;
+Mix_Music *dragonBattle;
+Mix_Music *snowBattle;
+Mix_Music *timeBattle;
+Mix_Music *cloneBattle;
+Mix_Chunk *garlonSound;
 Mix_Chunk *eatingSound;
 Mix_Chunk *portalSound;
 Mix_Chunk *dragonSound;
@@ -114,6 +120,51 @@ void initSound () {
 		exit(1);
 	}
 	
+	dragonBattle = Mix_LoadMUS("SoundEffects\\DragonBattle.mp3");
+	
+	if (dragonBattle == NULL) {
+		
+		printf ("Error to open Dragon Battle SoundTrack: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	snowBattle = Mix_LoadMUS("SoundEffects\\SnowBattle.mp3");
+	
+	if (snowBattle == NULL) {
+		
+		printf ("Error to open Snow Battle SoundTrack: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	timeBattle = Mix_LoadMUS("SoundEffects\\TimeBattle.mp3");
+	
+	if (timeBattle == NULL) {
+		
+		printf ("Error to open Time Battle Sound Track: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	cloneBattle = Mix_LoadMUS("SoundEffects\\CloneBattle.mp3");
+	
+	if (cloneBattle == NULL) {
+		
+		printf ("Error to open Clone Battle Sound Track: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
+	garlonSound = Mix_LoadWAV("SoundEffects\\GarlonSoundEffect.wav");
+	
+	if (garlonSound == NULL) {
+		
+		printf ("Error to open garlon sound: %s", Mix_GetError());
+		
+		exit(1);
+	}
+	
 	eatingSound = Mix_LoadWAV("SoundEffects\\EatingSoundEffect.wav");
 	
 	if (eatingSound == NULL) {
@@ -184,6 +235,7 @@ void initSound () {
 		printf ("Error to open time stop sound: %s", Mix_GetError());
 	}
 	
+	Mix_VolumeChunk(garlonSound, 80);
 	Mix_VolumeChunk(eatingSound, 2);
 	Mix_VolumeChunk(portalSound, 64);
 	Mix_VolumeChunk(thunderSound, 64);
@@ -198,48 +250,76 @@ void playSound (int soundChoice) {
 	
 	switch (soundChoice) {
 		
-		case 1:
+		case 0:
 			
 			Mix_PlayMusic(soundTrack, -1);
 			Mix_VolumeMusic(15);
 			break;
 			
+		case 1:
+			
+			Mix_PlayMusic(dragonBattle, -1);
+			Mix_VolumeMusic(15);
+			break;
+			
 		case 2:
 			
-			Mix_PlayChannel(-1, eatingSound, 0);
+			Mix_PlayMusic(snowBattle, -1);
+			Mix_VolumeMusic(15);
 			break;
 			
 		case 3:
 			
-			Mix_PlayChannel(-1, portalSound, 0);
+			Mix_PlayMusic(timeBattle, -1);
+			Mix_VolumeMusic(15);
 			break;
 			
 		case 4:
 			
-			Mix_PlayChannel(-1, thunderSound, 0);
-			break;
+			Mix_PlayMusic(cloneBattle, -1);
+			Mix_VolumeMusic(15);
 			
-		case 5: 
+		case 5:
 			
-			Mix_PlayChannel(-1, dragonSound, 0);
+			Mix_PlayChannel(-1, garlonSound, 0);
 			break;
 			
 		case 6:
 			
-			Mix_PlayChannel(-1, blizzardSound, 0);
+			Mix_PlayChannel(-1, eatingSound, 0);
 			break;
 			
 		case 7:
 			
-			Mix_PlayChannel(-1, fireSound, 0);
+			Mix_PlayChannel(-1, portalSound, 0);
 			break;
 			
 		case 8:
 			
+			Mix_PlayChannel(-1, thunderSound, 0);
+			break;
+			
+		case 9: 
+			
+			Mix_PlayChannel(-1, dragonSound, 0);
+			break;
+			
+		case 10:
+			
+			Mix_PlayChannel(-1, blizzardSound, 0);
+			break;
+			
+		case 11:
+			
+			Mix_PlayChannel(-1, fireSound, 0);
+			break;
+			
+		case 12:
+			
 			Mix_PlayChannel(-1, snowballSound, 0);
 			break;
 			
-		case 9:
+		case 13:
 			
 			Mix_PlayChannel(-1, timeStopSound, 0);
 			break;
@@ -269,6 +349,7 @@ void makeTextures () {
 	char pathWall[] = "assets\\Wall .png";
 	char pathBackground[] = "assets\\Background .png";
 	char pathDuck[] = "assets\\Duck( , ).png";
+	char pathDuckProtected[] = "assets\\DuckProtected( , ).png";
 	char pathDragon[] = "assets\\Dragon .png";
 	char pathPortal[] = "assets\\Portal .png";
 	char pathMonster[] = "assets\\Monster .png";
@@ -298,14 +379,17 @@ void makeTextures () {
 	for (i = 0; i < 4; i++) {
 		
 			pathDuck[12] = (i+48);
+			pathDuckProtected[21] = (i+48);
 			pathFireProjectile[21] = (i+49);
 			fireProjectileImg[i] = takeImage(pathFireProjectile);
 		
 		for (j = 0; j < 2; j++) {
 			
 			pathDuck[14] = (j+48);
+			pathDuckProtected[23] = (j+48);
 						
 			duckImg[i][j] = takeImage(pathDuck);
+			duckProtectedImg[i][j] = takeImage(pathDuckProtected);
 		}
 	}
 		
@@ -327,7 +411,7 @@ void makeTextures () {
 	cloneImg = takeImage("assets\\Monster4C.png");
 }
 
-void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd, int phase) {
+void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t *monster, int beak, int qtd, int phase, int shield) {
 	
 	int i, temp = 5; 
 	static int blizzard2, secondRound = 0, start = 0;
@@ -415,7 +499,7 @@ void phase2ElementsSpawn (Map_t *map, int *blizzard, Wizard_t *wizard, Monster_t
 	
 	if (phase != 5) {
 	
-	printScreen(map, wizard, monster, 8, 2, beak);
+	printScreen(map, wizard, monster, 8, 2, beak, shield);
 	}
 }
 
@@ -451,7 +535,7 @@ void spawnFire (Map_t *map, int direction, float x, float y) {
 	}
 }
 
-int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd, int phase) {
+int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wizard_t *wizard, Monster_t ogres[], int beak, int qtd, int phase, int shield) {
 	
 	int over = 0, i, j, temp = 2;
 	
@@ -526,19 +610,31 @@ int phase1ElementsSpawn (Map_t *map , int *dragonCountDown, int *lightning, Wiza
 	    if (over == 1) break;
 	}
 	
-	printScreen(map, wizard, ogres, qtd, phase, beak);
+	printScreen(map, wizard, ogres, qtd, phase, beak, shield);
 	
 	return over;
 }
 
 void stopTimeMode(){
 	
-	monsterImg[2] = takeImage("assets\\Monster3O.png");
+	int i;
+	char pathMonster[] = "assets\\Monster O.png";
+	
+	for (i = 0; i < 5; i++) {
+		
+		pathMonster[14] = (i+49);
+		
+		monsterImg[i] = takeImage(pathMonster);
+	}
+	
+	cloneImg = takeImage("assets\\Monster4CO.png");
 	hotdogImg = takeImage("assets\\HotdogO.png");
 	sandImg = takeImage("assets\\sandO.png");
 	woodImg = takeImage("assets\\woodO.png");
 	wallImg[2] = takeImage("assets\\wall3O.png");
+	wallImg[4] = takeImage("assets\\wall5O.png");
 	backgroundImg[2] = takeImage("assets\\Background3O.png");
+	backgroundImg[4] = takeImage("assets\\Background5O.png");
 }
 
 void spawnSnowBall(Map_t *map, Monster_t *snowBall, int *numSnowBalls){
@@ -577,7 +673,7 @@ void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 		
 			snowBall[i].y += 10;
 			snowBallImage[i].y += 10;
-			i++;
+	
 			if(snowBall[i].y >= (map->screenHeight + (map->outOfLimitsY * 2))){
 				snowBall[i].x = snowBall[(*numSnowBalls)-1].x;
 				snowBall[i].y = snowBall[(*numSnowBalls)-1].y;
@@ -589,6 +685,8 @@ void moveSnowBall(Map_t *map ,Monster_t *snowBall, int *numSnowBalls){
 				snowBallImage[(*numSnowBalls)-1].x = -100;
 				snowBall[(*numSnowBalls)-1].x = -100;
 			}
+			
+			i++;
 	}
 }
 
@@ -637,7 +735,7 @@ void spawnNexus(Map_t *map, int *which){
 	nexusImg[3] = takeImage(nexusPhase4);
 }
 
-void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak) {
+void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,int phase, int beak, int shield) {
 	
 	int imageSize, height, width;
 	int i, j, k = 0, l = 0;
@@ -707,10 +805,17 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 				position.y = wizard->y;
 				
 				if(wizard->type == 'D'){
-			
-					if (beak >= 0) SDL_RenderCopy(renderer, duckImg[wizard->direction][beak], NULL, &position);
-					else SDL_RenderCopy(renderer, portalImg[(beak * -1) - 1], NULL, &position);	
-			
+					
+					if (shield == 0){
+					
+						if (beak >= 0) SDL_RenderCopy(renderer, duckImg[wizard->direction][beak], NULL, &position);
+						else SDL_RenderCopy(renderer, portalImg[(beak * -1) - 1], NULL, &position);	
+					
+					} else {
+						
+						SDL_RenderCopy(renderer, duckProtectedImg[wizard->direction][beak], NULL, &position);
+					}
+					
 				}else{
 					
 					SDL_RenderCopy(renderer, monsterImg[3], NULL, &position);

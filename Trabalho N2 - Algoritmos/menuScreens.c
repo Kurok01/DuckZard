@@ -50,6 +50,7 @@ void makeScreenTextures(){
 }
 
 void mainScreen(int selection){
+	
 	int height, width, imageSize, x, y;
 	
 	height = displayMode.h / 27;

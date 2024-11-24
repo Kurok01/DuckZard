@@ -13,6 +13,7 @@
 //Hitbox do dragao
 //Mudar Musica de cada fase
 //Mudar ogro
+//colocar "pill" na função de spawnar lightning
 //Fazer imagens cinzas
 //Juntar imagens do blizzard
 //Cutscene da luta final e Gaguinho no final
@@ -36,6 +37,9 @@ int main(int argc, char *argv[]) {
     while(1){
 		
 		if(option == 0){
+			
+			playSound(0);
+			
 		    while(1){
 		        secondTime = clock();
 		        aux = secondTime - firstTime;
@@ -155,7 +159,7 @@ int main(int argc, char *argv[]) {
 	        }
 		}
 		
-
+		Mix_HaltMusic();
 		
 		if(selection == 1){
 			option = -1;

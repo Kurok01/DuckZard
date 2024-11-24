@@ -139,7 +139,7 @@ void eatPill(Map_t *map, Wizard_t *wizard, int *lightning){
 	if(map->mapPptr[yD][x] == '+') map->mapPptr[yD][x] = ' ';
 		
 	(*lightning) = 1;
-	playSound(4);
+	playSound(8);
 	
 	}
 }
@@ -158,7 +158,7 @@ void eat (Map_t *map, Wizard_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[y][x] = '-';
 		
-		playSound(2);
+		playSound(6);
 		(*score)++;
 		(*missing)--;
 	}
@@ -167,7 +167,7 @@ void eat (Map_t *map, Wizard_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[y][xD] = '-';
 		
-		playSound(2);
+		playSound(6);
 		(*score)++;
 		(*missing)--;
 		
@@ -177,7 +177,7 @@ void eat (Map_t *map, Wizard_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[yD][x] = '-';
 		
-		playSound(2);
+		playSound(6);
 		(*score)++;
 		(*missing)--;
 		
@@ -187,7 +187,7 @@ void eat (Map_t *map, Wizard_t *wizard, int *score, int *missing) {
 		
 		map->mapPptr[yD][xD] = '-';
 		
-		playSound(2);
+		playSound(6);
 		(*score)++;
 		(*missing)--;
 		

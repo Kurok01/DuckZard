@@ -53,13 +53,13 @@ int phase1 () {
 		lastTIME2[i] = SDL_GetTicks();
 	}
 	
-	playSound(1);
-	
-	printScreen(&mapPhase1, &wizard, ogres, 8, 1, -1);
+	printScreen(&mapPhase1, &wizard, ogres, 8, 1, -1, shield);
 	sleep(2);
-	printScreen(&mapPhase1, &wizard, ogres, 8, 1, -2);
+	printScreen(&mapPhase1, &wizard, ogres, 8, 1, -2, shield);
 	sleep(1);
-	playSound(3);
+	playSound(7);
+	
+	playSound(1);
 	
 	while (missing != 0) {
 			
@@ -83,7 +83,7 @@ int phase1 () {
 			if ((finalTime + 150) % 400 == 0) {
 				
 				spawnLightning(&mapPhase1, &score, &missing);
-				playSound(5);
+				playSound(9);
 			}
 		
 			if (finalTime % 400 == 0) {
@@ -116,8 +116,8 @@ int phase1 () {
 			preTime = finalTime;
 		}
 		
-		if(shield != 1) over -= phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1);
-		else phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1);
+		if(shield != 1) over -= phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1, shield);
+		else phase1ElementsSpawn(&mapPhase1, &dragonCountDown, &lightning, &wizard, ogres, beak, 8, 1, shield);
 		
 		if(preOver != over) shield = 1;
 		
@@ -186,7 +186,7 @@ int phase1 () {
 	if(missing == 0){
 		option = winningScreen();
 		if(option == 0){
-			printScreen(&mapPhase1, &wizard, ogres, 8, 0, beak);
+			printScreen(&mapPhase1, &wizard, ogres, 8, 0, beak, shield);
 			return 0;
 		}else{
 			return 1;
@@ -196,7 +196,7 @@ int phase1 () {
 		option = gameOverScreen();
 		
 		if(option == 0){
-			printScreen(&mapPhase1, &wizard, ogres, 8, 0, beak);
+			printScreen(&mapPhase1, &wizard, ogres, 8, 0, beak, shield);
 			return -1;
 		}else{
 			return 0;
@@ -252,14 +252,13 @@ int phase2 () {
 		lastTIME2[i] = SDL_GetTicks();
 	}
 	
-	playSound(1);
-	
-	printScreen(&mapPhase2, &wizard, yetis, 8, 2, -1);
+	printScreen(&mapPhase2, &wizard, yetis, 8, 2, -1, shield);
 	sleep(2);
-	printScreen(&mapPhase2, &wizard, yetis, 8, 2, -2);
+	printScreen(&mapPhase2, &wizard, yetis, 8, 2, -2, shield);
 	sleep(1);
-	playSound(3);
+	playSound(7);
 	
+	playSound(2);
 	
 	while (missing != 0) {
 		
@@ -283,7 +282,7 @@ int phase2 () {
 			if (finalTime % 400 == 0 && blizzard == 0) {
 				
 				blizzard = 1;
-				playSound(6);
+				playSound(10);
 				freeze(&mapPhase2, blizzard);
 			}
 			
@@ -384,7 +383,7 @@ int phase2 () {
             }
         }
 		
-		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8, 2);
+		phase2ElementsSpawn(&mapPhase2, &blizzard, &wizard, yetis, beak, 8, 2, shield);
 		
 		if (blizzard >= 1) {
 			
@@ -395,7 +394,7 @@ int phase2 () {
 		
 		if (state[SDL_SCANCODE_F] && coolDownFireTime == 0) {
 			
-			playSound(7);
+			playSound(11);
 			fireDuration = finalTime;
 			spawnFire(&mapPhase2, wizard.direction, wizard.x, wizard.y);
 			deFreeze(&mapPhase2, &wizard, fireDuration, finalTime);
@@ -436,7 +435,7 @@ int phase2 () {
 		
 		option = winningScreen();
 		if(option == 0){
-			printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak);
+			printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak, shield);
 			return 0;
 		}else{
 			return 1;
@@ -445,7 +444,7 @@ int phase2 () {
 		
 		option = gameOverScreen();
 		if(option == 0){
-			printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak);
+			printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak, shield);
 			return -1;
 		}else{
 			return 0;
@@ -500,12 +499,12 @@ int phase3(){
 		lastTIME2[i] = SDL_GetTicks();
 	}
 	
-	playSound(1);
-	
-	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -1);
+	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -1, shield);
 	sleep(2);
-	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -2);
+	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -2, shield);
 	sleep(1);
+	playSound(7);
+	
 	playSound(3);
 	
 	while (missing != 0) {
@@ -554,7 +553,7 @@ int phase3(){
 			preTime = finalTime;
 		}
 		
-		printScreen(&mapPhase3, &wizard, dogs, 11, 3, beak);
+		printScreen(&mapPhase3, &wizard, dogs, 11, 3, beak, shield);
 		
 		if (over <= 0) break;
 		
@@ -624,7 +623,7 @@ int phase3(){
 			
 			stopTimeMode();
 			
-			playSound(6);
+			playSound(13);
 			
 			stop = 1;
 		
@@ -653,7 +652,7 @@ int phase3(){
 	if(missing == 0){
 		option = winningScreen();
 		if(option == 0){
-			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak);
+			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak, shield);
 			return 0;
 		}else{
 			return 1;
@@ -662,7 +661,7 @@ int phase3(){
 		
 		option = gameOverScreen();
 		if(option == 0){
-			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak);
+			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak, shield);
 			return -1;
 		}else{
 			return 0;
@@ -716,14 +715,13 @@ int phase4(){
 		lastTIME2[i] = SDL_GetTicks();
 	}
 	
-	playSound(1);
-	
-	printScreen(&mapPhase4, &wizard, clone, 4, 4, -1);
+	printScreen(&mapPhase4, &wizard, clone, 4, 4, -1, shield);
 	sleep(2);
-	printScreen(&mapPhase4, &wizard, clone, 4, 4, -2);
+	printScreen(&mapPhase4, &wizard, clone, 4, 4, -2, shield);
 	sleep(1);
-	playSound(3);
+	playSound(7);
 	
+	playSound(0);
 	while (missing != 0) {
 		
 		preOver = over;
@@ -764,7 +762,6 @@ int phase4(){
 				shieldTime = 0;
 			}
 			
-			
 			if(finalTime % 300 == 0){
 				
 				spawnClone(&mapPhase4, clone, &numClones, 4);	
@@ -773,7 +770,7 @@ int phase4(){
 			preTime = finalTime;
 		}
 		
-		printScreen(&mapPhase4, &wizard, clone, numClones, 4, beak);
+		printScreen(&mapPhase4, &wizard, clone, numClones, 4, beak, shield);
 		
 		if (over <= 0) break;
 		
@@ -863,7 +860,7 @@ int phase4(){
 	if(missing == 0){
 		option = winningScreen();
 		if(option == 0){
-			printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak);
+			printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak, shield);
 			return 0;
 		}else{
 			return 1;
@@ -872,7 +869,7 @@ int phase4(){
 		
 		option = gameOverScreen();
 		if(option == 0){
-			printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak);
+			printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak, shield);
 			return -1;
 		}else{
 			return 0;
@@ -923,18 +920,17 @@ int finalPhase () {
 	
 	lastTIME = SDL_GetTicks();
 	
-	playSound(1);
-	
-	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -1);
+	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -1, shield);
 	
 	spawnNexus(&mapPhase5, which);
 	
-	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -1);
+	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -1, shield);
 	sleep(2);
-	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -2);
+	printScreen(&mapPhase5, &wizard, monsters, 8, 5, -2, shield);
 	sleep(1);
+	playSound(7);
 	
-	playSound(3);
+	playSound(0);
 	
 	while (missing != 0) {
 		
@@ -970,7 +966,7 @@ int finalPhase () {
 			if ((finalTime + 150) % 400 == 0 && which[0] > 0) {
 				
 				spawnLightning(&mapPhase5, &score, &missing);
-				playSound(5);
+				playSound(9);
 			}
 		
 			if (finalTime % 400 == 0 && which[0] > 0) {
@@ -982,7 +978,7 @@ int finalPhase () {
 			if (finalTime % 400 == 0 && blizzard == 0 && timeStopTime == 0 && which[1] > 0) {
 				
 				blizzard = 1;
-				playSound(6);
+				playSound(10);
 			}
 			
 			if(finalTime % 300 == 0 && timeStopTime == 0 && which[3] > 0){
@@ -1048,11 +1044,11 @@ int finalPhase () {
 				
 			}
 			
-			if (timeStopTime == 0) phase2ElementsSpawn(&mapPhase5, &blizzard, &wizard, monsters, beak, numClones, 5);
+			if (timeStopTime == 0) phase2ElementsSpawn(&mapPhase5, &blizzard, &wizard, monsters, beak, numClones, 5, shield);
 			
-			if (timeStopTime == 0 && shield != 1) over -= phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5);
-			else if(timeStopTime == 0 && shield == 1) phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5);
-			else printScreen(&mapPhase5, &wizard, monsters, numClones, 5, beak);
+			if (timeStopTime == 0 && shield != 1) over -= phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5, shield);
+			else if(timeStopTime == 0 && shield == 1) phase1ElementsSpawn(&mapPhase5, &dragonCountDown, &lightning, &wizard, monsters, beak, numClones, 5, shield);
+			else printScreen(&mapPhase5, &wizard, monsters, numClones, 5, beak, shield);
 				
 		if(over <= 0) break;
 		
@@ -1128,7 +1124,7 @@ int finalPhase () {
 		
 		if (state[SDL_SCANCODE_F] && coolDownFireTime == 0) {
 			
-			playSound(7);
+			playSound(11);
 			fireDuration = finalTime;
 			spawnFire(&mapPhase5, wizard.direction, wizard.x, wizard.y);
 			deFreezeCorrect = deFreezeCrystal (&mapPhase5, &wizard, fireDuration, finalTime, which);
@@ -1185,7 +1181,7 @@ int finalPhase () {
 			
 			stopTimeMode();
 			
-			playSound(6);
+			playSound(13);
 			
 			stop = 1;
 		
@@ -1215,7 +1211,7 @@ int finalPhase () {
 	if(missing == 0){
 		option = winningScreen();
 		if(option == 0){
-			printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak);
+			printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak, shield);
 			return 0;
 		}else{
 			return 1;
@@ -1224,7 +1220,7 @@ int finalPhase () {
 		
 		option = gameOverScreen();
 		if(option == 0){
-			printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak);
+			printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak, shield);
 			
 			return -1;
 			
@@ -1234,5 +1230,4 @@ int finalPhase () {
 			
 		}	
 	}
-	
 }
