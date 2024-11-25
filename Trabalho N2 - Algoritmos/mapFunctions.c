@@ -416,9 +416,6 @@ void spawnLightning(Map_t *map, int *score, int *missing) {
 			
 			map->mapPptr[y][x] = '+';
 			
-			(*score)++;
-			(*missing)--;
-			
 			spawn = 1;	
 		}
 	}

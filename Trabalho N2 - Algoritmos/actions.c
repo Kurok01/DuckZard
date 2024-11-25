@@ -122,6 +122,7 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 }
 
 void eatPill(Map_t *map, Wizard_t *wizard, int *lightning){
+	
 	int xD, yD, x, y;
 	
 	xD = (((wizard->x + map->imageSize - 5) - map->outOfLimitsX) / map->imageSize);

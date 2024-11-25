@@ -15,7 +15,7 @@ SDL_Texture *winningImg[4];
 SDL_Texture *gameOverImg[4];
 SDL_Texture *letters[23];
 SDL_Texture *numbers[10];
-SDL_Texture *staticsBackGroundImg;
+SDL_Texture *statisticsBackGroundImg;
 
 SDL_Rect screenSize;
 
@@ -31,7 +31,7 @@ void makeScreenTextures(){
 	char pathLetter[] = "assets\\ .png";
 	char pathNumber[] = "assets\\ .png";
 	
-	alocMap("staticsMap.txt", &staticsMap);
+	alocMap("statisticsMap.txt", &statisticsMap);
 	
 	for(i = 0; i < 26; i++){
 		pathLetter[7] = (i + 65);
@@ -74,7 +74,7 @@ void makeScreenTextures(){
 		gameOverImg[i] = takeImage(gameOverScreenPath);
 	}
 	
-	staticsBackGroundImg = takeImage("assets\\staticsBackGroundImg.png");
+	statisticsBackGroundImg = takeImage("assets\\staticsBackGroundImg.png");
 }
 
 void mainScreen(int selection){
@@ -253,13 +253,13 @@ void pauseScreen(int selection){
 	SDL_Delay(100);
 }
 
-void staticsScreen(){
+void statisticsScreen(){
 	
 	int i,j;
 	
 	SDL_RenderClear(renderer);
 	
-	SDL_RenderCopy(renderer, staticsBackGroundImg, NULL, &screenSize);
+	SDL_RenderCopy(renderer, statisticsBackGroundImg, NULL, &screenSize);
 	
 	for (i = 0; i < 27; i++) {
 		
@@ -271,8 +271,8 @@ void staticsScreen(){
 			position.w = (imageSize * 2);
 			position.h = (imageSize * 2);
 			
-			if (staticsMap.mapPptr[i][j] >= 'A' && staticsMap.mapPptr[i][j] <= 'Z') SDL_RenderCopy(renderer, letters[(staticsMap.mapPptr[i][j]) - 65], NULL, &position);
-			else if (staticsMap.mapPptr[i][j] >= '0' && staticsMap.mapPptr[i][j] <= '9') SDL_RenderCopy(renderer, numbers[(staticsMap.mapPptr[i][j]) - 48], NULL, &position);
+			if (statisticsMap.mapPptr[i][j] >= 'A' && statisticsMap.mapPptr[i][j] <= 'Z') SDL_RenderCopy(renderer, letters[(statisticsMap.mapPptr[i][j]) - 65], NULL, &position);
+			else if (statisticsMap.mapPptr[i][j] >= '0' && statisticsMap.mapPptr[i][j] <= '9') SDL_RenderCopy(renderer, numbers[(statisticsMap.mapPptr[i][j]) - 48], NULL, &position);
 			
   		}
 	}

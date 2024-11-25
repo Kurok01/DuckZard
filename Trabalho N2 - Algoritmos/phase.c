@@ -183,7 +183,7 @@ int phase1 () {
 	}
 	
 	saveData(over, finalTime, 1);
-	changeStaticsMap();
+	changeStatisticsMap();
 	
 	freeMap(&mapPhase1);
 	
@@ -432,7 +432,7 @@ int phase2 () {
 	}
 	
 	saveData(over, finalTime, 1);
-	changeStaticsMap();
+	changeStatisticsMap();
 	
 	freeMap(&mapPhase2);
 	
@@ -656,7 +656,7 @@ int phase3(){
 	}
 	
 	saveData(over, finalTime, 1);
-	changeStaticsMap();
+	changeStatisticsMap();
 	
 	freeMap(&mapPhase3);
 	
@@ -867,7 +867,7 @@ int phase4(){
 	}
 	
 	saveData(over, finalTime, 1);
-	changeStaticsMap();
+	changeStatisticsMap();
 	
 	freeMap(&mapPhase4);
 	
@@ -1221,7 +1221,7 @@ int finalPhase () {
 	}
 	
 	saveData(over, finalTime, 1);
-	changeStaticsMap();
+	changeStatisticsMap();
 	
 	freeMap(&mapPhase5);
 	

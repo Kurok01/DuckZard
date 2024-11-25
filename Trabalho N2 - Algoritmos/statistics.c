@@ -9,7 +9,7 @@ void saveData (int lives, int finalTime, int phase) {
 	char pathPhase[] = "phase .txt";
 	pathPhase[5] = (phase + 48);
 	
-	data = fopen(pathPhase, "w+");
+	data = fopen(pathPhase, "w");
 	
 	if (data == NULL) {
 		
@@ -17,12 +17,12 @@ void saveData (int lives, int finalTime, int phase) {
 	}
 
 	fprintf (data, "Time: %d\n", finalTime);
-	fprintf(data, "Lives: %d\n", lives);
+	fprintf(data, "Lives: %d", lives);
 
 	fclose (data);
 }
 
-void changeStaticsMap(){
+void changeStatisticsMap(){
 	int i,j, nums[4], lives, minutes, seconds, aux;
 	FILE *data;
 	int y, x;
@@ -55,21 +55,29 @@ void changeStaticsMap(){
 		if(seconds != 0) nums[1] = (seconds/10) % 10;
 		nums[0] = seconds % 10;
 		
+		if (finalTime == 0) {
+			
+			for (j = 0; j < 4; j++) {
+				
+				nums[j] = 0;
+			}
+		}
+		
 		fseek(data, -1, SEEK_END);
 		
 		fscanf(data, "%d", &lives);
 		
 		y = 7 + (i * 4);
 		
-		staticsMap.mapPptr[y][21] = (nums[3] + 48);
-		staticsMap.mapPptr[y][23] = (nums[2] + 48);
-		staticsMap.mapPptr[y][27] = (nums[1] + 48);
-		staticsMap.mapPptr[y][29] = (nums[0] + 48);
-		staticsMap.mapPptr[y][43] = (lives + 48);
+		if (statisticsMap.mapPptr[y][43] < lives) {
+			
+			statisticsMap.mapPptr[y][21] = (nums[3] + 48);
+			statisticsMap.mapPptr[y][23] = (nums[2] + 48);
+			statisticsMap.mapPptr[y][27] = (nums[1] + 48);
+			statisticsMap.mapPptr[y][29] = (nums[0] + 48);
+			statisticsMap.mapPptr[y][43] = (lives + 48);
+		}
 		
 		fclose(data);
-	}
-	
-		
-	
+	}	
 }

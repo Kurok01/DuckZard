@@ -3,6 +3,6 @@
 
 void saveData (int lives, int finalTime, int phase);
 
-void changeStaticsMap();
+void changeStatisticsMap();
 
 #endif

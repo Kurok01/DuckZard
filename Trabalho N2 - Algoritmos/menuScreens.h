@@ -19,6 +19,6 @@ void printgameOverScreen(int selection);
 
 void pauseScreen(int selection);
 
-Map_t staticsMap;
+Map_t statisticsMap;
 
 #endif

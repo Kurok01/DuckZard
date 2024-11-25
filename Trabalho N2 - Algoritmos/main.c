@@ -14,6 +14,7 @@
 //Hitbox do dragao
 //Mudar Musica de cada fase
 //Mudar ogro
+//Criar pasta statistics
 //colocar "pill" na função de spawnar lightning
 //Fazer imagens cinzas
 //Juntar imagens do blizzard
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
 	const Uint8 *state;
     int  selection = 1;
     float firstTime, secondTime, aux = 0;
-    int finalTime, preTime = 1, print, phases = 1, option = 0, i;
+    int finalTime, preTime = 1, print, phases = 5, option = 0, i;
     SDL_Event event;
 	
 	initSDL();
@@ -35,14 +36,14 @@ int main(int argc, char *argv[]) {
 	makeScreenTextures();
 
     firstTime = clock();
-    
-    changeStaticsMap();
+
+	changeStatisticsMap();
     
     for(i = 0; i < 5; i++){
     	
-    	if(staticsMap.mapPptr[(i*4) + 7][43] != '0') phases++;
+    	if(statisticsMap.mapPptr[(i*4) + 7][43] != '0') phases++;
     	if(phases >= 5) phases = 5;
-	}
+	}	
 
     while(1){
 		
@@ -92,7 +93,7 @@ int main(int argc, char *argv[]) {
 		        	
 		        	while(1){
 		        		
-		        		staticsScreen();
+		        		statisticsScreen();
 		        		
 						while(SDL_PollEvent(&event));
 		
@@ -107,6 +108,8 @@ int main(int argc, char *argv[]) {
 		            exit(1);
 		        }
 		    }
+		    
+		    option++;
 		}
 	    
 	    Sleep(100);
@@ -179,13 +182,20 @@ int main(int argc, char *argv[]) {
 	        }
 	
 	        if(state[SDL_SCANCODE_RETURN]){
+	        
 	            break;
 	        }
+	        
+	        if (state[SDL_SCANCODE_ESCAPE]) {
+	        	
+	        	option = 0;
+	        	break;
+			}
 		}
 		
 		Mix_HaltMusic();
 		
-		if(selection == 1){
+		if(selection == 1 && option != 0){
 			option = -1;
 			
 			while(option == -1){
@@ -234,5 +244,8 @@ int main(int argc, char *argv[]) {
 			
 		}
 	}
+	
+	freeSDL ();
+	
 	return 0;
 }

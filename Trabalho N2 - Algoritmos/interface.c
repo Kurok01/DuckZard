@@ -905,35 +905,241 @@ void freeSDL () {
 	
 	int i, j;
 	
-	//Aumentar loop
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 5; i++) {
 		
-		SDL_DestroyTexture(backgroundImg[i]);
-		SDL_DestroyTexture(wallImg[i]);
-		SDL_DestroyTexture(dragonImg[i]);
-	}
+    if (wallImg[i]) {
+    	
+        SDL_DestroyTexture(wallImg[i]);
+        wallImg[i] = NULL;
+    }
+}
+
+for (i = 0; i < 4; i++) {
 	
-	for (i = 0; i < 4; i++) {
-		
-		for (j = 0; j < 2; j++) {
-			
-			SDL_DestroyTexture(duckImg[i][j]);
-		}
-	}
+    for (j = 0; j < 2; j++) {
+    	
+        if (duckImg[i][j]) {
+        	
+            SDL_DestroyTexture(duckImg[i][j]);
+            duckImg[i][j] = NULL;
+        }
+        
+        if (duckProtectedImg[i][j]) {
+        	
+            SDL_DestroyTexture(duckProtectedImg[i][j]);
+            duckProtectedImg[i][j] = NULL;
+        }
+    }
+}
+
+for (i = 0; i < 5; i++) {
 	
-//Destuir tudo
-/*
-	SDL_DestroyTexture(hotdogImg);
-	SDL_DestroyTexture(internalFireImg);
-	SDL_DestroyTexture(middleFireImg);
-	SDL_DestroyTexture(externalFireImg);
-	SDL_DestroyTexture(thunderImg);
-	SDL_DestroyTexture(lightningProjectileImg);
-	SDL_DestroyTexture(lightningPillImg);
-	SDL_DestroyTexture(fireProjectileImg);
-	SDL_DestroyTexture(snowballImg);
-	SDL_DestroyTexture(blizzardImg);
-	SDL_DestroyTexture(freezedImg);*/
+    if (backgroundImg[i]) {
+    	
+        SDL_DestroyTexture(backgroundImg[i]);
+        backgroundImg[i] = NULL;
+    }
+    
+    if (monsterImg[i]) {
+    	
+        SDL_DestroyTexture(monsterImg[i]);
+        monsterImg[i] = NULL;
+    }
+}
+
+for (i = 0; i < 2; i++) {
+	
+    if (dragonImg[i]) {
+    	
+        SDL_DestroyTexture(dragonImg[i]);
+        dragonImg[i] = NULL;
+    }
+    
+    if (portalImg[i]) {
+    	
+        SDL_DestroyTexture(portalImg[i]);
+        portalImg[i] = NULL;
+    }
+}
+
+if (thunderImg) {
+	
+    SDL_DestroyTexture(thunderImg);
+    thunderImg = NULL;
+}
+
+if (hotdogImg) {
+	
+    SDL_DestroyTexture(hotdogImg);
+    hotdogImg = NULL;
+}
+
+if (lightningPillImg) {
+	
+    SDL_DestroyTexture(lightningPillImg);
+    lightningPillImg = NULL;
+}
+
+if (lightningProjectileImg) {
+	
+    SDL_DestroyTexture(lightningProjectileImg);
+    lightningProjectileImg = NULL;
+}
+
+if (blizzardImg) {
+	
+    SDL_DestroyTexture(blizzardImg);
+    blizzardImg = NULL;
+}
+
+if (freezedImg) {
+	
+    SDL_DestroyTexture(freezedImg);
+    freezedImg = NULL;
+}
+
+if (freezedHotdogImg) {
+	
+    SDL_DestroyTexture(freezedHotdogImg);
+    freezedHotdogImg = NULL;
+}
+
+if (halfFreezedHotdogImg) {
+	
+    SDL_DestroyTexture(halfFreezedHotdogImg);
+    halfFreezedHotdogImg = NULL;
+}
+
+if (snowballImg) {
+	
+    SDL_DestroyTexture(snowballImg);
+    snowballImg = NULL;
+}
+
+if (externalFireImg) {
+	
+    SDL_DestroyTexture(externalFireImg);
+    externalFireImg = NULL;
+}
+
+if (middleFireImg) {
+	
+    SDL_DestroyTexture(middleFireImg);
+    middleFireImg = NULL;
+}
+
+if (internalFireImg) {
+	
+    SDL_DestroyTexture(internalFireImg);
+    internalFireImg = NULL;
+}
+
+for (i = 0; i < 4; i++) {
+	
+    if (fireProjectileImg[i]) {
+    	
+        SDL_DestroyTexture(fireProjectileImg[i]);
+        fireProjectileImg[i] = NULL;
+    }
+}
+
+if (sandImg) {
+    SDL_DestroyTexture(sandImg);
+    sandImg = NULL;
+}
+
+if (woodImg) {
+    SDL_DestroyTexture(woodImg);
+    woodImg = NULL;
+}
+
+if (metalImg) {
+    SDL_DestroyTexture(metalImg);
+    metalImg = NULL;
+}
+
+if (cloneImg) {
+    SDL_DestroyTexture(cloneImg);
+    cloneImg = NULL;
+}
+
+for (i = 0; i < 4; i++) {
+	
+    if (nexusImg[i]) {
+        SDL_DestroyTexture(nexusImg[i]);
+        nexusImg[i] = NULL;
+    }
+}
+
+if (soundTrack) {
+    Mix_FreeMusic(soundTrack);
+    soundTrack = NULL;
+}
+
+if (dragonBattle) {
+    Mix_FreeMusic(dragonBattle);
+    dragonBattle = NULL;
+}
+
+if (snowBattle) {
+    Mix_FreeMusic(snowBattle);
+    snowBattle = NULL;
+}
+
+if (timeBattle) {
+    Mix_FreeMusic(timeBattle);
+    timeBattle = NULL;
+}
+
+if (cloneBattle) {
+    Mix_FreeMusic(cloneBattle);
+    cloneBattle = NULL;
+}
+
+if (garlonSound) {
+    Mix_FreeChunk(garlonSound);
+    garlonSound = NULL;
+}
+
+if (eatingSound) {
+    Mix_FreeChunk(eatingSound);
+    eatingSound = NULL;
+}
+
+if (portalSound) {
+    Mix_FreeChunk(portalSound);
+    portalSound = NULL;
+}
+
+if (dragonSound) {
+    Mix_FreeChunk(dragonSound);
+    dragonSound = NULL;
+}
+
+if (thunderSound) {
+    Mix_FreeChunk(thunderSound);
+    thunderSound = NULL;
+}
+
+if (blizzardSound) {
+    Mix_FreeChunk(blizzardSound);
+    blizzardSound = NULL;
+}
+
+if (fireSound) {
+    Mix_FreeChunk(fireSound);
+    fireSound = NULL;
+}
+
+if (snowballSound) {
+    Mix_FreeChunk(snowballSound);
+    snowballSound = NULL;
+}
+
+if (timeStopSound) {
+    Mix_FreeChunk(timeStopSound);
+    timeStopSound = NULL;
+}
 	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
