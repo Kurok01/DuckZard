@@ -8,6 +8,7 @@
 #include "actions.h"
 #include "mapFunctions.h"
 #include "phase.h"
+#include "statistics.h"
 
 //Organizar pasta de assets
 //Hitbox do dragao
@@ -22,7 +23,7 @@ int main(int argc, char *argv[]) {
 	const Uint8 *state;
     int  selection = 1;
     float firstTime, secondTime, aux = 0;
-    int finalTime, preTime = 1, print, phases = 5, option = 0;
+    int finalTime, preTime = 1, print, phases = 1, option = 0, i;
     SDL_Event event;
 	
 	initSDL();
@@ -34,6 +35,15 @@ int main(int argc, char *argv[]) {
 	makeScreenTextures();
 
     firstTime = clock();
+    
+    changeStaticsMap();
+    
+    for(i = 0; i < 5; i++){
+    	
+    	if(staticsMap.mapPptr[(i*4) + 7][43] != '0') phases++;
+    	if(phases >= 5) phases = 5;
+	}
+
     while(1){
 		
 		if(option == 0){
@@ -47,7 +57,7 @@ int main(int argc, char *argv[]) {
 		        finalTime = aux * 10;
 		
 		        if(print == 0) mainScreen(selection);
-		        else mainScreen(4);
+		        else mainScreen(5);
 		
 		        if(finalTime > (preTime + 4)){
 		            preTime = finalTime;
@@ -69,7 +79,7 @@ int main(int argc, char *argv[]) {
 		
 		        if(state[SDL_SCANCODE_S]){
 		
-		            if(selection < 3) selection++;
+		            if(selection < 4) selection++;
 		            mainScreen(selection);
 		
 		        }
@@ -77,12 +87,26 @@ int main(int argc, char *argv[]) {
 		        if(state[SDL_SCANCODE_RETURN] && selection == 1){
 		            break;
 		        }
-		
+		        
 		        if(state[SDL_SCANCODE_RETURN] && selection == 3){
+		        	
+		        	while(1){
+		        		
+		        		staticsScreen();
+		        		
+						while(SDL_PollEvent(&event));
+		
+		        		state = SDL_GetKeyboardState(NULL);
+		        		
+		        		if(state[SDL_SCANCODE_ESCAPE]) break;
+					}
+		        	
+				}
+		
+		        if(state[SDL_SCANCODE_RETURN] && selection == 4){
 		            exit(1);
 		        }
 		    }
-		    option++;
 		}
 	    
 	    Sleep(100);

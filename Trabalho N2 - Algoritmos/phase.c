@@ -6,6 +6,7 @@
 #include "mapFunctions.h"
 #include "structs.h"
 #include "actions.h"
+#include "statistics.h"
 
 int phase1 () {
 	
@@ -180,6 +181,9 @@ int phase1 () {
 		
 		eat(&mapPhase1, &wizard, &score, &missing);
 	}
+	
+	saveData(over, finalTime, 1);
+	changeStaticsMap();
 	
 	freeMap(&mapPhase1);
 	
@@ -427,6 +431,9 @@ int phase2 () {
 		eat(&mapPhase2, &wizard, &score, &missing);
 	}
 	
+	saveData(over, finalTime, 1);
+	changeStaticsMap();
+	
 	freeMap(&mapPhase2);
 	
 	resetSnowBall();
@@ -647,6 +654,10 @@ int phase3(){
 		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;
 	}
+	
+	saveData(over, finalTime, 1);
+	changeStaticsMap();
+	
 	freeMap(&mapPhase3);
 	
 	if(missing == 0){
@@ -854,6 +865,9 @@ int phase4(){
 		
 		eat(&mapPhase4, &wizard, &score, &missing);
 	}
+	
+	saveData(over, finalTime, 1);
+	changeStaticsMap();
 	
 	freeMap(&mapPhase4);
 	
@@ -1205,6 +1219,9 @@ int finalPhase () {
 		if(finalTime == (reverseMove + 150) && reverseMove != 0) reverseMove = 0;
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;	
 	}
+	
+	saveData(over, finalTime, 1);
+	changeStaticsMap();
 	
 	freeMap(&mapPhase5);
 	

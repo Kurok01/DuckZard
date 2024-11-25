@@ -6,14 +6,20 @@
 #include <time.h>
 #include "interface.h"
 #include "menuScreens.h"
+#include "mapFunctions.h"
 
-SDL_Texture *mainScreenImg[4];
+SDL_Texture *mainScreenImg[5];
 SDL_Texture *pauseScreenImg[4];
 SDL_Texture *choosePhaseImg[5][6];
 SDL_Texture *winningImg[4];
 SDL_Texture *gameOverImg[4];
+SDL_Texture *letters[23];
+SDL_Texture *numbers[10];
+SDL_Texture *staticsBackGroundImg;
 
 SDL_Rect screenSize;
+
+int imageSize, x, y;
 
 void makeScreenTextures(){
 	int i, j;
@@ -22,6 +28,22 @@ void makeScreenTextures(){
 	char winningScreenPath[] = "assets\\victory .png";
 	char gameOverScreenPath[] = "assets\\gameOver .png";
 	char pathChoosePhase[] = "assets\\choose _ .png";
+	char pathLetter[] = "assets\\ .png";
+	char pathNumber[] = "assets\\ .png";
+	
+	alocMap("staticsMap.txt", &staticsMap);
+	
+	for(i = 0; i < 26; i++){
+		pathLetter[7] = (i + 65);
+		
+		letters[i] = takeImage(pathLetter);
+	}
+	
+	for(i = 0; i < 10; i++){
+		pathNumber[7] = (i + 48);
+		
+		numbers[i] = takeImage(pathNumber);
+	}
 	
 	for(i = 1; i <= 5; i++){
 		
@@ -36,22 +58,28 @@ void makeScreenTextures(){
 		
 	}
 	
-	for(i = 0; i < 4; i++){
+	for(i = 0; i < 5; i++){
 		mainScreenPath[17] = (i+49);
+		
+		mainScreenImg[i] = takeImage(mainScreenPath);
+	}
+	
+	for(i = 0; i < 4; i++){
 		pauseScreenPath[18] = (i+49);
 		winningScreenPath[14] = (i+48);
 		gameOverScreenPath[15] = (i+48);
 		
-		mainScreenImg[i] = takeImage(mainScreenPath);
 		pauseScreenImg[i] = takeImage(pauseScreenPath);
 		winningImg[i] = takeImage(winningScreenPath);
 		gameOverImg[i] = takeImage(gameOverScreenPath);
 	}
+	
+	staticsBackGroundImg = takeImage("assets\\staticsBackGroundImg.png");
 }
 
 void mainScreen(int selection){
 	
-	int height, width, imageSize, x, y;
+	int height, width;
 	
 	height = displayMode.h / 27;
 	width = displayMode.w / 51;
@@ -223,4 +251,33 @@ void pauseScreen(int selection){
 	SDL_RenderPresent(renderer);
 	
 	SDL_Delay(100);
+}
+
+void staticsScreen(){
+	
+	int i,j;
+	
+	SDL_RenderClear(renderer);
+	
+	SDL_RenderCopy(renderer, staticsBackGroundImg, NULL, &screenSize);
+	
+	for (i = 0; i < 27; i++) {
+		
+		for (j = 0; j < 51; j++) {
+			
+			SDL_Rect position;
+			position.x = (j * imageSize) + x;
+			position.y = (i * imageSize) + y;
+			position.w = (imageSize * 2);
+			position.h = (imageSize * 2);
+			
+			if (staticsMap.mapPptr[i][j] >= 'A' && staticsMap.mapPptr[i][j] <= 'Z') SDL_RenderCopy(renderer, letters[(staticsMap.mapPptr[i][j]) - 65], NULL, &position);
+			else if (staticsMap.mapPptr[i][j] >= '0' && staticsMap.mapPptr[i][j] <= '9') SDL_RenderCopy(renderer, numbers[(staticsMap.mapPptr[i][j]) - 48], NULL, &position);
+			
+  		}
+	}
+	
+	SDL_RenderPresent(renderer);
+	
+	SDL_Delay(16);
 }
