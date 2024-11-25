@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 	const Uint8 *state;
     int  selection = 1;
     float firstTime, secondTime, aux = 0;
-    int finalTime, preTime = 1, print, phases = 5, option = 0, i;
+    int finalTime, preTime = 1, print, phases = 1, option = 0, i;
     SDL_Event event;
 	
 	initSDL();

@@ -69,7 +69,7 @@ void changeStatisticsMap(){
 		
 		y = 7 + (i * 4);
 		
-		if (statisticsMap.mapPptr[y][43] < lives) {
+		if ((statisticsMap.mapPptr[y][43] - 48) < lives) {
 			
 			statisticsMap.mapPptr[y][21] = (nums[3] + 48);
 			statisticsMap.mapPptr[y][23] = (nums[2] + 48);
