@@ -744,7 +744,9 @@ void printScreen (Map_t *map, Wizard_t *wizard, Monster_t monster[], int qtd ,in
 	static int phaseStatic = 1;
 	int over = 0;
 	
-	if(phaseStatic != phase) tempLimits = 0;
+	if(phase == 0) phaseStatic = 0;
+	if(phaseStatic == 0) tempLimits = 0;
+	if(phase == 0) return;
 	
 	height = displayMode.h / map->height;
 	width = displayMode.w / map->width;

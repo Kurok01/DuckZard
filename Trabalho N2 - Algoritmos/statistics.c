@@ -48,6 +48,7 @@ void changeStatisticsMap(){
 		seconds = ((finalTime - minutes) * 100);
 		
 		if(minutes != 0) nums[3] = (minutes/10) % 10;
+		else nums[3] = 0;
 		nums[2] = minutes % 10;
 		
 		seconds = (seconds * 60) / 100;
@@ -69,7 +70,7 @@ void changeStatisticsMap(){
 		
 		y = 7 + (i * 4);
 		
-		if ((statisticsMap.mapPptr[y][43] - 48) < lives) {
+		if ((statisticsMap.mapPptr[y][43] - 48) <= lives) {
 			
 			statisticsMap.mapPptr[y][21] = (nums[3] + 48);
 			statisticsMap.mapPptr[y][23] = (nums[2] + 48);

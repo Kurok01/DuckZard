@@ -164,6 +164,7 @@ int phase1 () {
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                	printScreen(&mapPhase1, &wizard, ogres, 8, 0, -2, shield);
                     return 0;
                 }
             }
@@ -231,6 +232,8 @@ int phase2 () {
 	wizard.type = 'D';
 	
 	lookingFor(&wizard, 1, &mapPhase2);
+	
+	missing = 10;
 	
 	
 	for (i = 0; i < 8; i++) {
@@ -380,7 +383,7 @@ int phase2 () {
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                	
+                	printScreen(&mapPhase2, &wizard, yetis, 8, 0, beak, shield);
                 	resetSnowBall();
                     return 0;
                 }
@@ -431,7 +434,7 @@ int phase2 () {
 		eat(&mapPhase2, &wizard, &score, &missing);
 	}
 	
-	saveData(over, finalTime, 1);
+	saveData(over, finalTime, 2);
 	changeStatisticsMap();
 	
 	freeMap(&mapPhase2);
@@ -604,6 +607,7 @@ int phase3(){
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                	printScreen(&mapPhase3, &wizard, dogs, 11, 0, -1, shield);
                     return 0;
                 }
             }
@@ -655,7 +659,7 @@ int phase3(){
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;
 	}
 	
-	saveData(over, finalTime, 1);
+	saveData(over, finalTime, 3);
 	changeStatisticsMap();
 	
 	freeMap(&mapPhase3);
@@ -846,6 +850,7 @@ int phase4(){
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                	printScreen(&mapPhase4, &wizard, clone, numClones, 0, beak, shield);
                     return 0;
                 }
             }
@@ -866,7 +871,7 @@ int phase4(){
 		eat(&mapPhase4, &wizard, &score, &missing);
 	}
 	
-	saveData(over, finalTime, 1);
+	saveData(over, finalTime, 4);
 	changeStatisticsMap();
 	
 	freeMap(&mapPhase4);
@@ -1126,6 +1131,7 @@ int finalPhase () {
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
+                	printScreen(&mapPhase5, &wizard, monsters, numClones, 0, beak, shield);
                     return 0;
                 }  
             }
@@ -1220,7 +1226,7 @@ int finalPhase () {
 		if(finalTime >= (coolDownStopTime + 300) && coolDownStopTime != 0) coolDownStopTime = 0;	
 	}
 	
-	saveData(over, finalTime, 1);
+	saveData(over, finalTime, 5);
 	changeStatisticsMap();
 	
 	freeMap(&mapPhase5);

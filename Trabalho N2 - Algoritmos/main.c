@@ -19,12 +19,13 @@
 //Fazer imagens cinzas
 //Juntar imagens do blizzard
 //Cutscene da luta final e Gaguinho no final
+//parar musica quando parar o tempo;
 
 int main(int argc, char *argv[]) {
 	const Uint8 *state;
     int  selection = 1;
     float firstTime, secondTime, aux = 0;
-    int finalTime, preTime = 1, print, phases = 1, option = 0, i;
+    int finalTime, preTime = 1, phases, print, option = 0, i;
     SDL_Event event;
 	
 	initSDL();
@@ -36,16 +37,20 @@ int main(int argc, char *argv[]) {
 	makeScreenTextures();
 
     firstTime = clock();
-
-	changeStatisticsMap();
     
-    for(i = 0; i < 5; i++){
-    	
-    	if(statisticsMap.mapPptr[(i*4) + 7][43] != '0') phases++;
-    	if(phases >= 5) phases = 5;
-	}	
+    Map_t map_aux;
+    
 
     while(1){
+    	phases = 1;
+    	
+    	changeStatisticsMap();
+    
+   		for(i = 0; i < 5; i++){
+    	
+    		if(statisticsMap.mapPptr[(i*4) + 7][43] != '0') phases++;
+    		if(phases >= 5) phases = 5;
+		}	
 		
 		if(option == 0){
 			
