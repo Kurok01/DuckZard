@@ -1,2 +1,2 @@
-Time: 0000
-Lives: 0
+Time: 41
+Lives: 3

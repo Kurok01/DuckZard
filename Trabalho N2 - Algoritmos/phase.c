@@ -233,9 +233,6 @@ int phase2 () {
 	
 	lookingFor(&wizard, 1, &mapPhase2);
 	
-	missing = 10;
-	
-	
 	for (i = 0; i < 8; i++) {
 		
 		yetis[i].type = 'O';

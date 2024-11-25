@@ -40,7 +40,6 @@ int main(int argc, char *argv[]) {
     
     Map_t map_aux;
     
-
     while(1){
     	phases = 1;
     	
