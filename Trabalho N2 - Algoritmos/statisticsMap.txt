@@ -2,27 +2,27 @@
 **************************************************
 * E S C                                          *
 *                                                *
-*      P H A S E S    T I M E     L I V E S      *
+*     P H A S E S     T I M E     L I V E S      *
 *                                                *
 *                                                *
 *                                                *
-*      P H A S E 1   0 0 : 0 0    L E F T  0     *
+*     P H A S E  1   0 0 : 0 0    L E F T  0     *
 *                                                *
 *                                                *
 *                                                *
-*      P H A S E 2   0 0 : 0 0    L E F T  0     *
+*     P H A S E  2   0 0 : 0 0    L E F T  0     *
 *                                                *
 *                                                *
 *                                                *
-*      P H A S E 3   0 0 : 0 0    L E F T  0     *
+*     P H A S E  3   0 0 : 0 0    L E F T  0     *
 *                                                *
 *                                                *
 *                                                *
-*      P H A S E 4   0 0 : 0 0    L E F T  0     *
+*     P H A S E  4   0 0 : 0 0    L E F T  0     *
 *                                                *
 *                                                *
 *                                                *
-*      P H A S E 5   0 0 : 0 0    L E F T  0     *
+*     P H A S E  5   0 0 : 0 0    L E F T  0     *
 *                                                *
 *                                                *
 **************************************************

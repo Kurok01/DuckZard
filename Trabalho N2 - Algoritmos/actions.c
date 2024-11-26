@@ -109,7 +109,7 @@ void reverseMoves(const Uint8 *state, Wizard_t *wizard, Map_t *map, Uint32 *last
 	x = ((wizard->x - map->outOfLimitsX + 5)/ map->imageSize);
 	y = ((wizard->y - map->outOfLimitsY + 5) / map->imageSize);
 	
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < 14; i++) {
 		
 		if (map->mapPptr[y][x] == limits[i] || map->mapPptr[yD][xD] == limits[i] || map->mapPptr[y][xD] == limits[i] || map->mapPptr[yD][x] == limits[i]) {
 			
@@ -205,7 +205,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	int correct = 1, correctGPS = 1, aux, aux2, direction = 0;
 	int i, j;
 	static int k = 0, l = 1;
-	char limits[] = "*$#ASVIM54321";
+	char limits[] = "*$#ASVIHM54321";
 	
 	srand(time(0) + (k * l));
 	
@@ -228,7 +228,7 @@ void moveNPC(Map_t *map, Monster_t *monster, Wizard_t *wizard, Uint32 *lastTIME,
 	
 		for(i = 0; i < 8; i++){
 			
-			for(j = 0; j < 9; j++){
+			for(j = 0; j < 14; j++){
 				if(map->mapPptr[aux2][aux] == limits[j]){
 					correctGPS = 0;
 					break;

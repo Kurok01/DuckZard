@@ -1,2 +1,2 @@
-Time: 41
-Lives: 3
+Time: 2114
+Lives: 0

@@ -15,6 +15,7 @@ SDL_Texture *winningImg[4];
 SDL_Texture *gameOverImg[4];
 SDL_Texture *letters[23];
 SDL_Texture *numbers[10];
+SDL_Texture *colon;
 SDL_Texture *statisticsBackGroundImg;
 
 SDL_Rect screenSize;
@@ -30,6 +31,7 @@ void makeScreenTextures(){
 	char pathChoosePhase[] = "assets\\choose _ .png";
 	char pathLetter[] = "assets\\ .png";
 	char pathNumber[] = "assets\\ .png";
+	colon = takeImage("assets\\Colon.png");
 	
 	alocMap("statisticsMap.txt", &statisticsMap);
 	
@@ -273,6 +275,7 @@ void statisticsScreen(){
 			
 			if (statisticsMap.mapPptr[i][j] >= 'A' && statisticsMap.mapPptr[i][j] <= 'Z') SDL_RenderCopy(renderer, letters[(statisticsMap.mapPptr[i][j]) - 65], NULL, &position);
 			else if (statisticsMap.mapPptr[i][j] >= '0' && statisticsMap.mapPptr[i][j] <= '9') SDL_RenderCopy(renderer, numbers[(statisticsMap.mapPptr[i][j]) - 48], NULL, &position);
+			else if (statisticsMap.mapPptr[i][j] == ':') SDL_RenderCopy(renderer, colon, NULL, &position);
 			
   		}
 	}

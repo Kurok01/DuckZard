@@ -304,7 +304,6 @@ int phase2 () {
 			
 			if(finalTime % 5 == 0 && blizzard == 0){
 				
-				if(finalTime % 40 == 0) playSound(8);
 				spawnSnowBall(&mapPhase2, snowBall, &numSnowBall);
 				
 			}
@@ -464,7 +463,7 @@ int phase3(){
 	
 	Map_t mapPhase3;
 	Wizard_t wizard;
-	Monster_t dogs[11];
+	Monster_t dogs[8];
 	int print, selection = 1;
 	int coordenates = 0, i;
 	float firstTime, secondTime, aux = 0;
@@ -483,7 +482,7 @@ int phase3(){
 	lookingFor(&wizard, 1, &mapPhase3);
 	
 	
-	for (i = 0; i < 11; i++) {
+	for (i = 0; i < 8; i++) {
 		
 		dogs[i].type = 'O';
 		lookingForMonster(&(dogs[i]), (i+1), &mapPhase3);
@@ -506,9 +505,9 @@ int phase3(){
 		lastTIME2[i] = SDL_GetTicks();
 	}
 	
-	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -1, shield);
+	printScreen(&mapPhase3, &wizard, dogs, 8, 3, -1, shield);
 	sleep(2);
-	printScreen(&mapPhase3, &wizard, dogs, 11, 3, -2, shield);
+	printScreen(&mapPhase3, &wizard, dogs, 8, 3, -2, shield);
 	sleep(1);
 	playSound(7);
 	
@@ -534,9 +533,9 @@ int phase3(){
 			}
 			
 			if (stop != 1){
-				for (i = 0; i < 11; i++) {
+				for (i = 0; i < 8; i++) {
 				
-					moveNPC(&mapPhase3, &(dogs[i]), &wizard ,&lastTIME, (mapPhase3.imageSize/1.5));
+					moveNPC(&mapPhase3, &(dogs[i]), &wizard ,&lastTIME, (mapPhase3.imageSize) / 2.5);
 				
 					if(shield != 1) over -= gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 				
@@ -560,7 +559,7 @@ int phase3(){
 			preTime = finalTime;
 		}
 		
-		printScreen(&mapPhase3, &wizard, dogs, 11, 3, beak, shield);
+		printScreen(&mapPhase3, &wizard, dogs, 8, 3, beak, shield);
 		
 		if (over <= 0) break;
 		
@@ -604,7 +603,7 @@ int phase3(){
                 }
 
                 if(state[SDL_SCANCODE_RETURN] && selection == 3){
-                	printScreen(&mapPhase3, &wizard, dogs, 11, 0, -1, shield);
+                	printScreen(&mapPhase3, &wizard, dogs, 8, 0, -1, shield);
                     return 0;
                 }
             }
@@ -616,7 +615,7 @@ int phase3(){
 		
 		
 		if (stop != 1){
-			for (i = 0; i < 11; i++) {
+			for (i = 0; i < 8; i++) {
 						
 				if(shield != 1) over -= gameOver(&wizard, &mapPhase3, dogs[i].x, dogs[i].y, mapPhase3.imageSize, mapPhase3.imageSize);
 
@@ -673,7 +672,7 @@ int phase3(){
 		
 		option = gameOverScreen();
 		if(option == 0){
-			printScreen(&mapPhase3, &wizard, dogs, 11, 0, beak, shield);
+			printScreen(&mapPhase3, &wizard, dogs, 8, 0, beak, shield);
 			return -1;
 		}else{
 			return 0;
@@ -733,7 +732,7 @@ int phase4(){
 	sleep(1);
 	playSound(7);
 	
-	playSound(0);
+	playSound(4);
 	while (missing != 0) {
 		
 		preOver = over;
@@ -774,7 +773,7 @@ int phase4(){
 				shieldTime = 0;
 			}
 			
-			if(finalTime % 300 == 0){
+			if(finalTime % 300 == 0 && numClones < 40){
 				
 				spawnClone(&mapPhase4, clone, &numClones, 4);	
 			}
@@ -795,7 +794,7 @@ int phase4(){
 	
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 		
-		if(state[SDL_SCANCODE_F] && transformationCoolDown == 0){
+		if(state[SDL_SCANCODE_C] && transformationCoolDown == 0){
 			
 			wizard.type = 'O';
 			transformationDuration = finalTime;
@@ -904,7 +903,7 @@ int finalPhase () {
 	float firstTime, secondTime, aux = 0;
 	int finalTime, preTime = 1, pauseTime, timeStopTime = 0, transformationCoolDown = 0, transformationDuration = 0;
 	int beak = 0, x, y;
-	int score = 0, missing = 4, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
+	int score = 0, missing = 16, spawnPower = 0, coolDownStopTime = 0, reverseMove = 0;
 	int dragonCountDown = 0;
 	int over = 3, preOver, dragonOver = 0, coolDownFireTime = 0, fireDuration = 0, stop = 0, deFreezeCorrect = 0;
 	int lightning = 0, shield = 0;
@@ -949,6 +948,13 @@ int finalPhase () {
 	playSound(0);
 	
 	while (missing != 0) {
+		
+		missing = 0;
+		
+		for (i = 0; i < 4; i++) {
+			
+			missing += which[i];
+		}
 		
 		preOver = over;
 		
@@ -997,7 +1003,7 @@ int finalPhase () {
 				playSound(10);
 			}
 			
-			if(finalTime % 300 == 0 && timeStopTime == 0 && which[3] > 0){
+			if(finalTime % 300 == 0 && timeStopTime == 0 && which[3] > 0 && numClones < 16){
 				
 				spawnClone(&mapPhase5, monsters, &numClones, 5);	
 			}

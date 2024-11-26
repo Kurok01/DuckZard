@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     Map_t map_aux;
     
     while(1){
-    	phases = 1;
+    	phases = 5;
     	
     	changeStatisticsMap();
     
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
     	
     		if(statisticsMap.mapPptr[(i*4) + 7][43] != '0') phases++;
     		if(phases >= 5) phases = 5;
-		}	
+		}
 		
 		if(option == 0){
 			
